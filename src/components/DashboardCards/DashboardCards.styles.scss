@@ -1,0 +1,34 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    background: linear-gradient(135deg, #007BFF, #262A62); 
+    background-size: 200% 200%;
+    animation: gradientBG 10s ease infinite;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 4px 4px #fafafa;
+    }
+    
+    @keyframes gradientBG {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .values {
+        color: #FFFFFF;
+    }
+    .titles{
+        font-weight: bolder;
+        color: #FFFFFF;
+    }
+}

@@ -1,0 +1,37 @@
+.sidebar-sticky {
+    min-height: 90vh;
+
+    @media only screen and (max-width: 900px) {
+        min-height: unset;
+    }
+
+    ul {
+        margin-top: 20%; 
+        display: block;       
+        @media only screen and (max-width: 900px) {
+            margin-top: 5%;
+        }
+
+        li {
+            margin-bottom: 2.5vh;
+            font-size: 14px;            
+
+            span {
+                padding-left: 10px;
+                color: #262A62;
+            }
+            
+            @media only screen and (max-width: 900px) {
+                margin-bottom: 1vh;
+            }
+        }
+    }
+}
+
+.nav-link:hover{
+    font-weight: bold;
+}
+#active{
+    font-weight: bold;
+    font-size: 1.4em;
+}
