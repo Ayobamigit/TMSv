@@ -14,7 +14,7 @@
 
         li {
             margin-bottom: 2.5vh;
-            font-size: 14px;            
+            font-size: 15px;            
 
             span {
                 padding-left: 10px;
@@ -32,6 +32,39 @@
     font-weight: bold;
 }
 #active{
-    font-weight: bold;
-    font-size: 1.4em;
+  font-weight: bold;
+  font-size: 1.2;
 }
+
+/* Fixed sidenav, full height */
+  
+  /* Style the sidenav links and the dropdown button */
+  .sidenav a, .dropdown-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    color: #fff;
+    display: block;
+    border: none;
+    background: none;
+    width:100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  /* On mouse-over */
+  .sidenav a:hover, .dropdown-btn:hover {
+    font-weight: bold;
+  }
+  
+  
+  /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+  .dropdown-container {
+    display: none;
+    background-color: #262A62;
+    margin-left: 15%;
+  }
+
+  .dropdown-container > a {
+    border-bottom: 2px solid #f8f9fa;
+  }

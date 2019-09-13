@@ -53,7 +53,7 @@ const SignIn = ({history}) => {
                     onChange={onChange}
                 />
                 <button 
-                    className="btn btn-lg btn-primary btn-block" 
+                    className="btn btn-md btn-primary btn-block" 
                     type="submit"
                 >
                     Sign in
@@ -63,4 +63,4 @@ const SignIn = ({history}) => {
         </div>
     )
 }
-export default withRouter(SignIn)
+export default withRouter(SignIn);

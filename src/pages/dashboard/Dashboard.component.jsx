@@ -1,10 +1,11 @@
 import React from 'react';
+import withTimeout from '../../HOCs/withTimeout.hoc';
 import './Dashboard.styles.scss';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import DashboardCardsList from '../../components/DashboardCardsList/DashboardCardsList.component';
 import DashboardTransactionHistoryComponent from '../../components/DashboardTransactionHistory.component.jsx/DashboardTransactionHistory.component';
 
-export default function () {
+const Dashboard = () => {
     const customFileName = `tms-dashboard-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
     return (
         <React.Fragment>
@@ -28,3 +29,4 @@ export default function () {
         </React.Fragment>
     )
 }
+export default withTimeout(Dashboard)

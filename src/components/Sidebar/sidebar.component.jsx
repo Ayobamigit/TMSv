@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import './sidebar.styles.scss';
+import myFunction from './dropdown';
 
 const Sidebar = ({history}) => {
+  useEffect(() => {
+    myFunction();
+  }, [])
+  
   const pathname = history.location.pathname;
     return (
       <React.Fragment>
-        <div className="sidebar-sticky">
+        <div className="sidebar-sticky sidenav">
           <ul className="nav flex">             
           {/* Dashboard */}
           <li className="nav-item">
@@ -33,26 +38,42 @@ const Sidebar = ({history}) => {
 
           {/*  Device Setup / configuration */}
           <li className="nav-item">
-            <Link className="nav-link" to="/device-setup" id={pathname === '/device-setup' ? 'active' : ''}>
+            <div className="nav-link dropdown-btn" id={pathname.includes('device') ? 'active' : ''}>
               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#262A62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-file">
                   <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                   <polyline points="13 2 13 9 20 9"></polyline>
               </svg>
               <span>Device Setup / configuration</span>
-            </Link>
+            </div>
+            <div className="dropdown-container">
+              <Link id={pathname.includes('/device-setup') ? 'active' : ''} to="/device-setup">
+                Register a Terminal
+              </Link>
+              <Link to="/device-list" id={pathname.includes('/device-list') ? 'active' : ''}>
+                View all Terminals  
+              </Link>
+            </div>
           </li>
 
           {/*  Institution Management */}
           <li className="nav-item">
-            <Link className="nav-link" to="/institution-management" id={pathname === '/institution-management' ? 'active' : ''}>
+            <div className="nav-link dropdown-btn" id={pathname.includes('institution') ? 'active' : ''}>
               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#262A62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-layers">
                   <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                   <polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>
               </svg>
               <span>Institution Management</span>
-            </Link>
+            </div>
+            <div className="dropdown-container">
+              <Link to="/institution-setup" id={pathname.includes('/institution-setup') ? 'active' : ''}>
+                Register an Institution
+              </Link>
+              <Link to="/institution-list" id={pathname.includes('/device-list') ? 'active' : ''}>
+                View all Instistutions  
+              </Link>
+            </div>
           </li>
-
+          
           {/*  Reporting */}
           <li className="nav-item">
             <Link className="nav-link" to="/reporting" id={pathname === '/reporting' ? 'active' : ''}>
