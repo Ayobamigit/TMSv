@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+// import { useHttp } from '../../../CustomHooks/useHttp.hooks';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-import Swal from '../../../constants/swal';
-import baseUrl from '../../../constants/baseurl';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
+import Swal from '../../../constants/swal';
+import { withRouter } from 'react-router-dom';
+import baseUrl from '../../../constants/baseurl';
 
-const DeviceView = ({history, match}) => {
+// Context for Authentication
+import { authContext } from '../../../Context/Authentication.context';
+import Layout from '../../../components/Layout/layout.component';
+
+const DeviceView = ({ history, match}) => {
     const [state, setState ] =  useState({
         terminalID: '',
         terminalType: '',
@@ -26,7 +31,6 @@ const DeviceView = ({history, match}) => {
             })
           .then(response => response.json())
             .then(result => {
-                console.log(result)
                 setIsLoading(false)
                 if(result.respCode === '00'){
                     const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo } = result.respBody;
@@ -119,11 +123,16 @@ const DeviceView = ({history, match}) => {
             });
         }
     }
+
+    const { isAuthenticated } = useContext(authContext)
+    if(!isAuthenticated){
+        history.push('/')
+    }
     if(isLoading){
         return <PreLoader />
     } else {
         return (
-            <React.Fragment>
+            <Layout>
                 <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 className="h2">Terminals View</h1>
                     <button className="btn btn-sm btn-primary" onClick={editFields}>Edit Fields</button>
@@ -199,7 +208,7 @@ const DeviceView = ({history, match}) => {
                         </form>
                     </div>
                 </div>
-            </React.Fragment>
+            </Layout>
         )
     }
 }

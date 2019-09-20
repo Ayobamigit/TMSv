@@ -1,7 +1,7 @@
 /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
 const myFunction = () =>  {
-    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var dropdown = document.querySelectorAll(".dropdown-btn");
     var i;
 
     for (i = 0; i < dropdown.length; i++) {

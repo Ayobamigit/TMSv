@@ -3,3 +3,6 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
 }
+.btn{
+    margin: 0;
+}

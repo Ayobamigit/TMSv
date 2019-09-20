@@ -1,10 +1,14 @@
-import React, {useState} from 'react';
+import React, { useState, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-import { withRouter } from 'react-router-dom';
 import Swal from '../../../constants/swal';
 import baseUrl from '../../../constants/baseurl';
+import { withRouter } from 'react-router-dom';
 
-const InstitutionRegistration = ({history}) => {
+// Context for Authentication
+import { authContext } from '../../../Context/Authentication.context';
+import Layout from '../../../components/Layout/layout.component';
+
+const InstitutionRegistration = ({ history }) => {
     const [state, setState ] =  useState({ 
         institutionName: '', 
         institutionEmail: '', 
@@ -108,8 +112,13 @@ const InstitutionRegistration = ({history}) => {
         }
     }
 
+    const { isAuthenticated } = useContext(authContext)
+    if(!isAuthenticated){
+        history.push('/')
+    }
+
     return (
-        <React.Fragment>
+        <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">Institution Registration</h1>
             </div>
@@ -337,7 +346,7 @@ const InstitutionRegistration = ({history}) => {
         
                 </div>
             </div>
-        </React.Fragment>
+        </Layout>
     )
 }
 export default withTimeout(withRouter(InstitutionRegistration));

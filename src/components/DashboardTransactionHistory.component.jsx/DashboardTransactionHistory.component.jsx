@@ -9,7 +9,7 @@ export default function () {
                 <table className="table table-striped" id="table-to-xls">
                     <thead>
                         <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">S/N</th>
                         <th scope="col">First</th>
                         <th scope="col">Last</th>
                         <th scope="col">Handle</th>

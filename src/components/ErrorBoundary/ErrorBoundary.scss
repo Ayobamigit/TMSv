@@ -1,0 +1,32 @@
+.errorImageOverlay {
+    height: 60%;
+    width: 60%;
+    left: 20%;
+    top: 20%;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 960px) {
+    .errorImageOverlay {
+        width: 80%;
+        left: 10%;
+    } 
+}
+
+.errorImageContainer {
+    display: inline-block;
+    background-image: url("../../img/error404.png");
+    background-size: cover;
+    background-position: center;
+    width: 40vh;
+    height: 40vh;
+}
+.errorImageText{
+    font-size: 28px;
+    color: #FF0014;
+    text-align: center;
+}

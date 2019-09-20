@@ -1,19 +1,26 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import Logo from '../../img/3linewhite.png';
 import './header.styles.scss';
+import { authContext } from '../../Context/Authentication.context';
 
-export default function() {
+const Header = ({history}) => {
+    const { setAuthenticationStatus } = useContext(authContext)
+    
+    const logout = () => {
+        setAuthenticationStatus(false);
+        history.push('/')
+    }
     return (
         <div className="top-bar">
             <Link to="/dashboard"><img src={Logo} alt="3 Line" width="72" height="auto"  /></Link>
-            <Link to="/">
                 <button 
                 className="btn btn-sm btn-danger"
+                onClick={logout}
                 >
                     Sign out
                 </button>
-            </Link>
         </div>
     )
 }
+export default withRouter(Header);

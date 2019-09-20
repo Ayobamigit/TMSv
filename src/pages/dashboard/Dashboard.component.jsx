@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import './Dashboard.styles.scss';
+import { withRouter } from 'react-router-dom';
+import Layout from '../../components/Layout/layout.component';
+
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import DashboardCardsList from '../../components/DashboardCardsList/DashboardCardsList.component';
 import DashboardTransactionHistoryComponent from '../../components/DashboardTransactionHistory.component.jsx/DashboardTransactionHistory.component';
 
-const Dashboard = () => {
+// Context for Authentication
+import { authContext } from '../../Context/Authentication.context';
+
+const Dashboard = ({ history }) => {
+    const { isAuthenticated } = useContext(authContext)
     const customFileName = `tms-dashboard-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
+    
+    if(!isAuthenticated){
+        history.push('/')
+    }
+    
     return (
-        <React.Fragment>
+        <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">Dashboard</h1>
                 <div className="btn-toolbar mb-2 mb-md-0">
@@ -26,7 +38,7 @@ const Dashboard = () => {
             </div> 
             <DashboardCardsList />
             <DashboardTransactionHistoryComponent />
-        </React.Fragment>
+        </Layout>
     )
 }
-export default withTimeout(Dashboard)
+export default withTimeout(withRouter(Dashboard))

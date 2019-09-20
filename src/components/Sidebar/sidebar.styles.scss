@@ -62,7 +62,15 @@
   .dropdown-container {
     display: none;
     background-color: #262A62;
-    margin-left: 15%;
+
+    ul {
+      margin-top: 5%; 
+    }
+
+    ul > li {
+      list-style-type: circle;
+      margin-bottom: 1.5vh;
+    }
   }
 
   .dropdown-container > a {

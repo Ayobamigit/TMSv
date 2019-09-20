@@ -1,24 +1,29 @@
-import React, { useState, useCallback } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { useState, useCallback, useContext } from 'react';
 import './sign-in.styles.scss';
+import { authContext } from '../../Context/Authentication.context';
 
 import Logo from '../../img/3line_logo.png';
 
-const SignIn = ({history}) => {
+const SignIn = ({ history }) => { 
     const [ state, setState ] = useState({
         username: '',
         password: ''
     });
-
+    
+    const { setAuthenticationStatus } = useContext(authContext)
     const onSubmit = useCallback((e) => {
         e.preventDefault();
+        document.querySelector(".btn").disabled = true;
+        setAuthenticationStatus(true)
         history.push('/dashboard')
-    }, [history])
+        document.querySelectorAll(".btn").disabled = false;
+    }, [history, setAuthenticationStatus])
 
     const onChange = useCallback((e) => {
         setState({...state, [e.target.name]: e.target.value});
     }, [state])
- 
+
+    
     return (
         <div className="signInContainer">
             <form className="form-signin" onSubmit={onSubmit}>
@@ -63,4 +68,4 @@ const SignIn = ({history}) => {
         </div>
     )
 }
-export default withRouter(SignIn);
+export default SignIn;

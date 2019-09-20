@@ -46,12 +46,18 @@ const Sidebar = ({history}) => {
               <span>Device Setup / configuration</span>
             </div>
             <div className="dropdown-container">
-              <Link id={pathname.includes('/device-setup') ? 'active' : ''} to="/device-setup">
-                Register a Terminal
-              </Link>
-              <Link to="/device-list" id={pathname.includes('/device-list') ? 'active' : ''}>
-                View all Terminals  
-              </Link>
+              <ul>
+                <li>
+                  <Link id={pathname.includes('/device-setup') ? 'active' : ''} to="/device-setup">
+                  Register a Terminal
+                </Link>
+                </li>
+                <li>
+                  <Link to="/device-list" id={pathname.includes('/device-list') ? 'active' : ''}>
+                    View all Terminals  
+                  </Link>
+                </li>
+              </ul>           
             </div>
           </li>
 
@@ -65,12 +71,18 @@ const Sidebar = ({history}) => {
               <span>Institution Management</span>
             </div>
             <div className="dropdown-container">
-              <Link to="/institution-setup" id={pathname.includes('/institution-setup') ? 'active' : ''}>
-                Register an Institution
-              </Link>
-              <Link to="/institution-list" id={pathname.includes('/device-list') ? 'active' : ''}>
-                View all Instistutions  
-              </Link>
+              <ul>
+                <li>
+                  <Link to="/institution-setup" id={pathname.includes('/institution-setup') ? 'active' : ''}>
+                    Register an Institution
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/institution-list" id={pathname.includes('/device-list') ? 'active' : ''}>
+                    View all Instistutions  
+                  </Link>
+                </li>
+              </ul>           
             </div>
           </li>
           
