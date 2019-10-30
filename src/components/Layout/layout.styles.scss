@@ -1,13 +1,26 @@
+#wrapper{
+    position: relative;
+    top: 60px;
+}
+
+#main{
+    transition:margin-left .75s;
+    padding: 20px;
+    min-height: 100vh;
+}
+#mySidebar{
+    height:100%;
+    width:200px;
+    background-color:#f3f3f3;
+    position:fixed!important;
+    z-index:1;
+    overflow:auto
+}
 .children{
     overflow-y: auto;
     overflow-x: auto;
     margin: 0;
 } 
-
-.bg{
-    background: #f8f9fa;
-    // background: #007BFF;
-}
 
 //Toggle Button
 .menu-toggle-btn{

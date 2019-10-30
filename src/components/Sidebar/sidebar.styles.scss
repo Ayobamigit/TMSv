@@ -1,78 +1,79 @@
-.sidebar-sticky {
-    min-height: 90vh;
+ul {
+  margin-top: 20%;
+  padding: 0px; 
+  display: block;   
+  list-style: none;
+     
+  @media only screen and (max-width: 900px) {
+    margin-top: 5%;
+  }
 
+  li {
+    margin-bottom: 2.5vh;
+    font-size: 15px;            
+
+    span {
+      padding-left: 10px;
+    }
+    
     @media only screen and (max-width: 900px) {
-        min-height: unset;
+      margin-bottom: 1vh;
     }
 
-    ul {
-        margin-top: 20%; 
-        display: block;       
-        @media only screen and (max-width: 900px) {
-            margin-top: 5%;
-        }
-
-        li {
-            margin-bottom: 2.5vh;
-            font-size: 15px;            
-
-            span {
-                padding-left: 10px;
-                color: #262A62;
-            }
-            
-            @media only screen and (max-width: 900px) {
-                margin-bottom: 1vh;
-            }
-        }
+    .fa{
+      color: #ff3547;
     }
+  }
 }
 
 .nav-link:hover{
-    font-weight: bold;
-}
-#active{
   font-weight: bold;
-  font-size: 1.2;
 }
 
 /* Fixed sidenav, full height */
   
-  /* Style the sidenav links and the dropdown button */
-  .sidenav a, .dropdown-btn {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    color: #fff;
-    display: block;
-    border: none;
-    background: none;
-    width:100%;
-    text-align: left;
-    cursor: pointer;
-    outline: none;
-  }
-  
-  /* On mouse-over */
-  .sidenav a:hover, .dropdown-btn:hover {
-    font-weight: bold;
-  }
-  
-  
-  /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
-  .dropdown-container {
-    display: none;
-    background-color: #262A62;
+/* Style the sidenav links and the dropdown button */
+.sidenav a, .dropdown-btn {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  color: #fff;
+  display: block;
+  border: none;
+  background: none;
+  width:100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
 
-    ul {
-      margin-top: 5%; 
-    }
+/* On mouse-over */
+.sidenav a:hover, .dropdown-btn:hover {
+  font-weight: bold;
+}
 
-    ul > li {
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+  display: none;
+  background-color: #262A62;
+  margin-left: 20%;
+  padding: 5px;
+
+  ul {
+    margin-top: 5%; 
+
+    li {
       list-style-type: circle;
       margin-bottom: 1.5vh;
+
+      a:hover{
+        text-decoration: none;
+        font-weight: bolder;
+      }
     }
   }
+}
 
-  .dropdown-container > a {
-    border-bottom: 2px solid #f8f9fa;
-  }
+.dropdown-container > a {
+  border-bottom: 2px solid #f8f9fa;
+}

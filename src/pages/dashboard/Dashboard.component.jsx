@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import './Dashboard.styles.scss';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Layout from '../../components/Layout/layout.component';
 
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
@@ -11,7 +11,8 @@ import DashboardTransactionHistoryComponent from '../../components/DashboardTran
 // Context for Authentication
 import { authContext } from '../../Context/Authentication.context';
 
-const Dashboard = ({ history }) => {
+const Dashboard = () => {
+    const history = useHistory();
     const { isAuthenticated } = useContext(authContext)
     const customFileName = `tms-dashboard-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
     
@@ -41,4 +42,4 @@ const Dashboard = ({ history }) => {
         </Layout>
     )
 }
-export default withTimeout(withRouter(Dashboard))
+export default withTimeout(Dashboard)
