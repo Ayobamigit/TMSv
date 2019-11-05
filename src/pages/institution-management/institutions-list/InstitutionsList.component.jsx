@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
 import baseUrl from '../../../constants/baseurl';
 import Swal from '../../../constants/swal';
@@ -11,7 +11,7 @@ import { authContext } from '../../../Context/Authentication.context';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Layout from '../../../components/Layout/layout.component';
 
-const InstitutionsList = ({ history }) => {
+const InstitutionsList = () => {
     const [institutionsList, setInstitutionsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
@@ -42,7 +42,8 @@ const InstitutionsList = ({ history }) => {
             });
     }, [])
 
-    const { isAuthenticated } = useContext(authContext)
+    const { isAuthenticated } = useContext(authContext);
+    const history = useHistory();
     if(!isAuthenticated){
         history.push('/')
     }

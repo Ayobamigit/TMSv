@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 // import { useHttp } from '../../../CustomHooks/useHttp.hooks';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './TerminalsList.styles.scss';
 import baseUrl from '../../../constants/baseurl';
 import Swal from '../../../constants/swal';
@@ -12,7 +12,7 @@ import PreLoader from '../../../components/PreLoader/Preloader.component';
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 
-const DeviceList = ({ history }) => {
+const DeviceList = () => {
     const [terminalsList, setTerminalsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
@@ -42,7 +42,8 @@ const DeviceList = ({ history }) => {
             });
     }, [])
 
-    const { isAuthenticated } = useContext(authContext)
+    const { isAuthenticated } = useContext(authContext);
+    const history = useHistory();
     if(!isAuthenticated){
         history.push('/')
     }
@@ -94,4 +95,4 @@ const DeviceList = ({ history }) => {
         )
     }
 }
-export default withTimeout(withRouter(DeviceList));
+export default withTimeout(DeviceList);

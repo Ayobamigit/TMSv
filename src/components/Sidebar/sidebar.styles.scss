@@ -10,7 +10,11 @@ ul {
 
   li {
     margin-bottom: 2.5vh;
-    font-size: 15px;            
+    font-size: 15px;
+    
+    a:hover{
+      text-decoration: none;
+    }
 
     span {
       padding-left: 10px;
@@ -55,8 +59,8 @@ ul {
 /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
 .dropdown-container {
   display: none;
-  background-color: #262A62;
   margin-left: 20%;
+  border: 1px solid #ff3547;
   padding: 5px;
 
   ul {
@@ -65,9 +69,8 @@ ul {
     li {
       list-style-type: circle;
       margin-bottom: 1.5vh;
-
-      a:hover{
-        text-decoration: none;
+      
+      &:hover{
         font-weight: bolder;
       }
     }

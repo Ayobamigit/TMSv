@@ -3,14 +3,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Swal from '../../../constants/swal';
-import { withRouter } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import baseUrl from '../../../constants/baseurl';
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 
-const DeviceView = ({ history, match}) => {
+const history = useHistory();
+const match = useRouteMatch();
+
+const DeviceView = () => {
     const [state, setState ] =  useState({
         terminalID: '',
         terminalType: '',
@@ -61,7 +64,7 @@ const DeviceView = ({ history, match}) => {
             });
         }
         getDeviceData();
-    }, [match.params.id])
+    }, [])
 
     const onChange = (e) => {
         setState({...state, [e.target.name]: e.target.value})
@@ -124,7 +127,7 @@ const DeviceView = ({ history, match}) => {
         }
     }
 
-    const { isAuthenticated } = useContext(authContext)
+    const { isAuthenticated } = useContext(authContext);
     if(!isAuthenticated){
         history.push('/')
     }
@@ -212,4 +215,4 @@ const DeviceView = ({ history, match}) => {
         )
     }
 }
-export default withTimeout(withRouter(DeviceView));
+export default withTimeout(DeviceView);

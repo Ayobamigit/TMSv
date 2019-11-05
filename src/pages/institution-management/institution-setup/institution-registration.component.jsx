@@ -2,13 +2,13 @@ import React, { useState, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import Swal from '../../../constants/swal';
 import baseUrl from '../../../constants/baseurl';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 
-const InstitutionRegistration = ({ history }) => {
+const InstitutionRegistration = () => {
     const [state, setState ] =  useState({ 
         institutionName: '', 
         institutionEmail: '', 
@@ -84,7 +84,7 @@ const InstitutionRegistration = ({ history }) => {
             })
           .then(response => response.json())
             .then(result => {
-                console.log(result)
+                // console.log(result)
                 if(result.respCode === '00'){
                     Swal.fire({
                         type: 'success',
@@ -112,7 +112,8 @@ const InstitutionRegistration = ({ history }) => {
         }
     }
 
-    const { isAuthenticated } = useContext(authContext)
+    const { isAuthenticated } = useContext(authContext);
+    const history = useHistory();
     if(!isAuthenticated){
         history.push('/')
     }
@@ -349,4 +350,4 @@ const InstitutionRegistration = ({ history }) => {
         </Layout>
     )
 }
-export default withTimeout(withRouter(InstitutionRegistration));
+export default withTimeout(InstitutionRegistration);

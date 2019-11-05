@@ -1,13 +1,13 @@
 import React, { useState, useContext } from 'react';
-import './sign-in.styles.scss';
+import './SuperAdminSignIn.styles.scss';
 import axios from 'axios';
 import { authContext } from '../../Context/Authentication.context';
-import { institutionLoginUrl } from '../../Utils/URLs';
+import { superAdminLoginUrl } from '../../Utils/URLs';
 
 import Logo from '../../img/3line_logo.png';
 import IsFetching from '../../components/isFetching/IsFetching.component';
 
-const SignIn = ({ history }) => { 
+const AdminSignIn = ({ history }) => { 
     const [ state, setState ] = useState({
         username: '',
         password: '',
@@ -30,11 +30,10 @@ const SignIn = ({ history }) => {
             axios({
                 method: 'post',
                 headers: {'Content-Type' : 'application/json'},
-                url: `${institutionLoginUrl}`,
+                url: `${superAdminLoginUrl}`,
                 data: reqBody
             })
-                .then(response => {
-                console.log(response.data)
+            .then(response => {
                 setState({ ...state, isLoggingIn: false })
                 document.getElementById(id).disabled = false;
                 if (response.data.respCode === '00') {
@@ -48,6 +47,7 @@ const SignIn = ({ history }) => {
             .catch(e => {
                 setState({ ...state, isLoggingIn: false })
                 document.getElementById(id).disabled = false;
+                alert(e)
             })
         }
     }
@@ -63,6 +63,8 @@ const SignIn = ({ history }) => {
                 <img className="mb-4" src={Logo} alt="" />
                 <div className="welcome-text">
                     <h3>Welcome to 3Line Terminal Management System</h3>
+                    <br />
+                    <h5>(Super Admin)</h5>
                 </div>
                 
                 <h3 className="h3 mb-3 font-weight-normal">Please sign in</h3> <br />
@@ -105,4 +107,4 @@ const SignIn = ({ history }) => {
         </div>
     )
 }
-export default SignIn;
+export default AdminSignIn;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { withRouter } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import baseUrl from '../../../constants/baseurl';
@@ -9,7 +9,10 @@ import Swal from '../../../constants/swal';
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 
-const InstitutionView = ({ history, match }) => {
+const history = useHistory();
+const match = useRouteMatch();
+
+const InstitutionView = () => {
     const [state, setState ] =  useState({ 
         id: '',
         institutionName: '', 
@@ -76,7 +79,7 @@ const InstitutionView = ({ history, match }) => {
             });
         }
         getDeviceData();
-    }, [match.params.id])
+    }, [])
 
     const onChange = (e) => {
         setState({...state, [e.target.name]: e.target.value})
@@ -445,4 +448,4 @@ const InstitutionView = ({ history, match }) => {
         )
     }
 }
-export default withTimeout(withRouter(InstitutionView));
+export default withTimeout(InstitutionView);

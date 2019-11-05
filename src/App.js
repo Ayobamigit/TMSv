@@ -6,6 +6,7 @@ import { Route, Switch, HashRouter } from 'react-router-dom';
 import PreLoader from './components/PreLoader/Preloader.component';
 
 import SignIn from './pages/sign-in/sign-in.component';
+import AdminSignIn from './pages/super-admin-login/SuperAdminSignIn.component';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard.component'));
 const DeviceSetup = lazy(() => import('./pages/terminals-management/device-setup/device-setup.component'));
@@ -25,7 +26,8 @@ function App() {
         <ErrorBoundary>
           <Suspense fallback={<PreLoader />}>
             <Switch>  
-              <Route exact path="/" component={SignIn} />                          
+              <Route exact path="/" component={SignIn} /> 
+              <Route exact path="/super-admin" component={AdminSignIn} />
               <Route exact path="/dashboard" component={Dashboard} />
               <Route exact path="/device-setup" component={DeviceSetup} />
               <Route exact path="/device-list" component={DeviceLists} />

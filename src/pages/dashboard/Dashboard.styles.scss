@@ -1,0 +1,10 @@
+#alignChartAndCards{
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+
+    #chart{
+        width: 99%;
+        height: 500px; 
+        margin: 0;
+    }
+}

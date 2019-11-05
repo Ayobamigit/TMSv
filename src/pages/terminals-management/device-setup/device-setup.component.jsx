@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Swal from '../../../constants/swal';
 import baseUrl from '../../../constants/baseurl';
 
@@ -8,7 +8,7 @@ import baseUrl from '../../../constants/baseurl';
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 
-const DeviceRegistration = ({ history }) => {
+const DeviceRegistration = () => {
     const [state, setState ] =  useState({
         terminalID: '',
         terminalType: '',
@@ -73,7 +73,8 @@ const DeviceRegistration = ({ history }) => {
         }
     }
 
-    const { isAuthenticated } = useContext(authContext)
+    const { isAuthenticated } = useContext(authContext);
+    const history = useHistory();
     if(!isAuthenticated){
         history.push('/')
     }
@@ -149,4 +150,4 @@ const DeviceRegistration = ({ history }) => {
         </Layout>
     )
 }
-export default withTimeout(withRouter(DeviceRegistration));
+export default withTimeout(DeviceRegistration);

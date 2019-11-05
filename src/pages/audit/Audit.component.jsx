@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 // Context for Authentication
 import { authContext } from '../../Context/Authentication.context';
 import Layout from '../../components/Layout/layout.component';
 
-const Audit = ({ history }) => {
-    const { isAuthenticated } = useContext(authContext)
+const Audit = () => {
+    const { isAuthenticated } = useContext(authContext);
+    const history = useHistory();
     if(!isAuthenticated){
         history.push('/')
     }
@@ -19,4 +20,4 @@ const Audit = ({ history }) => {
         </Layout>
     )
 }
-export default withTimeout(withRouter(Audit));
+export default withTimeout(Audit);

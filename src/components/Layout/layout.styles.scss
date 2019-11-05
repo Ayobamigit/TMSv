@@ -1,17 +1,32 @@
 #wrapper{
     position: relative;
     top: 60px;
+
+    ::-webkit-scrollbar-track {
+        border: 1px solid #FAA831;
+        border-radius: 5px;
+        background-color: #F3F3F3;
+    }
+    
+    ::-webkit-scrollbar {
+        width: 1px;
+        background-color: #F3F3F3;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background-color: #FFF;	
+    }
 }
 
 #main{
     transition:margin-left .75s;
-    padding: 20px;
-    min-height: 100vh;
+    overflow-y: none;
 }
 #mySidebar{
     height:100%;
     width:200px;
     background-color:#f3f3f3;
+    border-right: 1px solid #fff;
     position:fixed!important;
     z-index:1;
     overflow:auto
@@ -20,14 +35,26 @@
     overflow-y: auto;
     overflow-x: auto;
     margin: 0;
+
+    #manipulateChildren{
+       top: 40px;
+       position: relative;
+       padding: 10px 0 0 20px;
+       min-height: 20vh;
+    }
 } 
 
 //Toggle Button
 .menu-toggle-btn{
-    margin: 15px;
     cursor: pointer;
-    width: 30px;
-    height: 30px;
+    width: 60px;
+    height: 55px;
+    position: fixed;
+    background-color: #f3f3f3;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    z-index: 1000;
 
     span{
         background: #1d1d1b;

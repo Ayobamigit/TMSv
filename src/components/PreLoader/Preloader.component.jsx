@@ -15,18 +15,6 @@ const PreLoader = () => {
                     <i></i>
                 </div>
             </section>
-
-                <section className="wrapper dark">
-                    <div className="spinner">
-                        <i></i>
-                        <i></i>
-                        <i></i>
-                        <i></i>
-                        <i></i>
-                        <i></i>
-                        <i></i>
-                    </div>
-            </section>
         </React.Fragment>
     )
 }
