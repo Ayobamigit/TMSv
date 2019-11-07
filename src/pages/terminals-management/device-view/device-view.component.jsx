@@ -4,14 +4,14 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Swal from '../../../constants/swal';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import baseUrl from '../../../constants/baseurl';
+import { viewATerminal } from '../../../Utils/URLs';
+import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
-
-const history = useHistory();
-const match = useRouteMatch();
+import Axios from 'axios';
+const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const DeviceView = () => {
     const [state, setState ] =  useState({
@@ -26,17 +26,20 @@ const DeviceView = () => {
 
     useEffect(() => {
         const getDeviceData = () => {
-            fetch(`${baseUrl}/api/Tms/${match.params.id}`, {
+            Axios({
                 method: 'get',
+                url: `${`${viewATerminal}`}/${match.params.id}`,
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                data: {},
+                timeout: FetchTimeOut
             })
-          .then(response => response.json())
             .then(result => {
                 setIsLoading(false)
-                if(result.respCode === '00'){
-                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo } = result.respBody;
+                if(result.data.respCode === '00'){
+                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo } = result.data.respBody;
                     setState(state => ({...state, 
                         terminalID,
                         terminalType,
@@ -48,7 +51,7 @@ const DeviceView = () => {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.respDescription}`,
+                        text: `${result.data.respDescription}`,
                         footer: 'Please contact support'
                     })
                 }                
@@ -65,10 +68,11 @@ const DeviceView = () => {
         }
         getDeviceData();
     }, [])
-
-    const onChange = (e) => {
-        setState({...state, [e.target.name]: e.target.value})
-    }
+    const history = useHistory();
+    const match = useRouteMatch();
+        const onChange = (e) => {
+            setState({...state, [e.target.name]: e.target.value})
+        }
 
     const editFields = () => {
         setIsReadOnly(!readOnly)
@@ -92,16 +96,18 @@ const DeviceView = () => {
                 text: 'Please fill all fields!'
             })
         } else {
-            fetch(`${baseUrl}/api/Tms/${match.params.id}`, {
+            Axios(`${`${viewATerminal}`}/${match.params.id}`, {
                 method: 'put',
-                body: JSON.stringify(reqBody),
+                data: reqBody,
+                url: `${`${viewATerminal}`}/${match.params.id}`,
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                timeout: FetchTimeOut
             })
-          .then(response => response.json())
             .then(result => {
-                if(result.respCode === '00'){
+                if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
                         title: 'Successful Update...',
@@ -112,7 +118,7 @@ const DeviceView = () => {
                     Swal.fire({
                         type: 'error',
                         title: 'Failed to get device data...',
-                        text: `${result.respDescription}`
+                        text: `${result.data.respDescription}`
                     })
                 }                
             })

@@ -2,11 +2,15 @@ import React, { useState, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { useHistory } from 'react-router-dom';
 import Swal from '../../../constants/swal';
-import baseUrl from '../../../constants/baseurl';
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
+import Axios from 'axios';
+import { FetchTimeOut } from "../../../Utils/FetchTimeout";
+import { registerTerminalURL } from '../../../Utils/URLs'
+
+const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
 const DeviceRegistration = () => {
     const [state, setState ] =  useState({
@@ -24,11 +28,12 @@ const DeviceRegistration = () => {
         const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, terminalStatus } = state;
         const reqBody = {
             id: 0,
-            terminalID: terminalID,
-            terminalROMVersion: terminalROMVersion,
-            terminalSerialNo: terminalSerialNo,
-            terminalType: terminalType,
-            terminalStatus: terminalStatus
+            terminalID,
+            dateCreated: new Date(),
+            terminalROMVersion,
+            terminalSerialNo,
+            terminalType,
+            terminalStatus
         }
         if (terminalID.trim() === '' || terminalType.trim() === '' || terminalStatus.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === ''){
             Swal.fire({
@@ -37,16 +42,18 @@ const DeviceRegistration = () => {
                 text: 'Please fill all fields!'
             })
         } else {
-            fetch(`${baseUrl}/api/Tms`, {
+            Axios({
                 method: 'post',
-                body: JSON.stringify(reqBody),
+                url: `${`${registerTerminalURL}`}`,
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                data: {reqBody},
+                timeout: FetchTimeOut
             })
-          .then(response => response.json())
             .then(result => {
-                if(result.respCode === '00'){
+                if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
                         title: 'Successful Registration...',
@@ -57,7 +64,7 @@ const DeviceRegistration = () => {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.respDescription}`,
+                        text: `${result.data.respDescription}`,
                         footer: 'Please contact support'
                     })
                 }                
