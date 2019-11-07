@@ -1,25 +1,31 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import './sign-in.styles.scss';
 import axios from 'axios';
 import { authContext } from '../../Context/Authentication.context';
 import { institutionLoginUrl } from '../../Utils/URLs';
+import { FetchTimeOut } from '../../Utils/FetchTimeout'
 
 import Logo from '../../img/3line_logo.png';
 import IsFetching from '../../components/isFetching/IsFetching.component';
+import LoginError from '../../components/LoginError/LoginError.component';
 
 const SignIn = ({ history }) => { 
     const [ state, setState ] = useState({
         username: '',
         password: '',
-        isLoggingIn: false
+        isLoggingIn: false,
+        loginError: false
     });
+    useEffect(() => {
+        sessionStorage.clear();
+    }, [])
     const { setAuthenticationStatus } = useContext(authContext)
     const onSubmit = (e) => {
         e.preventDefault();
         if (username.trim() === '' || password.trim() === '') {
             alert('Please Fill all fields')
         } else {
-            setState({ ...state, isLoggingIn: true})
+            setState({ ...state, isLoggingIn: true, loginError: false})
             let id = e.target.id;
             document.getElementById(id).disabled = true;
             let reqBody = {
@@ -31,18 +37,25 @@ const SignIn = ({ history }) => {
                 method: 'post',
                 headers: {'Content-Type' : 'application/json'},
                 url: `${institutionLoginUrl}`,
-                data: reqBody
+                data: reqBody,
+                timeout: FetchTimeOut
             })
                 .then(response => {
-                console.log(response.data)
                 setState({ ...state, isLoggingIn: false })
                 document.getElementById(id).disabled = false;
                 if (response.data.respCode === '00') {
                     setAuthenticationStatus(true)
+                    sessionStorage.setItem('userDetails', JSON.stringify({
+                        authToken: response.data.respBody.authToken,
+                        userName: state.username.toUpperCase()
+                    }))
                     history.push('/dashboard')
                 } else {
                     setAuthenticationStatus(false);
-                    alert(response.data.respDescription)
+                    setState({
+                        ...state,
+                        loginError: true
+                    })
                 } 
             })
             .catch(e => {
@@ -53,20 +66,20 @@ const SignIn = ({ history }) => {
     }
 
     const onChange = (e) => {
-        setState({ ...state, [e.target.name]: e.target.value });
+        setState({ ...state, [e.target.name]: e.target.value, loginError: false });
     }
 
-    const { username, password, isLoggingIn } = state;
+    const { username, password, isLoggingIn, loginError } = state;
     return (
         <div className="signInContainer">
             <form className="form-signin" onSubmit={onSubmit}>
                 <img className="mb-4" src={Logo} alt="" />
                 <div className="welcome-text">
-                    <h3>Welcome to 3Line Terminal Management System</h3>
+                    Welcome to 3Line Terminal Management System
                 </div>
                 
-                <h3 className="h3 mb-3 font-weight-normal">Please sign in</h3> <br />
-                <label htmlFor="inputEmail" className="sr-only">Email address</label>
+                <div className="welcome-text">Please sign in</div> <br />
+                <label htmlFor="userName" className="sr-only">Username</label>
                 <input 
                     type="text" 
                     name="username"
@@ -79,7 +92,7 @@ const SignIn = ({ history }) => {
                     onChange={onChange} 
                 />
 
-                <label htmlFor="inputPassword" className="sr-only">Password</label>
+                <label htmlFor="password" className="sr-only">Password</label>
                 <input 
                     type="password" 
                     name="password"
@@ -90,6 +103,9 @@ const SignIn = ({ history }) => {
                     required="required" 
                     onChange={onChange}
                 />
+                {
+                    loginError ? <LoginError /> : null
+                }
                 <button 
                     className="btn btn-md btn-primary btn-block" 
                     id="loginButton"
@@ -100,8 +116,8 @@ const SignIn = ({ history }) => {
                         isLoggingIn ? <IsFetching /> : 'Sign in'
                     }
                 </button>
-                <p className="mt-5 mb-3 text-muted">© {new Date().getFullYear()}</p>
             </form>
+            <p className="mt-5 mb-3 text-muted">© {new Date().getFullYear()}</p>
         </div>
     )
 }

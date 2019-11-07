@@ -1,31 +1,31 @@
 import React, { useState, useContext } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import Swal from '../../../constants/swal';
-import baseUrl from '../../../constants/baseurl';
+import { registerInstitutionURL } from '../../../Utils/URLs';
 import { useHistory } from 'react-router-dom';
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
+import axios from 'axios';
+import { FetchTimeOut } from "../../../Utils/FetchTimeout";
+
+const { authToken, userName } = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const InstitutionRegistration = () => {
     const [state, setState ] =  useState({ 
         institutionName: '', 
         institutionEmail: '', 
         institutionID: '', 
-        institutionType: '',
         merchantAccount: '', 
-        merchantWalletID: '', 
-        merchantBank: '', 
-        acquiringBank: '', 
-        idno: '', 
-        idtype: '', 
-        bvn: '', 
         institutionLocation: '', 
-        institutionState: '', 
-        institutionAddress: '', 
-        institutionLGA: '', 
+        institutionAddress: '',
         institutionPhone: '',
+        password: '',
+        username: '',
+        processorIP: '',
+        processorName: '',
+        processorPort: '',
     });
 
     //Getting Current Time and Date 
@@ -41,51 +41,49 @@ const InstitutionRegistration = () => {
     const registerInstitution = (e) => {
         e.preventDefault();
         const { 
-            institutionName, institutionEmail, institutionID, institutionType,merchantAccount, merchantWalletID, 
-            merchantBank, acquiringBank, idno, idtype, bvn, institutionLocation, 
-            institutionState, institutionAddress, institutionLGA, institutionPhone
-         } = state;
+            institutionName, institutionEmail, institutionID, merchantAccount, username,
+            institutionLocation, institutionAddress, institutionPhone, password, processorIP, processorName, processorPort
+        } = state;
+        
         const reqBody = {
             id: '100',
-            institutionName: institutionName, 
-            institutionEmail: institutionEmail, 
-            institutionID: institutionID, 
-            institutionType: institutionType,
-            merchantAccount: merchantAccount, 
-            merchantWalletID: merchantWalletID, 
-            merchantBank: merchantBank, 
-            acquiringBank: acquiringBank, 
-            idno: idno, 
-            idtype: idtype, 
-            bvn: bvn, 
-            institutionLocation: institutionLocation, 
-            institutionState: institutionState, 
-            institutionAddress: institutionAddress, 
-            institutionLGA: institutionLGA, 
-            institutionPhone: institutionPhone,
-            createdBy: 'Admin', 
-            dateCreated: dateTime
+            institutionName, 
+            institutionEmail, 
+            institutionID, 
+            merchantAccount,  
+            institutionLocation,  
+            institutionAddress, 
+            institutionPhone,
+            createdBy: userName, 
+            dateCreated: dateTime,
+            auth_token: authToken,
+            password,
+            processorIP,
+            processorName,
+            processorPort,
+            username
         };
-        if (
-            institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || institutionType.trim() === '' || merchantAccount.trim() === '' || merchantWalletID.trim() === '' || merchantBank.trim() === '' || acquiringBank.trim() === '' || idno.trim() === '' || idtype.trim() === '' || institutionPhone.trim() === '' || bvn.trim() === '' || institutionLocation.trim() === '' || institutionState.trim() === '' || institutionAddress.trim() === '' || institutionLGA.trim() === ''
-            ){
+        if (institutionName.trim() === '' || password.trim() === '' || username.trim() === '' || processorIP.trim() === '' || processorName.trim() === '' || processorPort.trim() === ''
+            || institutionEmail.trim() === '' || institutionID.trim() === '' || merchantAccount.trim() === '' ||
+            institutionPhone.trim() === '' || institutionLocation.trim() === '' || institutionAddress.trim() === '') {
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
                 text: 'Please fill all fields!'
             })
         } else {
-            fetch(`${baseUrl}/api/institution`, {
+            axios({
+                url: `${registerInstitutionURL}`,
                 method: 'post',
-                body: JSON.stringify(reqBody),
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                data: reqBody,
+                timeout: FetchTimeOut
             })
-          .then(response => response.json())
             .then(result => {
-                // console.log(result)
-                if(result.respCode === '00'){
+                if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
                         title: 'Successful Registration...',
@@ -96,7 +94,7 @@ const InstitutionRegistration = () => {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.code}`,
+                        text: `${result.data.code}`,
                         footer: 'Please contact support'
                     })
                 }                
@@ -151,8 +149,6 @@ const InstitutionRegistration = () => {
                                 placeholder="Institution Email" 
                             />
                         </div>
-                    </div>
-                    <div className="form-row">
                         <div className="col-md-6">
                             <p>Institution ID</p>
                             <input 
@@ -166,20 +162,6 @@ const InstitutionRegistration = () => {
                             />
                         </div>
                         <div className="col-md-6">
-                            <p>Institution Type</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Institution Type" 
-                                value={state.institutionType} 
-                                name="institutionType"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="col-md-6">
                             <p>Merchant Account</p>
                             <input 
                                 type="text" 
@@ -187,84 +169,6 @@ const InstitutionRegistration = () => {
                                 placeholder="Merchant Account" 
                                 value={state.merchantAccount} 
                                 name="merchantAccount"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Merchant Wallet ID</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Merchant Wallet ID" 
-                                value={state.merchantWalletID} 
-                                name="merchantWalletID"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="col-md-6">
-                            <p>Merchant Bank</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Merchant Bank"
-                                value={state.merchantBank} 
-                                name="merchantBank"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Acquiring Bank</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Acquiring Bank"
-                                value={state.acquiringBank} 
-                                name="acquiringBank"
-                                onChange={onChange}
-                                required                                 
-                            />
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="col-md-6">
-                            <p>ID Number</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="ID Number"
-                                value={state.idno} 
-                                name="idno"
-                                onChange={onChange}
-                                required                                 
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>ID Type</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="ID Type" 
-                                value={state.idtype}
-                                name="idtype" 
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="col-md-6">
-                            <p>BVN</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="BVN" 
-                                value={state.bvn} 
-                                name="bvn"
                                 onChange={onChange}
                                 required                                
                             />
@@ -281,20 +185,6 @@ const InstitutionRegistration = () => {
                                 required                                
                             />
                         </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="col-md-6">
-                            <p>Institution State</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Institution State" 
-                                value={state.institutionState} 
-                                name="institutionState"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
                         <div className="col-md-6">
                             <p>Institution Address</p>
                             <input 
@@ -303,20 +193,6 @@ const InstitutionRegistration = () => {
                                 placeholder="Institution Address" 
                                 value={state.institutionAddress} 
                                 name="institutionAddress"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="col-md-6">
-                            <p>Institution LGA</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Institution LGA" 
-                                value={state.institutionLGA} 
-                                name="institutionLGA"
                                 onChange={onChange}
                                 required                                
                             />
@@ -333,6 +209,66 @@ const InstitutionRegistration = () => {
                                 required                                 
                             />
                         </div>
+                        <div className="col-md-6">
+                            <p>Username</p>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Assign a Username"
+                                value={state.username} 
+                                name="username"
+                                onChange={onChange}
+                                required                                 
+                            />
+                        </div>
+                        <div className="col-md-6">
+                            <p>Password</p>
+                            <input 
+                                type="password" 
+                                className="form-control" 
+                                placeholder="Password"
+                                value={state.password} 
+                                name="password"
+                                onChange={onChange}
+                                required                                 
+                            />
+                        </div>
+                        <div className="col-md-6">
+                            <p>Processor Name</p>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Processor Name"
+                                value={state.processorName} 
+                                name="processorName"
+                                onChange={onChange}
+                                required                                 
+                            />
+                        </div> 
+                        <div className="col-md-6">
+                            <p>Processor IP</p>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Processor IP"
+                                value={state.processorIP} 
+                                name="processorIP"
+                                onChange={onChange}
+                                required                                 
+                            />
+                        </div>
+                        <div className="col-md-6">
+                            <p>Processor Port</p>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Processor Port"
+                                value={state.processorPort} 
+                                name="processorPort"
+                                onChange={onChange}
+                                required                                 
+                            />
+                        </div>   
                     </div>
                     <div className="form-group">
                         <button 

@@ -3,43 +3,56 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 // import { useHttp } from '../../../CustomHooks/useHttp.hooks';
 import { Link, useHistory } from 'react-router-dom';
 import './TerminalsList.styles.scss';
-import baseUrl from '../../../constants/baseurl';
+import {allTerminals} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
+import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 
 import PreLoader from '../../../components/PreLoader/Preloader.component';
+import NoResultFound from "../../../components/NoResultFound/NoResultfound";
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
+import axios from 'axios';
+
+const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const DeviceList = () => {
     const [terminalsList, setTerminalsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
-        fetch(`${baseUrl}/api/Tms`)
-          .then(response => response.json())
-            .then(result => {
-                setIsLoading(false)
-                if(result.respCode === '00'){
-                    setTerminalsList(result.respBody)
-                } else {
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Oops...',
-                        text: `${result.respDescription}`,
-                        footer: 'Please contact support'
-                    })
-                }                
-            })
-            .catch(err => {
-                setIsLoading(false)
+        axios({
+            url: `${allTerminals}`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: {},
+            timeout: FetchTimeOut
+        })
+        .then(result => {
+            setIsLoading(false)
+            if(result.data.respCode === '00'){
+                setTerminalsList(result.data.respBody)
+            } else {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${err}`,
+                    text: `${result.data.respDescription}`,
                     footer: 'Please contact support'
                 })
-            });
+            }                
+        })
+        .catch(err => {
+            setIsLoading(false)
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
     }, [])
 
     const { isAuthenticated } = useContext(authContext);
@@ -70,18 +83,20 @@ const DeviceList = () => {
                             </thead>
                             <tbody>
                                 {
+                                    terminalsList.length === 0 ? 
+                                        <NoResultFound /> : 
                                     terminalsList.map((terminal, index) => {
                                         const { id, terminalID, terminalROMVersion, terminalSerialNo, terminalStatus, terminalType } = terminal;
                                         return (
                                             <tr key={index}>
-                                                <th scope="row">{id}</th>
+                                                <th scope="row">{index+1}</th>
                                                 <td>{terminalID}</td>
                                                 <td>{terminalROMVersion}</td>
                                                 <td>{terminalSerialNo}</td>
                                                 <td>{terminalStatus}</td>
                                                 <td>{terminalType}</td>
                                                 <td>
-                                                    <Link to={`/device-list/${terminalID}`}><i className="fas fa-eye"></i></Link>
+                                                    <Link to={`/device-list/${id}`}><i className="fa fa-eye"></i></Link>
                                                 </td>
                                             </tr>
                                         )

@@ -2,15 +2,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
-import baseUrl from '../../../constants/baseurl';
+import { viewAnInstitution } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
+
+import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
+import Axios from 'axios';
 
-const history = useHistory();
-const match = useRouteMatch();
+const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const InstitutionView = () => {
     const [state, setState ] =  useState({ 
@@ -18,18 +20,9 @@ const InstitutionView = () => {
         institutionName: '', 
         institutionEmail: '', 
         institutionID: '', 
-        institutionType: '',
         merchantAccount: '', 
-        merchantWalletID: '', 
-        merchantBank: '', 
-        acquiringBank: '', 
-        idno: '', 
-        idtype: '', 
-        bvn: '', 
         institutionLocation: '', 
-        institutionState: '', 
-        institutionAddress: '', 
-        institutionLGA: '', 
+        institutionAddress: '',
         institutionPhone: '',
         createdBy: '', 
         dateCreated: ''
@@ -39,31 +32,41 @@ const InstitutionView = () => {
 
     useEffect(() => {
         const getDeviceData = () => {
-            fetch(`${baseUrl}/api/institution/${match.params.id}`, {
+            Axios({
+                url: `${viewAnInstitution}/${match.params.id}`,
                 method: 'get',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                data: {},
+                timeout: FetchTimeOut
             })
-          .then(response => response.json())
-            .then(result => {
+                .then(result => {
                 setIsLoading(false)
-                if (result.respCode === '00'){
+                if (result.data.respCode === '00'){
                     const { 
-                    id, institutionName, institutionEmail, institutionID, institutionType,merchantAccount, merchantWalletID, 
-                    merchantBank, acquiringBank, idno, idtype, bvn, institutionLocation, 
-                    institutionState, institutionAddress, institutionLGA, institutionPhone, createdBy, dateCreated
-                    } = result.respBody;
-                    setState(state => ({...state, 
-                        id, institutionName, institutionEmail, institutionID, institutionType,merchantAccount, merchantWalletID, 
-                        merchantBank, acquiringBank, idno, idtype, bvn, institutionLocation, 
-                        institutionState, institutionAddress, institutionLGA, institutionPhone, createdBy, dateCreated
+                    institutionName, institutionEmail, institutionID, merchantAccount, id,
+                     institutionLocation, institutionAddress, institutionPhone, createdBy, dateCreated
+                    } = result.data.respBody;
+                    setState(state => ({
+                        ...state, 
+                        id,
+                        institutionName,
+                        institutionEmail,
+                        institutionID,
+                        merchantAccount, 
+                        institutionLocation,
+                        institutionAddress,
+                        institutionPhone,
+                        createdBy,
+                        dateCreated
                     }))
                 } else {                    
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.respDescription}`,
+                        text: `${result.data.respDescription}`,
                         footer: 'Please contact support'
                     })
                 }                
@@ -80,6 +83,9 @@ const InstitutionView = () => {
         }
         getDeviceData();
     }, [])
+    
+    const history = useHistory();
+    const match = useRouteMatch();
 
     const onChange = (e) => {
         setState({...state, [e.target.name]: e.target.value})
@@ -92,50 +98,39 @@ const InstitutionView = () => {
     const editInstitutionData = (e) => {
         e.preventDefault();
         const { 
-            id, institutionName, institutionEmail, institutionID, institutionType,merchantAccount, merchantWalletID, 
-            merchantBank, acquiringBank, idno, idtype, bvn, institutionLocation, 
-            institutionState, institutionAddress, institutionLGA, institutionPhone, createdBy, dateCreated
+            id, institutionName, institutionEmail, institutionID, merchantAccount, institutionLocation, institutionAddress, institutionPhone, createdBy, dateCreated
          } = state;
         const reqBody = {
             id,
             institutionName, 
             institutionEmail, 
             institutionID, 
-            institutionType,
-            merchantAccount, 
-            merchantWalletID, 
-            merchantBank, 
-            acquiringBank, 
-            idno, 
-            idtype, 
-            bvn, 
+            merchantAccount,
             institutionLocation, 
-            institutionState, 
             institutionAddress, 
-            institutionLGA, 
             institutionPhone,
             createdBy, 
             dateCreated
         };
-        if (
-            institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || institutionType.trim() === '' || merchantAccount.trim() === '' || merchantWalletID.trim() === '' || merchantBank.trim() === '' || acquiringBank.trim() === '' || idno.trim() === '' || idtype.trim() === '' || institutionPhone.trim() === '' || bvn.trim() === '' || institutionLocation.trim() === '' || institutionState.trim() === '' || institutionAddress.trim() === '' || institutionLGA.trim() === '' || createdBy.trim() === '' || dateCreated.trim() === ''
-            ){
+        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || merchantAccount.trim() === '' || institutionLocation.trim() === '' || institutionAddress.trim() === '' || institutionPhone.trim() === '' || createdBy.trim() === '' || dateCreated.trim() === ''){
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
                 text: 'Please fill all fields!'
             })
         } else {
-            fetch(`${baseUrl}/api/institution/${match.params.id}`, {
+            Axios({
+                url: `${viewAnInstitution}/${match.params.id}`,
                 method: 'put',
-                body: JSON.stringify(reqBody),
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                data: JSON.stringify(reqBody),
+                timeout: FetchTimeOut
             })
-          .then(response => response.json())
             .then(result => {
-                if(result.respCode === '00'){
+                if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
                         title: 'Successful Update...',
@@ -146,7 +141,7 @@ const InstitutionView = () => {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.respDescription}`,
+                        text: `${result.data.respDescription}`,
                         footer: 'Please contact support'
                     })
                 }
@@ -207,8 +202,6 @@ const InstitutionView = () => {
                                     placeholder="Institution Email" 
                                 />
                             </div>
-                        </div>
-                        <div className="form-row">
                             <div className="col-md-6">
                                 <p>Institution ID</p>
                                 <input 
@@ -223,21 +216,6 @@ const InstitutionView = () => {
                                 />
                             </div>
                             <div className="col-md-6">
-                                <p>Institution Type</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Institution Type" 
-                                    value={state.institutionType} 
-                                    name="institutionType"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="col-md-6">
                                 <p>Merchant Account</p>
                                 <input 
                                     type="text" 
@@ -245,90 +223,6 @@ const InstitutionView = () => {
                                     placeholder="Merchant Account" 
                                     value={state.merchantAccount} 
                                     name="merchantAccount"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                            <div className="col-md-6">
-                                <p>Merchant Wallet ID</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Merchant Wallet ID" 
-                                    value={state.merchantWalletID} 
-                                    name="merchantWalletID"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="col-md-6">
-                                <p>Merchant Bank</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Merchant Bank"
-                                    value={state.merchantBank} 
-                                    name="merchantBank"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                            <div className="col-md-6">
-                                <p>Acquiring Bank</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Acquiring Bank"
-                                    value={state.acquiringBank} 
-                                    name="acquiringBank"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly} 
-                                />
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="col-md-6">
-                                <p>ID Number</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="ID Number"
-                                    value={state.idno} 
-                                    name="idno"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly} 
-                                />
-                            </div>
-                            <div className="col-md-6">
-                                <p>ID Type</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="ID Type" 
-                                    value={state.idtype}
-                                    name="idtype" 
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="col-md-6">
-                                <p>BVN</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="BVN" 
-                                    value={state.bvn} 
-                                    name="bvn"
                                     onChange={onChange}
                                     required
                                     readOnly={readOnly}
@@ -347,21 +241,6 @@ const InstitutionView = () => {
                                     readOnly={readOnly}
                                 />
                             </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="col-md-6">
-                                <p>Institution State</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Institution State" 
-                                    value={state.institutionState} 
-                                    name="institutionState"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
                             <div className="col-md-6">
                                 <p>Institution Address</p>
                                 <input 
@@ -370,21 +249,6 @@ const InstitutionView = () => {
                                     placeholder="Institution Address" 
                                     value={state.institutionAddress} 
                                     name="institutionAddress"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="col-md-6">
-                                <p>Institution LGA</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Institution LGA" 
-                                    value={state.institutionLGA} 
-                                    name="institutionLGA"
                                     onChange={onChange}
                                     required
                                     readOnly={readOnly}
@@ -403,8 +267,6 @@ const InstitutionView = () => {
                                     readOnly={readOnly} 
                                 />
                             </div>
-                        </div>
-                        <div className="form-row">
                             <div className="col-md-6">
                                 <p>Created By</p>
                                 <input 

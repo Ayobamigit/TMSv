@@ -14,10 +14,9 @@ export default function Layout ({ children }) {
   }, [])
   useEffect(() => {
     if(sidebar){
-      if(window.innerWidth < 900){
-        document.getElementById("main").style.marginLeft = "70%";
-        document.getElementById("mySidebar").style.width = "70%";
-        document.getElementById("manipulateChildren").style.display = "none";
+      if(window.innerWidth < 960){
+        document.getElementById("mySidebar").style.width = "100%";
+        document.getElementById("mySidebar").style.paddingTop = "50px";
       } else {
         document.getElementById("main").style.marginLeft = "15%";
         document.getElementById("mySidebar").style.width = "15%";

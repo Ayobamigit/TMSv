@@ -1,6 +1,5 @@
-ul {
-  margin-top: 20%;
-  padding: 0px; 
+.list-unstyled.components{
+  margin-top: 20%; 
   display: block;   
   list-style: none;
      
@@ -9,16 +8,13 @@ ul {
   }
 
   li {
-    margin-bottom: 2.5vh;
     font-size: 15px;
+    margin-top: 15px;
     
     a:hover{
       text-decoration: none;
     }
 
-    span {
-      padding-left: 10px;
-    }
     
     @media only screen and (max-width: 900px) {
       margin-bottom: 1vh;
@@ -26,57 +22,19 @@ ul {
 
     .fa{
       color: #ff3547;
+      margin-right: 10px;
     }
   }
 }
 
 .nav-link:hover{
-  font-weight: bold;
+  font-weight: 500;
 }
 
-/* Fixed sidenav, full height */
-  
-/* Style the sidenav links and the dropdown button */
-.sidenav a, .dropdown-btn {
-  padding: 6px 8px 6px 16px;
-  text-decoration: none;
-  color: #fff;
-  display: block;
-  border: none;
-  background: none;
-  width:100%;
-  text-align: left;
-  cursor: pointer;
-  outline: none;
-}
-
-/* On mouse-over */
-.sidenav a:hover, .dropdown-btn:hover {
-  font-weight: bold;
-}
-
-
-/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
-.dropdown-container {
-  display: none;
-  margin-left: 20%;
-  border: 1px solid #ff3547;
-  padding: 5px;
-
-  ul {
-    margin-top: 5%; 
-
-    li {
-      list-style-type: circle;
-      margin-bottom: 1.5vh;
-      
-      &:hover{
-        font-weight: bolder;
-      }
+.collapse.list-unstyled {
+  li {    
+    &:hover{
+      font-weight: bolder;
     }
   }
-}
-
-.dropdown-container > a {
-  border-bottom: 2px solid #f8f9fa;
 }

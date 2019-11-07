@@ -1,0 +1,1 @@
+export const FetchTimeOut = 1000 * 60 * 1; //One Minute Timeout

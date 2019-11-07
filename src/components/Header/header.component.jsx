@@ -9,6 +9,7 @@ const Header = () => {
     const history = useHistory();
     const logout = () => {
         setAuthenticationStatus(false);
+        sessionStorage.clear();
         history.push('/')
     }
     return (

@@ -1,16 +1,12 @@
 import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './sidebar.styles.scss';
-import myFunction from './dropdown';
 
 const Sidebar = () => {
-  useEffect(() => {
-    myFunction();
-  }, [])
   const active = { fontWeight: 'bold', fontSize: '1.2', color: '#ff3547' }
     return (
       <React.Fragment>
-        <ul>             
+        <ul className="list-unstyled components">             
           {/* Dashboard */}
           <li>
             <NavLink className="nav-link" to="/dashboard" activeStyle={active}>
@@ -29,50 +25,46 @@ const Sidebar = () => {
 
           {/*  Device Setup / configuration */}
           <li>
-            <div className="nav-link dropdown-btn">
+            <div className="nav-link dropdown-toggle" href="#deviceSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
                 <i className="fa fa-cogs"></i>
-                <span>Device Setup / configuration</span>
+                <span>Device Setup</span>
               </NavLink>
             </div>
-            <div className="dropdown-container">
-              <ul>
-                <li>
-                  <NavLink to="/device-setup" activeStyle={active}>
+            <ul className="collapse list-unstyled nav-link" id="deviceSubmenu">
+              <li>
+                <NavLink to="/device-setup" activeStyle={active}>
                   Register a Terminal
                 </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/device-list" activeStyle={active}>
-                    View all Terminals  
-                  </NavLink>
-                </li>
-              </ul>           
-            </div>
+              </li>
+              <li>
+                <NavLink to="/device-list" activeStyle={active}>
+                  View all Terminals  
+                </NavLink>
+              </li>
+            </ul>
           </li>
 
           {/*  Institution Management */}
           <li>
-            <div className="nav-link dropdown-btn">
+            <div className="nav-link dropdown-toggle" href="#institutionSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
                 <i className="fa fa-university"></i>
                 <span>Institution Management</span>
               </NavLink>
             </div>
-            <div className="dropdown-container">
-              <ul>
-                <li>
-                  <NavLink to="/institution-setup" activeStyle={active}>
-                    Register an Institution
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/institution-list" activeStyle={active}>
-                    View all Instistutions  
-                  </NavLink>
-                </li>
-              </ul>           
-            </div>
+            <ul className="collapse list-unstyled nav-link" id="institutionSubmenu">
+              <li>
+                <NavLink to="/institution-setup" activeStyle={active}>
+                  Register an Institution
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/institution-list" activeStyle={active}>
+                  View all Instistutions  
+                </NavLink>
+              </li>
+            </ul> 
           </li>
           
           {/*  Reporting */}

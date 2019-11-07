@@ -1,25 +1,31 @@
-import React, { useState, useContext } from 'react';
-import './SuperAdminSignIn.styles.scss';
+import React, { useState, useContext, useEffect } from 'react';
+import '../sign-in/sign-in.styles.scss';
 import axios from 'axios';
 import { authContext } from '../../Context/Authentication.context';
 import { superAdminLoginUrl } from '../../Utils/URLs';
+import { FetchTimeOut } from "../../Utils/FetchTimeout";
 
 import Logo from '../../img/3line_logo.png';
 import IsFetching from '../../components/isFetching/IsFetching.component';
+import LoginError from '../../components/LoginError/LoginError.component';
 
 const AdminSignIn = ({ history }) => { 
     const [ state, setState ] = useState({
         username: '',
         password: '',
-        isLoggingIn: false
+        isLoggingIn: false,
+        loginError: false
     });
+    useEffect(() => {
+        sessionStorage.clear();
+    }, [])
     const { setAuthenticationStatus } = useContext(authContext)
     const onSubmit = (e) => {
         e.preventDefault();
         if (username.trim() === '' || password.trim() === '') {
             alert('Please Fill all fields')
         } else {
-            setState({ ...state, isLoggingIn: true})
+            setState({ ...state, isLoggingIn: true, loginError: false})
             let id = e.target.id;
             document.getElementById(id).disabled = true;
             let reqBody = {
@@ -31,17 +37,25 @@ const AdminSignIn = ({ history }) => {
                 method: 'post',
                 headers: {'Content-Type' : 'application/json'},
                 url: `${superAdminLoginUrl}`,
-                data: reqBody
+                data: reqBody,
+                timeout: FetchTimeOut
             })
             .then(response => {
                 setState({ ...state, isLoggingIn: false })
                 document.getElementById(id).disabled = false;
                 if (response.data.respCode === '00') {
                     setAuthenticationStatus(true)
+                    sessionStorage.setItem('userDetails', JSON.stringify({
+                        authToken: response.data.respBody.authToken,
+                        userName: state.username.toUpperCase()
+                    }))
                     history.push('/dashboard')
                 } else {
                     setAuthenticationStatus(false);
-                    alert(response.data.respDescription)
+                    setState({
+                        ...state,
+                        loginError: true
+                    })
                 } 
             })
             .catch(e => {
@@ -53,10 +67,10 @@ const AdminSignIn = ({ history }) => {
     }
 
     const onChange = (e) => {
-        setState({ ...state, [e.target.name]: e.target.value });
+        setState({ ...state, [e.target.name]: e.target.value, loginError: false });
     }
 
-    const { username, password, isLoggingIn } = state;
+    const { username, password, isLoggingIn, loginError } = state;
     return (
         <div className="signInContainer">
             <form className="form-signin" onSubmit={onSubmit}>
@@ -92,6 +106,9 @@ const AdminSignIn = ({ history }) => {
                     required="required" 
                     onChange={onChange}
                 />
+                {
+                    loginError ? <LoginError /> : null
+                }
                 <button 
                     className="btn btn-md btn-primary btn-block" 
                     id="loginButton"
