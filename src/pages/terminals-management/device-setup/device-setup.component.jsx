@@ -8,7 +8,8 @@ import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import Axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
-import { registerTerminalURL } from '../../../Utils/URLs'
+import { registerTerminalURL } from '../../../Utils/URLs';
+import FileUploadModal from './file-upload.component';
 
 const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
@@ -44,12 +45,12 @@ const DeviceRegistration = () => {
         } else {
             Axios({
                 method: 'post',
-                url: `${`${registerTerminalURL}`}`,
+                url: `${registerTerminalURL}`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authToken}`
                 },
-                data: {reqBody},
+                data: reqBody,
                 timeout: FetchTimeOut
             })
             .then(result => {
@@ -89,6 +90,9 @@ const DeviceRegistration = () => {
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">Terminals Registration</h1>
+                <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    Upload Excel
+                </button>
             </div>
             <div className="row">
                 <div className="col-md-6">
@@ -154,6 +158,9 @@ const DeviceRegistration = () => {
                     </form>
                 </div>
             </div>
+
+            {/* MODAL */}
+            <FileUploadModal />
         </Layout>
     )
 }

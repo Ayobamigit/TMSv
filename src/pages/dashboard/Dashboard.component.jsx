@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, createContext } from 'react';
+import React, { useContext, useState, createContext } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import './Dashboard.styles.scss';
 import { useHistory } from 'react-router-dom';
@@ -15,7 +15,7 @@ import { authContext } from '../../Context/Authentication.context';
 export const DashboardContext = createContext();
 
 const Dashboard = () => {
-    const [state, setState] = useState({
+    const [state] = useState({
         data: {
             activeDevices: 80,
             inactiveDevices: 75,

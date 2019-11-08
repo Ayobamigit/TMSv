@@ -14,6 +14,8 @@ import Axios from 'axios';
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const DeviceView = () => {
+    const history = useHistory();
+    const match = useRouteMatch();
     const [state, setState ] =  useState({
         terminalID: '',
         terminalType: '',
@@ -67,9 +69,7 @@ const DeviceView = () => {
             });
         }
         getDeviceData();
-    }, [])
-    const history = useHistory();
-    const match = useRouteMatch();
+    }, [match.params.id])
         const onChange = (e) => {
             setState({...state, [e.target.name]: e.target.value})
         }
