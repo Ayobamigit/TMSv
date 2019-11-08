@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
 import Swal from '../../../constants/swal';
@@ -11,6 +11,7 @@ const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
 const FileUploadModal = () => {
     const history = useHistory();
+    let dismissModal = useRef()
     const [state, setState] = useState({
         selectedFile: null,
         inputTypeError: false,
@@ -80,6 +81,7 @@ const FileUploadModal = () => {
                             title: 'Successful Registration...',
                             text: 'Terminal Registration was Successful!'
                         })
+                        dismissModal.current.click();
                         history.push('/dashboard');
                     }else{
                         Swal.fire({
@@ -136,7 +138,14 @@ const FileUploadModal = () => {
                         }                          
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button 
+                            type="button" 
+                            className="btn btn-secondary" 
+                            data-dismiss="modal"
+                            ref={dismissModal}
+                        >
+                            Close
+                        </button>
                         <button 
                             type="submit" 
                             className="btn btn-primary" 
