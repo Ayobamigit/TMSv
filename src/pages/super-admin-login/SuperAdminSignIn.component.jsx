@@ -26,8 +26,6 @@ const AdminSignIn = ({ history }) => {
             alert('Please Fill all fields')
         } else {
             setState({ ...state, isLoggingIn: true, loginError: false})
-            let id = e.target.id;
-            document.getElementById(id).disabled = true;
             let reqBody = {
                 username,
                 password
@@ -41,8 +39,8 @@ const AdminSignIn = ({ history }) => {
                 timeout: FetchTimeOut
             })
             .then(response => {
+                // console.log(response.data)
                 setState({ ...state, isLoggingIn: false })
-                document.getElementById(id).disabled = false;
                 if (response.data.respCode === '00') {
                     setAuthenticationStatus(true)
                     sessionStorage.setItem('userDetails', JSON.stringify({
@@ -60,7 +58,6 @@ const AdminSignIn = ({ history }) => {
             })
             .catch(e => {
                 setState({ ...state, isLoggingIn: false })
-                document.getElementById(id).disabled = false;
                 alert(e)
             })
         }
@@ -72,55 +69,58 @@ const AdminSignIn = ({ history }) => {
 
     const { username, password, isLoggingIn, loginError } = state;
     return (
-        <div className="signInContainer">
-            <form className="form-signin" onSubmit={onSubmit}>
-                <img className="mb-4" src={Logo} alt="" />
-                <div className="welcome-text">
-                    <h3>Welcome to 3Line Terminal Management System</h3>
-                    <br />
-                    <h5>(Super Admin)</h5>
-                </div>
-                
-                <h3 className="h3 mb-3 font-weight-normal">Please sign in</h3> <br />
-                <label htmlFor="inputEmail" className="sr-only">Email address</label>
-                <input 
-                    type="text" 
-                    name="username"
-                    value={username} 
-                    className="form-control" 
-                    placeholder="User Name"
-                    autoComplete="autoComplete"
-                    required="required" 
-                    autoFocus="autofocus"
-                    onChange={onChange} 
-                />
+        <div className="signInContainerWrapper">
+            <div className="signInContainer">
+                <form onSubmit={onSubmit}>
+                    <img className="mb-4" src={Logo} alt="" />
+                    <div className="welcome-text">
+                        <h3>Welcome to 3Line Terminal Management System</h3>
+                        <br />
+                        <h5>(Super Admin)</h5>
+                    </div>
+                    
+                    <h3 className="h3 mb-3 font-weight-normal">Please sign in</h3> <br />
+                    <label htmlFor="inputEmail" className="sr-only">Email address</label>
+                    <input 
+                        type="text" 
+                        name="username"
+                        value={username} 
+                        className="form-control" 
+                        placeholder="User Name"
+                        autoComplete="autoComplete"
+                        required="required" 
+                        autoFocus="autofocus"
+                        onChange={onChange} 
+                    />
 
-                <label htmlFor="inputPassword" className="sr-only">Password</label>
-                <input 
-                    type="password" 
-                    name="password"
-                    value={password} 
-                    className="form-control"
-                    autoComplete="new-password"
-                    placeholder="Password" 
-                    required="required" 
-                    onChange={onChange}
-                />
-                {
-                    loginError ? <LoginError /> : null
-                }
-                <button 
-                    className="btn btn-md btn-primary btn-block" 
-                    id="loginButton"
-                    type="submit"
-                    onClick={onSubmit}
-                >
+                    <label htmlFor="inputPassword" className="sr-only">Password</label>
+                    <input 
+                        type="password" 
+                        name="password"
+                        value={password} 
+                        className="form-control"
+                        autoComplete="new-password"
+                        placeholder="Password" 
+                        required="required" 
+                        onChange={onChange}
+                    />
                     {
-                        isLoggingIn ? <IsFetching /> : 'Sign in'
+                        loginError ? <LoginError /> : null
                     }
-                </button>
-                <p className="mt-5 mb-3 text-muted">© {new Date().getFullYear()}</p>
-            </form>
+                    <button 
+                        className="btn btn-md btn-primary btn-block" 
+                        id="loginButton"
+                        type="submit"
+                        disabled={isLoggingIn}
+                        onClick={onSubmit}
+                    >
+                        {
+                            isLoggingIn ? <IsFetching /> : 'Sign in'
+                        }
+                    </button>
+                    <p className="mt-5 mb-3 text-muted">© {new Date().getFullYear()}</p>
+                </form>
+            </div>
         </div>
     )
 }

@@ -1,21 +1,24 @@
-import React, { useContext, useState, createContext } from 'react';
+import React, { useContext, useState, createContext, useEffect } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import './Dashboard.styles.scss';
 import { useHistory } from 'react-router-dom';
 import Layout from '../../components/Layout/layout.component';
 import Chart from '../../components/Chart/Chart.component';
-
+import axios from 'axios';
+import Swal from '../../constants/swal';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import DashboardCardsList from '../../components/DashboardCardsList/DashboardCardsList.component';
 import DashboardTransactionHistoryComponent from '../../components/DashboardTransactionHistory.component.jsx/DashboardTransactionHistory.component';
 
 // Context for Authentication
 import { authContext } from '../../Context/Authentication.context';
+import { FetchTimeOut } from '../../Utils/FetchTimeout';
+import { transactionsHistoryURL } from '../../Utils/URLs';
 
 export const DashboardContext = createContext();
 
 const Dashboard = () => {
-    const [state] = useState({
+    const [state, setState ] = useState({
         data: {
             activeDevices: 80,
             inactiveDevices: 75,
@@ -23,8 +26,88 @@ const Dashboard = () => {
             deposits: 150,
             withdrawals: 120,
             billPayments: 160
-        }
+        },
+        isLoading: false,
+        page: 0,
+        size: 2,
+        fromDate: '',
+        toDate: ''
     })
+
+    const [ transactionsList, setTransactionsList ] = useState({
+        transactions: [],
+        totalCount: 0,
+        hasNextRecord: false
+    })
+    const { authToken, institution } = JSON.parse(sessionStorage.getItem('userDetails'));
+
+    useEffect(() => {
+        const { page, size, toDate, fromDate } = state;
+        let reqBody = {
+            fromDate: "",
+            institutionID: "FREEDOM",
+            page: "0",
+            size: "2",
+            toDate: ""
+        }
+        setState(state =>({
+            ...state,
+            isLoading: true
+        }))
+        axios({
+            url: `${transactionsHistoryURL}`,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: {reqBody},
+            timeout: FetchTimeOut
+        })
+        .then(result => {
+            console.log(result.data.respBody)
+            setState(state =>({
+                ...state,
+                isLoading: false
+            }))
+            if(result.data.respCode === '00'){
+                const { transactions, totalCount, hasNextRecord } = result.data.respBody;
+                setTransactionsList(transactionsList =>({
+                    ...transactionsList,
+                    transactions,
+                    totalCount,
+                    hasNextRecord
+                }))
+            } else {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }            
+        })
+        .catch(err => {
+            setState(state =>({
+                ...state,
+                isLoading: false
+            }))
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
+    }, [state.page, state.size])
+
+    const changeCurrentPage = (pageNumber) => {
+        setState({
+            ...state, 
+            page: pageNumber
+        })
+    }
+
     const history = useHistory();
     const { isAuthenticated } = useContext(authContext)
     const customFileName = `tms-dashboard-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
@@ -32,7 +115,8 @@ const Dashboard = () => {
     if(!isAuthenticated){
         history.push('/')
     }
-    const { data } = state;
+    const { data, page, size, isLoading } = state;
+    const { totalCount } = transactionsList;
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -51,7 +135,13 @@ const Dashboard = () => {
                 </div>
             </div>
             <DashboardContext.Provider value={{
-                data
+                data,
+                transactionsList,
+                isLoading,
+                page,
+                totalCount,
+                size,
+                changeCurrentPage
             }}>
                 <div id="alignChartAndCards">
                     <div id="chart">
@@ -61,8 +151,8 @@ const Dashboard = () => {
                         <DashboardCardsList />
                     </div>
                 </div>
+                <DashboardTransactionHistoryComponent />
             </DashboardContext.Provider>
-            <DashboardTransactionHistoryComponent />
         </Layout>
     )
 }

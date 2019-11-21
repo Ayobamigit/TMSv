@@ -104,7 +104,7 @@ const InstitutionsList = () => {
                                                 <td>{institutionAddress}</td>
                                                 <td>{institutionPhone}</td>
                                                 <td>{createdBy}</td>
-                                                <td>{dateCreated}</td>
+                                                <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
                                                 <td>
                                                     <Link to={`/institution-list/${id}`}><i className="fa fa-eye"></i></Link>
                                                 </td>

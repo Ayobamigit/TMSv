@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
 import Swal from '../../../constants/swal';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
-import { registerTerminalURL } from '../../../Utils/URLs';
+import { uploadTerminalsURL } from '../../../Utils/URLs';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 import ProgressBar from '../../../components/ProgressBar/ProgressBar';
 
@@ -57,7 +57,7 @@ const FileUploadModal = () => {
                     state.selectedFile,
                     state.selectedFile.name
                 )
-                Axios.post(`${registerTerminalURL}/upload`, formData, {
+                Axios.post(`${uploadTerminalsURL}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${authToken}`

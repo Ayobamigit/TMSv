@@ -8,16 +8,23 @@ import PreLoader from './components/PreLoader/Preloader.component';
 import SignIn from './pages/sign-in/sign-in.component';
 import AdminSignIn from './pages/super-admin-login/SuperAdminSignIn.component';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard.component'));
+
 const DeviceSetup = lazy(() => import('./pages/terminals-management/device-setup/device-setup.component'));
 const DeviceLists = lazy(() => import('./pages/terminals-management/device-list/TerminalsList.component'));
 const DeviceList = lazy(() => import('./pages/terminals-management/device-view/device-view.component'));
+
 const InstitutionSetup = lazy(() => import('./pages/institution-management/institution-setup/institution-registration.component'));
 const InstitutionsList = lazy(() => import('./pages/institution-management/institutions-list/InstitutionsList.component'));
 const InstitutionList = lazy(() => import('./pages/institution-management/institution-view/institution-view.component'));
+
 const ReportingComponent = lazy(() => import('./pages/reporting/Reporting.component'));
 const AuditComponent = lazy (() => import('./pages/audit/Audit.component'));
-const UserManagementComponent = lazy(() => import('./pages/user-management/UserManagement.component'));
+
+const UsersList = lazy(() => import('./pages/user-management/user-list/user-list.component'))
+const User = lazy(() => import('./pages/user-management/user-view/user.component'))
+const UserRegistration = lazy(() => import('./pages/user-management/user-setup/user-setup.component'))
 
 function App() {
   return (
@@ -38,7 +45,11 @@ function App() {
 
               <Route exact path="/reporting" component={ReportingComponent} />
               <Route exact path="/audit" component={AuditComponent} />
-              <Route exact path="/user-management" component={UserManagementComponent} />
+
+              <Route exact path="/user-setup" component={UserRegistration} />
+              <Route exact path="/user-list" component={UsersList} />
+              <Route exact path="/user/:id" component={User} />
+
               <Route path="*" component={SignIn} />      
             </Switch>
           </Suspense>

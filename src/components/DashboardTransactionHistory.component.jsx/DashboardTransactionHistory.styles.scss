@@ -1,3 +1,18 @@
 .table-layout {
     margin-top: 2.5%;
 }
+@mixin standardButton{
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+}
+
+.success{
+    @include standardButton;
+    background: green;
+}
+
+.failed{
+    @include standardButton;
+    background: red;
+}

@@ -10,16 +10,18 @@ import Axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import { registerTerminalURL } from '../../../Utils/URLs';
 import FileUploadModal from './file-upload.component';
+import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
 const DeviceRegistration = () => {
     const [state, setState ] =  useState({
-        terminalID: '',
+        terminalID: '2058',
         terminalType: '',
         terminalStatus: '',
         terminalROMVersion: '',
-        terminalSerialNo: ''
+        terminalSerialNo: '',
+        IsFetchingData: false
     })
     const onChange = (e) => {
         setState({...state, [e.target.name]: e.target.value})
@@ -43,6 +45,10 @@ const DeviceRegistration = () => {
                 text: 'Please fill all fields!'
             })
         } else {
+            setState({
+                ...state, 
+                IsFetchingData: true
+            })
             Axios({
                 method: 'post',
                 url: `${registerTerminalURL}`,
@@ -54,6 +60,10 @@ const DeviceRegistration = () => {
                 timeout: FetchTimeOut
             })
             .then(result => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
@@ -71,6 +81,10 @@ const DeviceRegistration = () => {
                 }                
             })
             .catch(err => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
@@ -86,6 +100,7 @@ const DeviceRegistration = () => {
     if(!isAuthenticated){
         history.push('/')
     }
+    const { IsFetchingData } = state;
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -151,8 +166,11 @@ const DeviceRegistration = () => {
                             <button 
                                 type="input"
                                 className="btn btn-primary" 
+                                disabled={IsFetchingData}
                             >
-                                Create
+                                {
+                                    IsFetchingData ? <IsFetching /> : 'Create'
+                                }
                             </button>
                         </div>
                     </form>

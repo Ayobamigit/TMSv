@@ -1,60 +1,75 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './DashboardTransactionHistory.styles.scss';
+import { DashboardContext } from "../../pages/dashboard/Dashboard.component";
+import IsLoadingData from '../isLoadingData/isLoadingData'
+import Pagination from "react-pagination-js";
+import "react-pagination-js/dist/styles.css";
+import NoResultFound from '../NoResultFound/NoResultfound';
 
 export default function () {
-    return (
-        <div className="table-layout">
-           <h3>Recent Transactions</h3>
-           <div>
-                <table className="table table-striped" id="table-to-xls">
-                    <thead>
-                        <tr>
-                        <th scope="col">S/N</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        </tr>
-                    </tbody>
-                </table>
-           </div>
-        </div>
-    )
+    const { transactionsList: { transactions }, isLoading, page, totalCount, size, changeCurrentPage } = useContext(DashboardContext);
+    // console.log(transactions)
+    if(isLoading){
+        return <IsLoadingData />
+    } else {
+        return (
+            <div className="table-layout">
+            <h3>Recent Transactions</h3>
+            <div>
+                    <table className="table table-striped" id="table-to-xls">
+                        <thead>
+                            <tr>
+                            <th scope="col">S/N</th>
+                            <th scope="col">Terminal Id</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Tran Id</th>
+                            {/* <th scope="col">STAN</th> */}
+                            <th scope="col">Status</th>
+                            <th scope="col">Date and Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { 
+                                transactions.length === 0 ? 
+                                <NoResultFound />
+                                :
+                                transactions.map((transaction, i) => {
+                                    const { terminalID, amount, rrn, date, status, stan } = transaction;
+                                    const statusClass = () => {
+                                        if(status){
+                                            if (status.toLowerCase() === 'success'){
+                                                return 'success'
+                                            } else {
+                                                return 'failed'
+                                            }
+                                        }
+                                    }
+                                    return (
+                                        <tr key={i}>
+                                            <th scope="row">{i+1}</th>
+                                            <td>{terminalID}</td>
+                                            <td>{amount}</td>
+                                            <td>{rrn}</td>
+                                            {/* <td>{stan}</td> */}
+                                            <td><p className={statusClass()}>{status}</p></td>
+                                            <td>{date ? date.substring(0, 19) : null}</td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </tbody>
+                    </table>
+                    <Pagination
+                        currentPage={page + 1}
+                        totalSize={totalCount}
+                        sizePerPage={size}
+                        changeCurrentPage={changeCurrentPage}
+                        numberOfPagesNextToActivePage={2}
+                        theme="bootstrap"
+                    />
+            </div>
+            </div>
+        )
+    }
+    
 }

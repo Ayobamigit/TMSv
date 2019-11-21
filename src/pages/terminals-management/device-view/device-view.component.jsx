@@ -11,6 +11,7 @@ import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import Axios from 'axios';
+import IsFetching from '../../../components/isFetching/IsFetching.component';
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const DeviceView = () => {
@@ -21,7 +22,8 @@ const DeviceView = () => {
         terminalType: '',
         terminalStatus: '',
         terminalROMVersion: '',
-        terminalSerialNo: ''
+        terminalSerialNo: '',
+        IsFetchingData: false
     });
     const [readOnly, setIsReadOnly ] = useState(true);
     const [ isLoading, setIsLoading ] = useState(true);
@@ -83,11 +85,11 @@ const DeviceView = () => {
         const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, terminalStatus } = state;
         const reqBody = {
             id: match.params.id,
-            terminalID: terminalID,
-            terminalROMVersion: terminalROMVersion,
-            terminalSerialNo: terminalSerialNo,
-            terminalType: terminalType,
-            terminalStatus: terminalStatus
+            terminalID,
+            terminalROMVersion,
+            terminalSerialNo,
+            terminalType,
+            terminalStatus
         }
         if (terminalID.trim() === '' || terminalType.trim() === '' || terminalStatus.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === ''){
             Swal.fire({
@@ -96,7 +98,11 @@ const DeviceView = () => {
                 text: 'Please fill all fields!'
             })
         } else {
-            Axios(`${`${viewATerminal}`}/${match.params.id}`, {
+            setState({
+                ...state, 
+                IsFetchingData: true
+            })
+            Axios({
                 method: 'put',
                 data: reqBody,
                 url: `${`${viewATerminal}`}/${match.params.id}`,
@@ -107,6 +113,10 @@ const DeviceView = () => {
                 timeout: FetchTimeOut
             })
             .then(result => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
@@ -123,6 +133,10 @@ const DeviceView = () => {
                 }                
             })
             .catch(err => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
@@ -137,13 +151,14 @@ const DeviceView = () => {
     if(!isAuthenticated){
         history.push('/')
     }
+    const { IsFetchingData } = state;
     if(isLoading){
         return <PreLoader />
     } else {
         return (
             <Layout>
                 <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 className="h2">Terminals View</h1>
+                    <h1 className="h2">Terminal</h1>
                     <button className="btn btn-sm btn-primary" onClick={editFields}>Edit Fields</button>
                 </div>
                 <div className="row">
@@ -209,8 +224,11 @@ const DeviceView = () => {
                                     <button 
                                         type="input"
                                         className="btn btn-primary" 
+                                        disabled={IsFetchingData}
                                     >
-                                        Update
+                                        {
+                                            IsFetchingData ? <IsFetching /> : 'Update'
+                                        }
                                     </button>
                                 </div>
                             }               

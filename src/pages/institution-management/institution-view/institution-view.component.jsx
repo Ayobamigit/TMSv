@@ -11,6 +11,7 @@ import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import Axios from 'axios';
+import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
@@ -27,7 +28,8 @@ const InstitutionView = () => {
         institutionAddress: '',
         institutionPhone: '',
         createdBy: '', 
-        dateCreated: ''
+        dateCreated: '',
+        IsFetchingData: false
     });
     const [readOnly, setIsReadOnly ] = useState(true);
     const [ isLoading, setIsLoading ] = useState(true);
@@ -118,6 +120,10 @@ const InstitutionView = () => {
                 text: 'Please fill all fields!'
             })
         } else {
+            setState({
+                ...state, 
+                IsFetchingData: true
+            })
             Axios({
                 url: `${viewAnInstitution}/${match.params.id}`,
                 method: 'put',
@@ -129,6 +135,10 @@ const InstitutionView = () => {
                 timeout: FetchTimeOut
             })
             .then(result => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
@@ -147,6 +157,10 @@ const InstitutionView = () => {
                 
             })
             .catch(err => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
@@ -161,7 +175,7 @@ const InstitutionView = () => {
     if(!isAuthenticated){
         history.push('/')
     }
-
+    const { IsFetchingData } = state;
     if(isLoading){
         return <PreLoader />
     } else {
@@ -296,8 +310,11 @@ const InstitutionView = () => {
                                 <button 
                                     type="input"
                                     className="btn btn-primary" 
+                                    disabled={IsFetchingData}
                                 >
-                                    Update
+                                    {
+                                        IsFetchingData ? <IsFetching /> : 'Update'
+                                    }
                                 </button>
                             </div>
                         } 

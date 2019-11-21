@@ -21,3 +21,7 @@
 ::-webkit-scrollbar-thumb {
 	background-color: #FF0014;	
 }
+
+td, th{
+	text-align: center;
+}

@@ -9,6 +9,7 @@ import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
+import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const { authToken, userName } = JSON.parse(sessionStorage.getItem('userDetails'))
 
@@ -26,6 +27,7 @@ const InstitutionRegistration = () => {
         processorIP: '',
         processorName: '',
         processorPort: '',
+        IsFetchingData: false
     });
 
     //Getting Current Time and Date 
@@ -40,6 +42,10 @@ const InstitutionRegistration = () => {
     
     const registerInstitution = (e) => {
         e.preventDefault();
+        setState({
+            ...state, 
+            IsFetchingData: true
+        })
         const { 
             institutionName, institutionEmail, institutionID, merchantAccount, username,
             institutionLocation, institutionAddress, institutionPhone, password, processorIP, processorName, processorPort
@@ -64,14 +70,17 @@ const InstitutionRegistration = () => {
             username
         };
         if (institutionName.trim() === '' || password.trim() === '' || username.trim() === '' || processorIP.trim() === '' || processorName.trim() === '' || processorPort.trim() === ''
-            || institutionEmail.trim() === '' || institutionID.trim() === '' || merchantAccount.trim() === '' ||
-            institutionPhone.trim() === '' || institutionLocation.trim() === '' || institutionAddress.trim() === '') {
+            || institutionEmail.trim() === '' || institutionID.trim() === '' || institutionPhone.trim() === '' || institutionLocation.trim() === '' || institutionAddress.trim() === '') {
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
-                text: 'Please fill all fields!'
+                text: 'Please fill all required fields!'
             })
         } else {
+            setState({
+                ...state, 
+                IsFetchingData: true
+            })
             axios({
                 url: `${registerInstitutionURL}`,
                 method: 'post',
@@ -83,6 +92,10 @@ const InstitutionRegistration = () => {
                 timeout: FetchTimeOut
             })
             .then(result => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
@@ -100,6 +113,10 @@ const InstitutionRegistration = () => {
                 }                
             })
             .catch(err => {
+                setState({
+                    ...state, 
+                    IsFetchingData: false
+                })
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
@@ -115,7 +132,7 @@ const InstitutionRegistration = () => {
     if(!isAuthenticated){
         history.push('/')
     }
-
+    const { IsFetchingData } = state;
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -162,15 +179,14 @@ const InstitutionRegistration = () => {
                             />
                         </div>
                         <div className="col-md-6">
-                            <p>Merchant Account</p>
+                            <p>Merchant Account <small>(Optional Field)</small></p>
                             <input 
                                 type="text" 
                                 className="form-control" 
                                 placeholder="Merchant Account" 
                                 value={state.merchantAccount} 
                                 name="merchantAccount"
-                                onChange={onChange}
-                                required                                
+                                onChange={onChange}                               
                             />
                         </div>
                         <div className="col-md-6">
@@ -274,8 +290,11 @@ const InstitutionRegistration = () => {
                         <button 
                             type="input"
                             className="btn btn-primary" 
+                            disabled={IsFetchingData}
                         >
-                            Create
+                            {
+                                IsFetchingData ? <IsFetching /> : 'Create'
+                            }
                         </button>
                     </div>
                     

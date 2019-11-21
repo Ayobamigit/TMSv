@@ -12,6 +12,7 @@
     "react-chartjs-2": "^2.8.0",
     "react-dom": "^16.9.0",
     "react-html-table-to-excel": "^2.0.0",
+    "react-pagination-js": "^2.0.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.1.1",
     "sweetalert2": "^8.17.1",

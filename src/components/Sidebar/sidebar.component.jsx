@@ -17,10 +17,24 @@ const Sidebar = () => {
 
           {/*  User Management */}
           <li>
-            <NavLink className="nav-link" to="/user-management" activeStyle={active}>
-              <i className="fa fa-users"></i>
-              <span>User Management</span>
-            </NavLink>
+            <div className="nav-link dropdown-toggle" href="#userSubmenu" data-toggle="collapse" aria-expanded="false">
+              <NavLink to="#">
+                <i className="fa fa-users"></i>
+                <span>User Management</span>
+              </NavLink>
+            </div>
+            <ul className="collapse list-unstyled nav-link" id="userSubmenu">
+              <li>
+                <NavLink to="/user-setup" activeStyle={active}>
+                  Register a User
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/user-list" activeStyle={active}>
+                  View all Users  
+                </NavLink>
+              </li>
+            </ul>
           </li>
 
           {/*  Device Setup / configuration */}
