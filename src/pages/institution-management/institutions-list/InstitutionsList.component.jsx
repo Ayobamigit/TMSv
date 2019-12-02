@@ -4,6 +4,8 @@ import { Link, useHistory } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
 import {allInstitutions} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
+import Pagination from "react-pagination-js";
+import "react-pagination-js/dist/styles.css";
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
@@ -17,23 +19,36 @@ import NoResultFound from '../../../components/NoResultFound/NoResultfound';
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const InstitutionsList = () => {
+    const [state, setState] = useState({
+        page: 0,
+        size: 10,
+        totalCount: 0
+    })
     const [institutionsList, setInstitutionsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
+        let reqBody = {
+            page: state.page,
+            size: state.size
+        }
         axios({
             url: `${allInstitutions}`,
-            method: 'get',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            data: {},
+            data: reqBody,
             timeout: FetchTimeOut
         })
             .then(result => {
             setIsLoading(false)
             if(result.data.respCode === '00'){
-                setInstitutionsList(result.data.respBody)
+                setInstitutionsList(result.data.respBody.transactions)
+                setState(state =>({
+                    ...state,
+                    totalCount: result.data.respBody.totalCount
+                }))
             }else{
                 Swal.fire({
                     type: 'error',
@@ -53,13 +68,20 @@ const InstitutionsList = () => {
                 footer: 'Please contact support'
             })
         });
-    }, [])
+    }, [state.page, state.size])
 
     const { isAuthenticated } = useContext(authContext);
     const history = useHistory();
     if(!isAuthenticated){
         history.push('/')
     }
+    const changeCurrentPage = (pageNumber) => {
+        setState({
+            ...state, 
+            page: pageNumber - 1
+        })
+    }
+    const { page, size, totalCount } = state;
 
     if(isLoading){
         return <PreLoader />
@@ -114,6 +136,14 @@ const InstitutionsList = () => {
                                 }
                             </tbody>
                         </table>
+                        <Pagination
+                            currentPage={page + 1}
+                            totalSize={totalCount}
+                            sizePerPage={size}
+                            changeCurrentPage={changeCurrentPage}
+                            numberOfPagesNextToActivePage={2}
+                            theme="bootstrap"
+                        />
                     </div>
                 </div>
             </Layout>

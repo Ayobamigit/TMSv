@@ -22,7 +22,6 @@ const UserRegistration = () => {
         email: '',
         institutionName: '',
         institutionsList: [],
-        username: '',
         password: '',
         role: '',
         IsFetchingData: false
@@ -71,19 +70,18 @@ const UserRegistration = () => {
 
     const createUser = (e) => {
         e.preventDefault();
-        const { firstname, lastname, email, username, password, role } = state;
+        const { firstname, lastname, email, password, role } = state;
         const reqBody = {
             id: 0,
             firstname,
             dateCreated: new Date(),
             lastname,
             email,
-            username,
             password,
             role,
             institution: institutionInformation
         }
-        if (firstname.trim() === '' || lastname.trim() === '' || email.trim() === '' || password.trim() === '' || role.trim() === '' || username.trim() === ''){
+        if (firstname.trim() === '' || lastname.trim() === '' || email.trim() === '' || password.trim() === '' || role.trim() === ''){
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -202,17 +200,7 @@ const UserRegistration = () => {
                                     onChange={onChange}
                                     required                                     
                                 />
-                            </div>  
-                            <div className="form-group">
-                                <p>Username</p>
-                                <input
-                                    name="username" 
-                                    className="form-control" 
-                                    value={state.username} 
-                                    onChange={onChange}
-                                    required                                     
-                                />
-                            </div>
+                            </div> 
                             <div className="form-group">
                                 <p>Assign a password</p>
                                 <input

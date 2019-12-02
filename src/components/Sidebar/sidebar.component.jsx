@@ -96,6 +96,14 @@ const Sidebar = () => {
               <span>Audit</span>
             </NavLink>
           </li>
+
+          {/*  Configurations */}
+          <li>
+            <NavLink className="nav-link" to="/configuration" activeStyle={active}>
+              <i className="fa fa-cog"></i>
+              <span>Configuration</span>
+            </NavLink>
+          </li>
         </ul>     
       </React.Fragment>
     )

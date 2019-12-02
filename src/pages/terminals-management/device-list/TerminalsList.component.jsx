@@ -6,6 +6,8 @@ import './TerminalsList.styles.scss';
 import {allTerminals} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
+import Pagination from "react-pagination-js";
+import "react-pagination-js/dist/styles.css";
 
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import NoResultFound from "../../../components/NoResultFound/NoResultfound";
@@ -18,23 +20,36 @@ import axios from 'axios';
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const DeviceList = () => {
+    const [state, setState ] = useState({
+        page: 0,
+        size: 20, 
+        totalCount: 0
+    })
     const [terminalsList, setTerminalsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
+        let reqBody = {
+            page: state.page,
+            size: state.size
+        }
         axios({
             url: `${allTerminals}`,
-            method: 'get',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            data: {},
+            data: reqBody,
             timeout: FetchTimeOut
         })
         .then(result => {
             setIsLoading(false)
             if(result.data.respCode === '00'){
-                setTerminalsList(result.data.respBody)
+                setTerminalsList(result.data.respBody.transactions)
+                setState(state => ({
+                    ...state,
+                    totalCount: result.data.respBody.totalCount
+                }))
             } else {
                 Swal.fire({
                     type: 'error',
@@ -53,13 +68,22 @@ const DeviceList = () => {
                 footer: 'Please contact support'
             })
         });
-    }, [])
+    }, [state.page, state.size])
 
     const { isAuthenticated } = useContext(authContext);
     const history = useHistory();
     if(!isAuthenticated){
         history.push('/')
     }
+
+    const changeCurrentPage = (pageNumber) => {
+        setState({
+            ...state, 
+            page: pageNumber - 1
+        })
+    }
+
+    const { page, size, totalCount } = state;
 
     if(isLoading){
         return <PreLoader />
@@ -106,6 +130,14 @@ const DeviceList = () => {
                                 }
                             </tbody>
                         </table>
+                        <Pagination
+                            currentPage={page + 1}
+                            totalSize={totalCount}
+                            sizePerPage={size}
+                            changeCurrentPage={changeCurrentPage}
+                            numberOfPagesNextToActivePage={2}
+                            theme="bootstrap"
+                        />
                     </div>
                 </div>
             </Layout>

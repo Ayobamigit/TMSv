@@ -107,7 +107,7 @@ const InstitutionRegistration = () => {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.data.code}`,
+                        text: `${result.data.respDescription}`,
                         footer: 'Please contact support'
                     })
                 }                

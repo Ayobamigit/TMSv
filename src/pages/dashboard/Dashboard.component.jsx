@@ -29,7 +29,7 @@ const Dashboard = () => {
         },
         isLoading: false,
         page: 0,
-        size: 2,
+        size: 5,
         fromDate: '',
         toDate: ''
     })
@@ -39,16 +39,16 @@ const Dashboard = () => {
         totalCount: 0,
         hasNextRecord: false
     })
-    const { authToken, institution } = JSON.parse(sessionStorage.getItem('userDetails'));
+    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
     useEffect(() => {
         const { page, size, toDate, fromDate } = state;
         let reqBody = {
-            fromDate: "",
-            institutionID: "FREEDOM",
-            page: "0",
-            size: "2",
-            toDate: ""
+            fromDate,
+            institutionID: "",
+            page,
+            size,
+            toDate
         }
         setState(state =>({
             ...state,
@@ -61,11 +61,10 @@ const Dashboard = () => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            data: {reqBody},
+            data: reqBody,
             timeout: FetchTimeOut
         })
         .then(result => {
-            console.log(result.data.respBody)
             setState(state =>({
                 ...state,
                 isLoading: false
@@ -104,7 +103,7 @@ const Dashboard = () => {
     const changeCurrentPage = (pageNumber) => {
         setState({
             ...state, 
-            page: pageNumber
+            page: pageNumber - 1
         })
     }
 

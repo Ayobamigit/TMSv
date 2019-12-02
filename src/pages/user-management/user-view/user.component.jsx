@@ -12,7 +12,6 @@ import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import Axios from 'axios';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
-const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const UserView = () => {
     const history = useHistory();
@@ -27,6 +26,7 @@ const UserView = () => {
     });
     const [readOnly, setIsReadOnly ] = useState(true);
     const [ isLoading, setIsLoading ] = useState(true);
+    const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
     useEffect(() => {
         const getUserData = () => {
