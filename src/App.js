@@ -23,6 +23,7 @@ const ReportingComponent = lazy(() => import('./pages/reporting/Reporting.compon
 const AuditComponent = lazy (() => import('./pages/audit/Audit.component'));
 const ConfigurationComponent = lazy (() => import('./pages/configuration/configuration-list/configuration.component'));
 const ViewServiceProvider = lazy (() => import('./pages/configuration/view-service-provider/view-service-provider.component'));
+const ViewProfile = lazy (() => import('./pages/configuration/view-service-provider/view-profile.component'));
 
 const UsersList = lazy(() => import('./pages/user-management/user-list/user-list.component'))
 const User = lazy(() => import('./pages/user-management/user-view/user.component'))
@@ -48,7 +49,9 @@ function App() {
               <Route exact path="/reporting" component={ReportingComponent} />
               <Route exact path="/audit" component={AuditComponent} />
               <Route exact path="/configuration" component={ConfigurationComponent} />
-              <Route exact path="/configuration/:id" component={ViewServiceProvider} />              
+              <Route exact path="/configuration/:id" component={ViewServiceProvider} /> 
+              <Route exact path="/configuration/profile/:id" component={ViewProfile} />             
+
 
               <Route exact path="/user-setup" component={UserRegistration} />
               <Route exact path="/user-list" component={UsersList} />

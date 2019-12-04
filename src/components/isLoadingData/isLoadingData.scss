@@ -2,7 +2,7 @@
     display: inline-block;
     position: relative;
     width: 100%;
-    height: 64px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,10 +14,10 @@
     width: 51px;
     height: 51px;
     margin: 6px;
-    border: 6px solid #262A62;
+    border: 6px solid #ff3547;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #262A62 transparent transparent transparent;
+    border-color: #ff3547 transparent transparent transparent;
   }
   .lds-ring div:nth-child(1) {
     animation-delay: -0.45s;

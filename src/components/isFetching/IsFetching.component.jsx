@@ -3,7 +3,7 @@ import './IsFetching.styles.css';
 
 export default function IsFetching() {
     return (
-        <div className="lds-ring">
+        <div className="isloading-ring">
             <div></div>
             <div></div>
             <div></div>

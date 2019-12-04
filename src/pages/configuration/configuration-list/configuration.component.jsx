@@ -76,9 +76,6 @@ const Configuration = () => {
     if(!isAuthenticated){
         history.push('/')
     }
-    const changeCurrentPage = () => {
-
-    }
     const { isLoading, serviceProviders, addServiceProvider } = state;
     return (
         <Layout>

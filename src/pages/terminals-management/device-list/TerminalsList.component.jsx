@@ -100,7 +100,7 @@ const DeviceList = () => {
                                 <th scope="col">Terminal ID</th>
                                 <th scope="col">Terminal ROM Version</th>
                                 <th scope="col">Terminal Serial No</th>
-                                <th scope="col">Terminal Status</th>
+                                {/* <th scope="col">Terminal Status</th> */}
                                 <th scope="col">Terminal Type</th>
                                 <th scope="col">Date Created</th>
                                 <th scope="col">View</th>
@@ -111,14 +111,14 @@ const DeviceList = () => {
                                     terminalsList.length === 0 ? 
                                         <NoResultFound /> : 
                                     terminalsList.map((terminal, index) => {
-                                        const { id, terminalID, terminalROMVersion, terminalSerialNo, terminalStatus, terminalType, dateCreated } = terminal;
+                                        const { id, terminalID, terminalROMVersion, terminalSerialNo, terminalType, dateCreated } = terminal;
                                         return (
                                             <tr key={index}>
                                                 <th scope="row">{index+1}</th>
                                                 <td>{terminalID}</td>
                                                 <td>{terminalROMVersion}</td>
                                                 <td>{terminalSerialNo}</td>
-                                                <td>{terminalStatus}</td>
+                                                {/* <td>{terminalStatus}</td> */}
                                                 <td>{terminalType}</td>
                                                 <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
                                                 <td>

@@ -1,12 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { useHistory } from 'react-router-dom';
 import Swal from '../../../constants/swal';
+import { allServiceProviders, getProfilesByServiceProviderId } from '../../../Utils/URLs';
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
-import Axios from 'axios';
+import axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import { registerTerminalURL } from '../../../Utils/URLs';
 import FileUploadModal from './file-upload.component';
@@ -18,27 +19,110 @@ const DeviceRegistration = () => {
     const [state, setState ] =  useState({
         terminalID: '2058',
         terminalType: '',
-        terminalStatus: '',
         terminalROMVersion: '',
         terminalSerialNo: '',
+        serviceProvidersList: [],
+        serviceProviderId: '',
+        profilesList: [],
+        profileName: '',
         IsFetchingData: false
-    })
+    });
+
+    useEffect(() => {
+        axios({
+            url: `${allServiceProviders}`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: {},
+            timeout: FetchTimeOut
+        })
+            .then(result => {
+            if(result.data.respCode === '00'){
+                setState( state => ({
+                    ...state,
+                    serviceProvidersList: result.data.respBody
+                }))
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }
+            
+        })
+        .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
+    }, [])
+
+    const getProfilesById = (id) => {
+        axios({
+            url: `${getProfilesByServiceProviderId}`,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: id,
+            timeout: FetchTimeOut
+        })
+            .then(result => {
+            if(result.data.respCode === '00'){
+                setState( state => ({
+                    ...state,
+                    profilesList: result.data.respBody
+                }))
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }
+            
+        })
+        .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
+    }
+
     const onChange = (e) => {
+        let name = e.target.name;
+        let value = e.target.value;
         setState({...state, [e.target.name]: e.target.value})
+        if(name === 'serviceProviderId'){
+            getProfilesById(value);
+        }
     }
     const registerDevice = (e) => {
         e.preventDefault();
-        const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, terminalStatus } = state;
+        const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, serviceProviderId, profileName } = state;
         const reqBody = {
-            id: 0,
             terminalID,
             dateCreated: new Date(),
             terminalROMVersion,
             terminalSerialNo,
             terminalType,
-            terminalStatus
+            institutionID: serviceProviderId,
+            profileName
         }
-        if (terminalID.trim() === '' || terminalType.trim() === '' || terminalStatus.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === ''){
+        if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === ''){
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -49,7 +133,7 @@ const DeviceRegistration = () => {
                 ...state, 
                 IsFetchingData: true
             })
-            Axios({
+            axios({
                 method: 'post',
                 url: `${registerTerminalURL}`,
                 headers: {
@@ -100,7 +184,7 @@ const DeviceRegistration = () => {
     if(!isAuthenticated){
         history.push('/')
     }
-    const { IsFetchingData } = state;
+    const { IsFetchingData, serviceProviderId, profileName } = state;
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -133,16 +217,6 @@ const DeviceRegistration = () => {
                             </select>
                         </div>
                         <div className="form-group">
-                            <p>Terminal Status</p>
-                            <select className="browser-default custom-select" name="terminalStatus" value={state.terminalStatus} onChange={onChange} required >
-                                <option value="" disabled>Choose your option</option>                                
-                                <option value="Good">Good</option>
-                                <option value="Printer Error">Printer Error</option>
-                                <option value="No Paper">No Paper</option>
-                                <option value="Network Malfunction">Network Malfunction</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
                             <p>Terminal Version</p>
                             <input 
                                 name="terminalROMVersion" 
@@ -161,7 +235,49 @@ const DeviceRegistration = () => {
                                 onChange={onChange}
                                 required 
                             />
-                        </div>                  
+                        </div> 
+                        <div className="form-group">
+                            <p>Choose Service Provider</p>
+                                <select className="custom-select" name="serviceProviderId" value={serviceProviderId} onChange={onChange} required >
+                                <option value="">Select Service Provider</option>
+                                {
+                                    state.serviceProvidersList ? 
+                                    state.serviceProvidersList.map((serviceProvider, i) => {
+                                        return(
+                                            <option 
+                                                value={serviceProvider.id} 
+                                                key={i}
+                                            >
+                                                {serviceProvider.providerName}
+                                            </option>
+                                        )
+                                    })
+                                    :null
+                                }
+                            </select>
+                        </div>  
+                        {
+                            <div className="form-group">
+                            <p>Select Profile</p>
+                                <select className="custom-select" name="profileName" value={profileName} onChange={onChange} required >
+                                <option value="">Select Profile</option>
+                                {
+                                    state.profilesList ? 
+                                    state.profilesList.map((profile, i) => {
+                                        return(
+                                            <option 
+                                                value={profile.profileName} 
+                                                key={i}
+                                            >
+                                                {profile.profileName}
+                                            </option>
+                                        )
+                                    })
+                                    :null
+                                }
+                            </select>
+                        </div>
+                        }               
                         <div className="form-group">
                             <button 
                                 type="input"

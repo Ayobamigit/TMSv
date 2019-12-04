@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import IsFetching from '../../../components/isFetching/IsFetching.component';
+import React, { useState, useRef } from 'react';
+// import IsFetching from '../../../components/isFetching/IsFetching.component';
 import { useHistory } from 'react-router-dom';
 import { addProfiles } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
@@ -20,6 +20,7 @@ export default function AddProfiles({ id, providerName }) {
         })
     }
     const history = useHistory();
+    let dismissModal = useRef();
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
     const addProfile = (e) => {
         e.preventDefault();
@@ -54,13 +55,13 @@ export default function AddProfiles({ id, providerName }) {
                 ...state, 
                 IsFetchingData: false
             })
-            console.log(result.data)
             if(result.data.respCode === '00'){
                 Swal.fire({
                     type: 'success',
                     title: 'Successful Registration...',
                     text: 'Profile Registration was Successful!'
                 })
+                dismissModal.current.click();
                 history.push('/configuration');
             }else{
                 Swal.fire({
@@ -90,7 +91,7 @@ export default function AddProfiles({ id, providerName }) {
             <div className="modal-dialog" role="document">
                 <div className="modal-content">
                 <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <h5 className="modal-title" id="exampleModalLongTitle">Add a Profile</h5>
                     <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -149,7 +150,7 @@ export default function AddProfiles({ id, providerName }) {
                         </div> 
                         <div className="modal-footer">                            
                             <button type="submit" className="btn btn-primary">Submit</button>
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-secondary" ref={dismissModal} data-dismiss="modal">Close</button>
                         </div>
                     </div>
                     </form>

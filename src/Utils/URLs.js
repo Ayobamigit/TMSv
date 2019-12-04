@@ -32,6 +32,12 @@ export const allServiceProviders = `${baseUrl()}/api/v1/serviceProviders`;
 export const addServiceProviders = `${baseUrl()}/api/v1/serviceProviders/addProviders`;
 export const getServiceProviderById = `${baseUrl()}/api/v1/serviceProviders/getserviceProvider`;
 export const addProfiles = `${baseUrl()}/api/v1/serviceProviders/addProfiles`;
+export const getProfileById = `${baseUrl()}/api/v1/serviceProviders/profiles`;
+export const editProviders = `${baseUrl()}/api/v1/serviceProviders/providers`;
+export const deleteServiceProviderById = `${baseUrl()}/api/v1/serviceProviders/deleteServiceProvider`;
+export const deleteProfileById = `${baseUrl()}/api/v1/serviceProviders/deleteProfile`;
+export const getProfilesByServiceProviderId = `${baseUrl()}/api/v1/serviceProviders/profilesbyProvidersID`;
+
 
 //SuperAdmin
 export const superAdminLoginUrl = `${baseUrl()}/api/v1/superadmin/login`;

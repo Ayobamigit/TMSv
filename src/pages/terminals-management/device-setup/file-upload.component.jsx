@@ -6,8 +6,8 @@ import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import { uploadTerminalsURL } from '../../../Utils/URLs';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 import ProgressBar from '../../../components/ProgressBar/ProgressBar';
-
-const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+import TerminalsUploadSample from '../../../assets/sampleExcelFile.xlsx';
+import './device-setup.styles.scss';
 
 const FileUploadModal = () => {
     const history = useHistory();
@@ -19,6 +19,7 @@ const FileUploadModal = () => {
         isLoggingIn: false,
         errorMessage: ''
     })
+    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
     const fileChangedHandler = (e) => {
         const file = e.target.files[0];
@@ -129,6 +130,9 @@ const FileUploadModal = () => {
                             onChange={fileChangedHandler}
                         /> 
                         <ProgressBar percentage={uploadProgress} />
+                        <br/>
+                        <a href={TerminalsUploadSample}>Download a sample excel file <i className="fa fa-file"></i></a>
+                        
                         {
                             inputTypeError ? 
                             <div className="alert alert-sm alert-danger" role="alert">

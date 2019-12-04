@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import Swal from '../../../constants/swal';
-import { registerInstitutionURL } from '../../../Utils/URLs';
+import { registerInstitutionURL, allServiceProviders } from '../../../Utils/URLs';
 import { useHistory } from 'react-router-dom';
 
 // Context for Authentication
@@ -11,34 +11,72 @@ import axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 
-const { authToken, userName } = JSON.parse(sessionStorage.getItem('userDetails'))
-
 const InstitutionRegistration = () => {
     const [state, setState ] =  useState({ 
         institutionName: '', 
         institutionEmail: '', 
-        institutionID: '', 
-        merchantAccount: '', 
-        institutionLocation: '', 
+        settlementAccount: '', 
         institutionAddress: '',
         institutionPhone: '',
-        password: '',
-        username: '',
-        processorIP: '',
-        processorName: '',
-        processorPort: '',
+        serviceProvidersList: [],
+        serviceProvider: '',
         IsFetchingData: false
     });
+    const [serviceProviderInfo, setServiceProviderInfo] = useState({})
 
     //Getting Current Time and Date 
     const today = new Date();
     const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    const dateTime = date+' '+time;
+    const { authToken, userName } = JSON.parse(sessionStorage.getItem('userDetails'))
 
     const onChange = (e) => {
+        let name = e.target.name;
+        let value = e.target.value;
         setState({...state, [e.target.name]: e.target.value})
-    }       
+        if(name === 'serviceProvider'){
+            let result = state.serviceProvidersList.find((element) => {
+                return element.id === Number(value)
+            })
+            setServiceProviderInfo(result)
+        }
+    }    
+    
+    useEffect(() => {
+        axios({
+            url: `${allServiceProviders}`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: {},
+            timeout: FetchTimeOut
+        })
+            .then(result => {
+            if(result.data.respCode === '00'){
+                setState( state => ({
+                    ...state,
+                    serviceProvidersList: result.data.respBody
+                }))
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }
+            
+        })
+        .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
+    }, [authToken])
     
     const registerInstitution = (e) => {
         e.preventDefault();
@@ -46,31 +84,20 @@ const InstitutionRegistration = () => {
             ...state, 
             IsFetchingData: true
         })
-        const { 
-            institutionName, institutionEmail, institutionID, merchantAccount, username,
-            institutionLocation, institutionAddress, institutionPhone, password, processorIP, processorName, processorPort
-        } = state;
+        const { institutionName, institutionEmail, settlementAccount, institutionAddress, institutionPhone } = state;
         
         const reqBody = {
-            id: '100',
             institutionName, 
-            institutionEmail, 
-            institutionID, 
-            merchantAccount,  
-            institutionLocation,  
-            institutionAddress, 
+            institutionEmail,              
+            settlementAccount,               
+            // institutionAddress, 
             institutionPhone,
             createdBy: userName, 
-            dateCreated: dateTime,
-            auth_token: authToken,
-            password,
-            processorIP,
-            processorName,
-            processorPort,
-            username
+            dateCreated: date, 
+            serviceProviderName: serviceProviderInfo.providerName        
+
         };
-        if (institutionName.trim() === '' || password.trim() === '' || username.trim() === '' || processorIP.trim() === '' || processorName.trim() === '' || processorPort.trim() === ''
-            || institutionEmail.trim() === '' || institutionID.trim() === '' || institutionPhone.trim() === '' || institutionLocation.trim() === '' || institutionAddress.trim() === '') {
+        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAddress.trim() === '' || settlementAccount.trim() === '') {
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -92,6 +119,7 @@ const InstitutionRegistration = () => {
                 timeout: FetchTimeOut
             })
             .then(result => {
+                console.log(result.data)
                 setState({
                     ...state, 
                     IsFetchingData: false
@@ -143,7 +171,7 @@ const InstitutionRegistration = () => {
                 <form onSubmit={registerInstitution}>
                     <div className="form-row">
                         <div className="col-md-6">
-                            <p>Institution Name</p>
+                            <p>Name</p>
                             <input 
                                 type="text" 
                                 value={state.institutionName}
@@ -155,7 +183,7 @@ const InstitutionRegistration = () => {
                             />
                         </div>
                         <div className="col-md-6">
-                            <p>Institution Email</p>
+                            <p>Email</p>
                             <input 
                                 type="text" 
                                 value={state.institutionEmail}
@@ -167,42 +195,18 @@ const InstitutionRegistration = () => {
                             />
                         </div>
                         <div className="col-md-6">
-                            <p>Institution ID</p>
+                            <p>Settlement Account Number</p>
                             <input 
-                                type="text" 
+                                type="number" 
                                 className="form-control" 
-                                placeholder="Institution ID" 
-                                value={state.institutionID} 
-                                name="institutionID"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Merchant Account <small>(Optional Field)</small></p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Merchant Account" 
-                                value={state.merchantAccount} 
-                                name="merchantAccount"
+                                placeholder="Settlement Account Number" 
+                                value={state.settlementAccount} 
+                                name="settlementAccount"
                                 onChange={onChange}                               
                             />
                         </div>
                         <div className="col-md-6">
-                            <p>Institution Location</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Institution Location" 
-                                value={state.institutionLocation} 
-                                name="institutionLocation"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Institution Address</p>
+                            <p>Address</p>
                             <input 
                                 type="text" 
                                 className="form-control" 
@@ -214,7 +218,7 @@ const InstitutionRegistration = () => {
                             />
                         </div>
                         <div className="col-md-6">
-                            <p>Institution Phone</p>
+                            <p>Phone Number</p>
                             <input 
                                 type="text" 
                                 className="form-control" 
@@ -226,64 +230,24 @@ const InstitutionRegistration = () => {
                             />
                         </div>
                         <div className="col-md-6">
-                            <p>Username</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Assign a Username"
-                                value={state.username} 
-                                name="username"
-                                onChange={onChange}
-                                required                                 
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Password</p>
-                            <input 
-                                type="password" 
-                                className="form-control" 
-                                placeholder="Password"
-                                value={state.password} 
-                                name="password"
-                                onChange={onChange}
-                                required                                 
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Processor Name</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Processor Name"
-                                value={state.processorName} 
-                                name="processorName"
-                                onChange={onChange}
-                                required                                 
-                            />
-                        </div> 
-                        <div className="col-md-6">
-                            <p>Processor IP</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Processor IP"
-                                value={state.processorIP} 
-                                name="processorIP"
-                                onChange={onChange}
-                                required                                 
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Processor Port</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Processor Port"
-                                value={state.processorPort} 
-                                name="processorPort"
-                                onChange={onChange}
-                                required                                 
-                            />
+                            <p>Choose Service Provider</p>
+                                <select className="custom-select" name="serviceProvider" onChange={onChange} required >
+                                <option value="">Select Service Provider</option>
+                                {
+                                    state.serviceProvidersList ? 
+                                    state.serviceProvidersList.map((serviceProvider, i) => {
+                                        return(
+                                            <option 
+                                                value={serviceProvider.id} 
+                                                key={i}
+                                            >
+                                                {serviceProvider.providerName}
+                                            </option>
+                                        )
+                                    })
+                                    :null
+                                }
+                            </select>
                         </div>   
                     </div>
                     <div className="form-group">

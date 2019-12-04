@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import IsLoadingData from '../../../components/isLoadingData/isLoadingData';
 import { Link } from 'react-router-dom';
 import NoResultFound from '../../../components/NoResultFound/NoResultfound';
+import DeleteServiceProvider from './deleteServiceProvider.component';
 
-export default function ListOfServiceProvidersComponent({ isLoading, serviceProviders }) {
+const ListOfServiceProvidersComponent = ({ isLoading, serviceProviders }) => {
+    const [state, setState ] = useState({
+        idToBeDeleted: ''
+    })
     if(isLoading){
         return <IsLoadingData />
     } else {
@@ -17,6 +21,7 @@ export default function ListOfServiceProvidersComponent({ isLoading, serviceProv
                                 <tr>
                                     <th scope="col">S/N</th>
                                     <th scope="col">Name of Service Provider</th>
+                                    <th scope="col">Delete</th>
                                     <th scope="col">View</th>
                                 </tr>
                             </thead>
@@ -31,6 +36,7 @@ export default function ListOfServiceProvidersComponent({ isLoading, serviceProv
                                             <tr key={i}>
                                                 <th scope="row">{i+1}</th>
                                                 <td>{providerName}</td>
+                                                <td data-toggle="modal" data-target="#deleteModal" onClick={() => setState({...state, idToBeDeleted: id})}><Link to="#"><i className="fa fa-2x fa-trash"></i></Link></td>
                                                 <td>
                                                     <Link to={`/configuration/${id}`}><i className="fa fa-2x fa-eye"></i></Link>
                                                 </td>                                                
@@ -42,7 +48,9 @@ export default function ListOfServiceProvidersComponent({ isLoading, serviceProv
                         </table>
                     </div>
                 </div>
+                <DeleteServiceProvider id={state.idToBeDeleted} />
             </div>
         )
     }
 }
+export default ListOfServiceProvidersComponent;

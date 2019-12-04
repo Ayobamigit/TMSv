@@ -42,63 +42,72 @@ const Dashboard = () => {
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
     useEffect(() => {
-        const { page, size, toDate, fromDate } = state;
-        let reqBody = {
-            fromDate,
-            institutionID: "",
-            page,
-            size,
-            toDate
-        }
-        setState(state =>({
-            ...state,
-            isLoading: true
-        }))
-        axios({
-            url: `${transactionsHistoryURL}`,
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: reqBody,
-            timeout: FetchTimeOut
-        })
-        .then(result => {
+        const getTransactionsHistory = () => {
+            const { page, size, toDate, fromDate } = state;
+            let reqBody = {
+                fromDate,
+                institutionID: "",
+                page,
+                size,
+                toDate
+            }
             setState(state =>({
                 ...state,
-                isLoading: false
+                isLoading: true
             }))
-            if(result.data.respCode === '00'){
-                const { transactions, totalCount, hasNextRecord } = result.data.respBody;
-                setTransactionsList(transactionsList =>({
-                    ...transactionsList,
-                    transactions,
-                    totalCount,
-                    hasNextRecord
+            axios({
+                url: `${transactionsHistoryURL}`,
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                data: reqBody,
+                timeout: FetchTimeOut
+            })
+            .then(result => {
+                setState(state =>({
+                    ...state,
+                    isLoading: false
                 }))
-            } else {
+                if(result.data.respCode === '00'){
+                    const { transactions, totalCount, hasNextRecord } = result.data.respBody;
+                    setTransactionsList(transactionsList =>({
+                        ...transactionsList,
+                        transactions,
+                        totalCount,
+                        hasNextRecord
+                    }))
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }            
+            })
+            .catch(err => {
+                setState(state =>({
+                    ...state,
+                    isLoading: false
+                }))
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${result.data.respDescription}`,
+                    text: `${err}`,
                     footer: 'Please contact support'
                 })
-            }            
-        })
-        .catch(err => {
-            setState(state =>({
-                ...state,
-                isLoading: false
-            }))
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
-            })
-        });
-    }, [state.page, state.size])
+            });
+        }
+        getTransactionsHistory();
+
+        //Autorefresh Function 
+
+        setInterval(() => {
+            getTransactionsHistory();
+        }, 60000)
+    }, [state.page, state.size, authToken])
 
     const changeCurrentPage = (pageNumber) => {
         setState({

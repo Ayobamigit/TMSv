@@ -24,7 +24,7 @@ const UserView = () => {
         username: '',
         IsFetchingData: false
     });
-    const [readOnly, setIsReadOnly ] = useState(true);
+    const [readOnly ] = useState(true);
     const [ isLoading, setIsLoading ] = useState(true);
     const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
@@ -72,7 +72,7 @@ const UserView = () => {
             });
         }
         getUserData();
-    }, [match.params.id])
+    }, [match.params.id, authToken])
         const onChange = (e) => {
             setState({...state, [e.target.name]: e.target.value})
         }

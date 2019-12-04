@@ -1,17 +1,12 @@
 import React, { useContext } from 'react';
 import './DashboardTransactionHistory.styles.scss';
 import { DashboardContext } from "../../pages/dashboard/Dashboard.component";
-import IsLoadingData from '../isLoadingData/isLoadingData'
 import Pagination from "react-pagination-js";
 import "react-pagination-js/dist/styles.css";
 import NoResultFound from '../NoResultFound/NoResultfound';
 
 export default function () {
-    const { transactionsList: { transactions }, isLoading, page, totalCount, size, changeCurrentPage } = useContext(DashboardContext);
-    // console.log(transactions)
-    if(isLoading){
-        return <IsLoadingData />
-    } else {
+    const { transactionsList: { transactions }, page, totalCount, size, changeCurrentPage } = useContext(DashboardContext);
         return (
             <div className="table-layout">
             <h3>Recent Transactions</h3>
@@ -34,7 +29,7 @@ export default function () {
                                 <NoResultFound />
                                 :
                                 transactions.map((transaction, i) => {
-                                    const { terminalID, amount, rrn, date, status, stan } = transaction;
+                                    const { terminalID, amount, rrn, date, status } = transaction;
                                     const statusClass = () => {
                                         if(status){
                                             if (status.toLowerCase() === 'success'){
@@ -50,7 +45,6 @@ export default function () {
                                             <td>{terminalID}</td>
                                             <td>{amount}</td>
                                             <td>{rrn}</td>
-                                            {/* <td>{stan}</td> */}
                                             <td><p className={statusClass()}>{status}</p></td>
                                             <td>{date ? date.substring(0, 19) : null}</td>
                                         </tr>
@@ -70,6 +64,5 @@ export default function () {
             </div>
             </div>
         )
-    }
     
 }

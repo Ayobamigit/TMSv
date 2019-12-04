@@ -98,9 +98,7 @@ const InstitutionsList = () => {
                                 <th scope="col">Institution Name</th>
                                 <th scope="col">Institution Email</th>
                                 <th scope="col">Institution ID</th>
-                                <th scope="col">Merchant Account</th>                     
-                                <th scope="col">Institution Location</th>
-                                <th scope="col">Institution Address</th>
+                                <th scope="col">Settlement Account</th> 
                                 <th scope="col">Institution Phone</th>                                               
                                 <th scope="col">Created By</th>
                                 <th scope="col">Date Created</th>
@@ -113,7 +111,7 @@ const InstitutionsList = () => {
                                         <NoResultFound /> :
                                     institutionsList.map((institution, index) => {
                                         const { 
-                                            id,institutionName, institutionEmail, institutionID, merchantAccount, institutionLocation, institutionAddress, institutionPhone, createdBy, dateCreated
+                                            id,institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated
                                         } = institution;
                                         return (
                                             <tr key={index}>
@@ -121,9 +119,7 @@ const InstitutionsList = () => {
                                                 <td>{institutionName}</td>
                                                 <td>{institutionEmail}</td>
                                                 <td>{institutionID}</td>
-                                                <td>{merchantAccount}</td>
-                                                <td>{institutionLocation}</td>
-                                                <td>{institutionAddress}</td>
+                                                <td>{settlementAccount}</td>
                                                 <td>{institutionPhone}</td>
                                                 <td>{createdBy}</td>
                                                 <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>

@@ -23,9 +23,7 @@ const InstitutionView = () => {
         institutionName: '', 
         institutionEmail: '', 
         institutionID: '', 
-        merchantAccount: '', 
-        institutionLocation: '', 
-        institutionAddress: '',
+        settlementAccount: '', 
         institutionPhone: '',
         createdBy: '', 
         dateCreated: '',
@@ -50,8 +48,7 @@ const InstitutionView = () => {
                 setIsLoading(false)
                 if (result.data.respCode === '00'){
                     const { 
-                    institutionName, institutionEmail, institutionID, merchantAccount, id,
-                     institutionLocation, institutionAddress, institutionPhone, createdBy, dateCreated
+                    institutionName, institutionEmail, institutionID, settlementAccount, id, institutionPhone, createdBy, dateCreated
                     } = result.data.respBody;
                     setState(state => ({
                         ...state, 
@@ -59,9 +56,7 @@ const InstitutionView = () => {
                         institutionName,
                         institutionEmail,
                         institutionID,
-                        merchantAccount, 
-                        institutionLocation,
-                        institutionAddress,
+                        settlementAccount,
                         institutionPhone,
                         createdBy,
                         dateCreated
@@ -99,21 +94,19 @@ const InstitutionView = () => {
     const editInstitutionData = (e) => {
         e.preventDefault();
         const { 
-            id, institutionName, institutionEmail, institutionID, merchantAccount, institutionLocation, institutionAddress, institutionPhone, createdBy, dateCreated
+            id, institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated
          } = state;
         const reqBody = {
             id,
             institutionName, 
             institutionEmail, 
             institutionID, 
-            merchantAccount,
-            institutionLocation, 
-            institutionAddress, 
+            settlementAccount, 
             institutionPhone,
             createdBy, 
             dateCreated
         };
-        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || merchantAccount.trim() === '' || institutionLocation.trim() === '' || institutionAddress.trim() === '' || institutionPhone.trim() === '' || createdBy.trim() === '' || dateCreated.trim() === ''){
+        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || settlementAccount.trim() === '' || institutionPhone.trim() === '' || createdBy.trim() === '' || dateCreated.trim() === ''){
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -233,35 +226,9 @@ const InstitutionView = () => {
                                 <input 
                                     type="text" 
                                     className="form-control" 
-                                    placeholder="Merchant Account" 
-                                    value={state.merchantAccount} 
-                                    name="merchantAccount"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                            <div className="col-md-6">
-                                <p>Institution Location</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Institution Location" 
-                                    value={state.institutionLocation} 
-                                    name="institutionLocation"
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                            <div className="col-md-6">
-                                <p>Institution Address</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Institution Address" 
-                                    value={state.institutionAddress} 
-                                    name="institutionAddress"
+                                    placeholder="Settlement Account" 
+                                    value={state.settlementAccount} 
+                                    name="settlementAccount"
                                     onChange={onChange}
                                     required
                                     readOnly={readOnly}
