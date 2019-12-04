@@ -21,7 +21,7 @@ const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 const InstitutionsList = () => {
     const [state, setState] = useState({
         page: 0,
-        size: 10,
+        size: 20,
         totalCount: 0
     })
     const [institutionsList, setInstitutionsList ] = useState([]);
@@ -42,6 +42,7 @@ const InstitutionsList = () => {
             timeout: FetchTimeOut
         })
             .then(result => {
+                console.log(result)
             setIsLoading(false)
             if(result.data.respCode === '00'){
                 setInstitutionsList(result.data.respBody.transactions)

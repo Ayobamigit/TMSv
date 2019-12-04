@@ -26,6 +26,7 @@ export const viewATerminal = `${baseUrl()}/api/v1/tms`;
 export const allInstitutions = `${baseUrl()}/api/v1/institution/institutions`;
 export const registerInstitutionURL = `${baseUrl()}/api/v1/institution`;
 export const viewAnInstitution = `${baseUrl()}/api/v1/institution`;
+export const getBanks = `${baseUrl()}/api/v1/serviceProviders/banks`;
 
 //Configurations
 export const allServiceProviders = `${baseUrl()}/api/v1/serviceProviders`;
@@ -33,6 +34,7 @@ export const addServiceProviders = `${baseUrl()}/api/v1/serviceProviders/addProv
 export const getServiceProviderById = `${baseUrl()}/api/v1/serviceProviders/getserviceProvider`;
 export const addProfiles = `${baseUrl()}/api/v1/serviceProviders/addProfiles`;
 export const getProfileById = `${baseUrl()}/api/v1/serviceProviders/profiles`;
+export const editProfile = `${baseUrl()}/api/v1/serviceProviders/editprofiles`;
 export const editProviders = `${baseUrl()}/api/v1/serviceProviders/providers`;
 export const deleteServiceProviderById = `${baseUrl()}/api/v1/serviceProviders/deleteServiceProvider`;
 export const deleteProfileById = `${baseUrl()}/api/v1/serviceProviders/deleteProfile`;

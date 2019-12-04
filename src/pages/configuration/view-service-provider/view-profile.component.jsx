@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { getProfileById } from '../../../Utils/URLs';
+import { getProfileById, editProfile } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import axios from 'axios';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout';
@@ -75,14 +75,15 @@ const ViewProfile = () => {
         })
         const { profileIP, profileName, profilePort, profileZPK } = state;
         let reqBody = {
+            id: match.params.id,
             port: profilePort,
-            profileIP,
+            profileAddress: profileIP,
             profileName,
             zpk: profileZPK
         }
         axios({
-            url: `${getProfileById}/${match.params.id}`,
-            method: 'post',
+            url: `${editProfile}/${match.params.id}`,
+            method: 'put',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`

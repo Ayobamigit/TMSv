@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import Swal from '../../../constants/swal';
-import { registerInstitutionURL, allServiceProviders } from '../../../Utils/URLs';
+import { registerInstitutionURL, allServiceProviders, getBanks } from '../../../Utils/URLs';
 import { useHistory } from 'react-router-dom';
 
 // Context for Authentication
@@ -19,6 +19,8 @@ const InstitutionRegistration = () => {
         institutionAddress: '',
         institutionPhone: '',
         serviceProvidersList: [],
+        banks: [],
+        settlementBank: '',
         serviceProvider: '',
         IsFetchingData: false
     });
@@ -42,6 +44,8 @@ const InstitutionRegistration = () => {
     }    
     
     useEffect(() => {
+
+        //Get all service providers
         axios({
             url: `${allServiceProviders}`,
             method: 'get',
@@ -76,6 +80,42 @@ const InstitutionRegistration = () => {
                 footer: 'Please contact support'
             })
         });
+
+        // Get all banks 
+        axios({
+            url: `${getBanks}`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: {},
+            timeout: FetchTimeOut
+        })
+            .then(result => {
+            if(result.data.respCode === '00'){
+                setState( state => ({
+                    ...state,
+                    banks: result.data.respBody
+                }))
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }
+            
+        })
+        .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
     }, [authToken])
     
     const registerInstitution = (e) => {
@@ -84,20 +124,21 @@ const InstitutionRegistration = () => {
             ...state, 
             IsFetchingData: true
         })
-        const { institutionName, institutionEmail, settlementAccount, institutionAddress, institutionPhone } = state;
+        const { institutionName, institutionEmail, settlementAccount, institutionAddress, institutionPhone, settlementBank } = state;
         
         const reqBody = {
             institutionName, 
             institutionEmail,              
-            settlementAccount,               
-            // institutionAddress, 
+            settlementAccount, 
+            settlementBank,              
+            institutionAddress, 
             institutionPhone,
             createdBy: userName, 
             dateCreated: date, 
             serviceProviderName: serviceProviderInfo.providerName        
 
         };
-        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAddress.trim() === '' || settlementAccount.trim() === '') {
+        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAddress.trim() === '' || settlementAccount.trim() === '' || settlementBank.trim() === '') {
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -119,7 +160,6 @@ const InstitutionRegistration = () => {
                 timeout: FetchTimeOut
             })
             .then(result => {
-                console.log(result.data)
                 setState({
                     ...state, 
                     IsFetchingData: false
@@ -195,6 +235,26 @@ const InstitutionRegistration = () => {
                             />
                         </div>
                         <div className="col-md-6">
+                            <p>Choose Settlement Bank</p>
+                                <select className="custom-select" name="settlementBank" value={state.settlementBank} onChange={onChange} required >
+                                <option value="">Select Settlement Bank</option>
+                                {
+                                    state.banks ? 
+                                    state.banks.map((bank, i) => {
+                                        return(
+                                            <option 
+                                                value={bank.bankName} 
+                                                key={i}
+                                            >
+                                                {bank.bankName}
+                                            </option>
+                                        )
+                                    })
+                                    :null
+                                }
+                            </select>
+                        </div> 
+                        <div className="col-md-6">
                             <p>Settlement Account Number</p>
                             <input 
                                 type="number" 
@@ -250,7 +310,7 @@ const InstitutionRegistration = () => {
                             </select>
                         </div>   
                     </div>
-                    <div className="form-group">
+                    <div className="col-md-6 mt-5">
                         <button 
                             type="input"
                             className="btn btn-primary" 
