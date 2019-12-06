@@ -106,7 +106,7 @@ const Dashboard = () => {
 
         const interval = setInterval(() => {
             getTransactionsHistory();
-        }, 5000)
+        }, 60000)
 
         // Clearing autorefresh function when component unmounts
         return(() => {

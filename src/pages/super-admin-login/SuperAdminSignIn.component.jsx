@@ -39,7 +39,6 @@ const AdminSignIn = ({ history }) => {
                 timeout: FetchTimeOut
             })
             .then(response => {
-                // console.log(response.data)
                 setState({ ...state, isLoggingIn: false })
                 if (response.data.respCode === '00') {
                     setAuthenticationStatus(true)
