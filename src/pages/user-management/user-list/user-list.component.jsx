@@ -35,6 +35,7 @@ const UsersList = () => {
         })
         .then(result => {
             setIsLoading(false)
+            console.log(result)
             if(result.data.respCode === '00'){
                 setUsersList(result.data.respBody)
             } else {

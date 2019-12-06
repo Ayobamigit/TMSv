@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { useHistory } from 'react-router-dom';
 import Swal from '../../../constants/swal';
-import { allServiceProviders, getProfilesByServiceProviderId } from '../../../Utils/URLs';
+import { allServiceProviders, getProfilesByServiceProviderId, getInstitutionsUnderTerminal } from '../../../Utils/URLs';
 
 // Context for Authentication
 import { authContext } from '../../../Context/Authentication.context';
@@ -24,11 +24,50 @@ const DeviceRegistration = () => {
         serviceProvidersList: [],
         serviceProviderId: '',
         profilesList: [],
+        institutionsList: [],
+        institutionId: '',
         profileName: '',
         IsFetchingData: false
     });
 
     useEffect(() => {
+        //Get All institutions
+        axios({
+            url: `${getInstitutionsUnderTerminal}`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: {},
+            timeout: FetchTimeOut
+        })
+            .then(result => {
+            if(result.data.respCode === '00'){
+                setState( state => ({
+                    ...state,
+                    institutionsList: result.data.respBody
+                }))
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }
+            
+        })
+        .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
+
+        //Get Service Providers
         axios({
             url: `${allServiceProviders}`,
             method: 'get',
@@ -63,9 +102,12 @@ const DeviceRegistration = () => {
                 footer: 'Please contact support'
             })
         });
-    }, [])
+    }, [state.serviceProviderId])
 
     const getProfilesById = (id) => {
+        if(!id){
+            return;
+        }
         axios({
             url: `${getProfilesByServiceProviderId}`,
             method: 'post',
@@ -102,7 +144,7 @@ const DeviceRegistration = () => {
         });
     }
 
-    const onChange = (e) => {
+    const onChange = async (e) => {
         let name = e.target.name;
         let value = e.target.value;
         setState({...state, [e.target.name]: e.target.value})
@@ -112,17 +154,18 @@ const DeviceRegistration = () => {
     }
     const registerDevice = (e) => {
         e.preventDefault();
-        const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, serviceProviderId, profileName } = state;
+        const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, profileName, institutionId } = state;
         const reqBody = {
             terminalID,
             dateCreated: new Date(),
             terminalROMVersion,
             terminalSerialNo,
             terminalType,
-            institutionID: serviceProviderId,
+            institutionID: institutionId,
+            // institutionID: serviceProviderId,
             profileName
         }
-        if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === ''){
+        if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === '' || institutionId.trim() === ''){
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -184,7 +227,7 @@ const DeviceRegistration = () => {
     if(!isAuthenticated){
         history.push('/')
     }
-    const { IsFetchingData, serviceProviderId, profileName } = state;
+    const { IsFetchingData, serviceProviderId, profileName, institutionId } = state;
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -236,6 +279,26 @@ const DeviceRegistration = () => {
                                 required 
                             />
                         </div> 
+                        <div className="form-group">
+                            <p>Select Institution</p>
+                                <select className="custom-select" name="institutionId" value={institutionId} onChange={onChange} required >
+                                <option value="">Select Institution</option>
+                                {
+                                    state.institutionsList ? 
+                                    state.institutionsList.map((institution, i) => {
+                                        return(
+                                            <option 
+                                                value={institution.institutionID} 
+                                                key={i}
+                                            >
+                                                {institution.institutionName}
+                                            </option>
+                                        )
+                                    })
+                                    :null
+                                }
+                            </select>
+                        </div>
                         <div className="form-group">
                             <p>Choose Service Provider</p>
                                 <select className="custom-select" name="serviceProviderId" value={serviceProviderId} onChange={onChange} required >

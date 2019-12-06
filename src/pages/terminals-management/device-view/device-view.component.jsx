@@ -185,7 +185,7 @@ const DeviceView = () => {
                                     <option value="Topwise">Topwise</option>
                                 </select>
                             </div>
-                            <div className="form-group">
+                            {/* <div className="form-group">
                                 <p>Terminal Status</p>
                                 <select className="browser-default custom-select" name="terminalStatus" value={state.terminalStatus} onChange={onChange} required disabled={readOnly} >
                                     <option value="" disabled>Choose your option</option>                                
@@ -194,7 +194,7 @@ const DeviceView = () => {
                                     <option value="No Paper">No Paper</option>
                                     <option value="Network Malfunction">Network Malfunction</option>
                                 </select>
-                            </div>
+                            </div> */}
                             <div className="form-group">
                                 <p>Terminal Version</p>
                                 <input 

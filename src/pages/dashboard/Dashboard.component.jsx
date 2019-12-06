@@ -40,10 +40,10 @@ const Dashboard = () => {
         hasNextRecord: false
     })
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+    const { data, page, size, isLoading, toDate, fromDate } = state;
 
     useEffect(() => {
         const getTransactionsHistory = () => {
-            const { page, size, toDate, fromDate } = state;
             let reqBody = {
                 fromDate,
                 institutionID: "",
@@ -104,10 +104,15 @@ const Dashboard = () => {
 
         //Autorefresh Function 
 
-        setInterval(() => {
+        const interval = setInterval(() => {
             getTransactionsHistory();
-        }, 60000)
-    }, [state.page, state.size, authToken])
+        }, 5000)
+
+        // Clearing autorefresh function when component unmounts
+        return(() => {
+            clearInterval(interval)
+        })
+    }, [page, size, authToken, fromDate, toDate])
 
     const changeCurrentPage = (pageNumber) => {
         setState({
@@ -123,7 +128,6 @@ const Dashboard = () => {
     if(!isAuthenticated){
         history.push('/')
     }
-    const { data, page, size, isLoading } = state;
     const { totalCount } = transactionsList;
     return (
         <Layout>

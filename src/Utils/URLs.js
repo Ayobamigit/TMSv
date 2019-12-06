@@ -27,6 +27,7 @@ export const allInstitutions = `${baseUrl()}/api/v1/institution/institutions`;
 export const registerInstitutionURL = `${baseUrl()}/api/v1/institution`;
 export const viewAnInstitution = `${baseUrl()}/api/v1/institution`;
 export const getBanks = `${baseUrl()}/api/v1/serviceProviders/banks`;
+export const getInstitutionsUnderTerminal = `${baseUrl()}/api/v1/institution/institutionslist`;
 
 //Configurations
 export const allServiceProviders = `${baseUrl()}/api/v1/serviceProviders`;

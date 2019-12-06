@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TimeOut from '../constants/timeOut';
+import { Redirect } from 'react-router-dom';
 
 const withTimeout = (WrappedComponent) => {
     return class WithTimeOut extends Component {
@@ -37,6 +38,9 @@ const withTimeout = (WrappedComponent) => {
             this.setTimeout(); //End of Timeout handling
         }
         render(){
+            if (!sessionStorage.getItem('userDetails')){
+                return <Redirect to="/" />
+            }
             return (
                 <WrappedComponent />
             )

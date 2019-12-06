@@ -42,7 +42,6 @@ const InstitutionsList = () => {
             timeout: FetchTimeOut
         })
             .then(result => {
-                console.log(result)
             setIsLoading(false)
             if(result.data.respCode === '00'){
                 setInstitutionsList(result.data.respBody.transactions)

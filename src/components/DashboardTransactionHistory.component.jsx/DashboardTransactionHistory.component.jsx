@@ -29,7 +29,7 @@ export default function () {
                                 <NoResultFound />
                                 :
                                 transactions.map((transaction, i) => {
-                                    const { terminalID, amount, rrn, date, status } = transaction;
+                                    const { terminalID, amount, rrn, dateTime, status } = transaction;
                                     const statusClass = () => {
                                         if(status){
                                             if (status.toLowerCase() === 'success'){
@@ -46,7 +46,7 @@ export default function () {
                                             <td>{amount}</td>
                                             <td>{rrn}</td>
                                             <td><p className={statusClass()}>{status}</p></td>
-                                            <td>{date ? date.substring(0, 19) : null}</td>
+                                            <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
                                         </tr>
                                     )
                                 })
