@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
@@ -7,8 +7,6 @@ import Swal from '../../../constants/swal';
 
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 
-// Context for Authentication
-import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import Axios from 'axios';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
@@ -164,21 +162,17 @@ const InstitutionView = () => {
         }
     }
 
-    const { isAuthenticated } = useContext(authContext)
-    if(!isAuthenticated){
-        history.push('/')
-    }
     const { IsFetchingData } = state;
     if(isLoading){
         return <PreLoader />
     } else {
         return (
             <Layout>
-                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                     <h1 className="h2">Institution View</h1>
                     <button className="btn btn-sm btn-primary" onClick={editFields}>Edit Fields</button>
                 </div>
-                <div className="row">
+                <div className="row page-content">
                     <div className="col-md-12">
                     <form onSubmit={editInstitutionData}>
                         <div className="form-row">

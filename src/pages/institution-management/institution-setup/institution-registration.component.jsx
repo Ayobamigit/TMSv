@@ -1,11 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import Swal from '../../../constants/swal';
 import { registerInstitutionURL, allServiceProviders, getBanks } from '../../../Utils/URLs';
 import { useHistory } from 'react-router-dom';
 
 // Context for Authentication
-import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
@@ -195,135 +194,134 @@ const InstitutionRegistration = () => {
         }
     }
 
-    const { isAuthenticated } = useContext(authContext);
     const history = useHistory();
-    if(!isAuthenticated){
-        history.push('/')
-    }
+    
     const { IsFetchingData } = state;
     return (
         <Layout>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h2">Institution Registration</h1>
             </div>
-            <div className="row">
-                <div className="col-md-12">
-                <form onSubmit={registerInstitution}>
-                    <div className="form-row">
-                        <div className="col-md-6">
-                            <p>Name</p>
-                            <input 
-                                type="text" 
-                                value={state.institutionName}
-                                name="institutionName" 
-                                onChange={onChange}
-                                required 
-                                className="form-control" 
-                                placeholder="Institution Name" 
-                            />
+            <div className="page-content">
+                <div className="row">
+                    <div className="col-md-12">
+                    <form onSubmit={registerInstitution}>
+                        <div className="form-row">
+                            <div className="col-md-6">
+                                <p>Name</p>
+                                <input 
+                                    type="text" 
+                                    value={state.institutionName}
+                                    name="institutionName" 
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Institution Name" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Email</p>
+                                <input 
+                                    type="text" 
+                                    value={state.institutionEmail}
+                                    name="institutionEmail" 
+                                    onChange={onChange}
+                                    required                                 
+                                    className="form-control" 
+                                    placeholder="Institution Email" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Choose Settlement Bank</p>
+                                    <select className="custom-select" name="settlementBank" value={state.settlementBank} onChange={onChange} required >
+                                    <option value="">Select Settlement Bank</option>
+                                    {
+                                        state.banks ? 
+                                        state.banks.map((bank, i) => {
+                                            return(
+                                                <option 
+                                                    value={bank.bankName} 
+                                                    key={i}
+                                                >
+                                                    {bank.bankName}
+                                                </option>
+                                            )
+                                        })
+                                        :null
+                                    }
+                                </select>
+                            </div> 
+                            <div className="col-md-6">
+                                <p>Settlement Account Number</p>
+                                <input 
+                                    type="number" 
+                                    className="form-control" 
+                                    placeholder="Settlement Account Number" 
+                                    value={state.settlementAccount} 
+                                    name="settlementAccount"
+                                    onChange={onChange}                               
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Address</p>
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    placeholder="Institution Address" 
+                                    value={state.institutionAddress} 
+                                    name="institutionAddress"
+                                    onChange={onChange}
+                                    required                                
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Phone Number</p>
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    placeholder="Institution Phone"
+                                    value={state.institutionPhone} 
+                                    name="institutionPhone"
+                                    onChange={onChange}
+                                    required                                 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Choose Service Provider</p>
+                                    <select className="custom-select" name="serviceProvider" onChange={onChange} required >
+                                    <option value="">Select Service Provider</option>
+                                    {
+                                        state.serviceProvidersList ? 
+                                        state.serviceProvidersList.map((serviceProvider, i) => {
+                                            return(
+                                                <option 
+                                                    value={serviceProvider.id} 
+                                                    key={i}
+                                                >
+                                                    {serviceProvider.providerName}
+                                                </option>
+                                            )
+                                        })
+                                        :null
+                                    }
+                                </select>
+                            </div>   
                         </div>
-                        <div className="col-md-6">
-                            <p>Email</p>
-                            <input 
-                                type="text" 
-                                value={state.institutionEmail}
-                                name="institutionEmail" 
-                                onChange={onChange}
-                                required                                 
-                                className="form-control" 
-                                placeholder="Institution Email" 
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Choose Settlement Bank</p>
-                                <select className="custom-select" name="settlementBank" value={state.settlementBank} onChange={onChange} required >
-                                <option value="">Select Settlement Bank</option>
+                        <div className="col-md-12 mt-5 d-flex justify-content-end">
+                            <button 
+                                type="input"
+                                className="btn btn-primary" 
+                                disabled={IsFetchingData}
+                            >
                                 {
-                                    state.banks ? 
-                                    state.banks.map((bank, i) => {
-                                        return(
-                                            <option 
-                                                value={bank.bankName} 
-                                                key={i}
-                                            >
-                                                {bank.bankName}
-                                            </option>
-                                        )
-                                    })
-                                    :null
+                                    IsFetchingData ? <IsFetching /> : 'Create'
                                 }
-                            </select>
-                        </div> 
-                        <div className="col-md-6">
-                            <p>Settlement Account Number</p>
-                            <input 
-                                type="number" 
-                                className="form-control" 
-                                placeholder="Settlement Account Number" 
-                                value={state.settlementAccount} 
-                                name="settlementAccount"
-                                onChange={onChange}                               
-                            />
+                            </button>
                         </div>
-                        <div className="col-md-6">
-                            <p>Address</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Institution Address" 
-                                value={state.institutionAddress} 
-                                name="institutionAddress"
-                                onChange={onChange}
-                                required                                
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Phone Number</p>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Institution Phone"
-                                value={state.institutionPhone} 
-                                name="institutionPhone"
-                                onChange={onChange}
-                                required                                 
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <p>Choose Service Provider</p>
-                                <select className="custom-select" name="serviceProvider" onChange={onChange} required >
-                                <option value="">Select Service Provider</option>
-                                {
-                                    state.serviceProvidersList ? 
-                                    state.serviceProvidersList.map((serviceProvider, i) => {
-                                        return(
-                                            <option 
-                                                value={serviceProvider.id} 
-                                                key={i}
-                                            >
-                                                {serviceProvider.providerName}
-                                            </option>
-                                        )
-                                    })
-                                    :null
-                                }
-                            </select>
-                        </div>   
+                        
+                    </form>
+            
                     </div>
-                    <div className="col-md-6 mt-5">
-                        <button 
-                            type="input"
-                            className="btn btn-primary" 
-                            disabled={IsFetchingData}
-                        >
-                            {
-                                IsFetchingData ? <IsFetching /> : 'Create'
-                            }
-                        </button>
-                    </div>
-                    
-                </form>
-        
                 </div>
             </div>
         </Layout>

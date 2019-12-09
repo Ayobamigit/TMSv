@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 // import { useHttp } from '../../../CustomHooks/useHttp.hooks';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './TerminalsList.styles.scss';
 import {allTerminals} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
@@ -13,7 +13,6 @@ import PreLoader from '../../../components/PreLoader/Preloader.component';
 import NoResultFound from "../../../components/NoResultFound/NoResultfound";
 
 // Context for Authentication
-import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
 
@@ -70,12 +69,6 @@ const DeviceList = () => {
         });
     }, [state.page, state.size])
 
-    const { isAuthenticated } = useContext(authContext);
-    const history = useHistory();
-    if(!isAuthenticated){
-        history.push('/')
-    }
-
     const changeCurrentPage = (pageNumber) => {
         setState({
             ...state, 
@@ -90,54 +83,56 @@ const DeviceList = () => {
     } else {
         return (
             <Layout>
-                <div className="table-layout">
-                    <h3>List of Devices</h3>
-                    <div>
-                        <table className="table table-striped" id="table-to-xls">
-                            <thead>
-                                <tr>
-                                <th scope="col">S/N</th>
-                                <th scope="col">Terminal ID</th>
-                                <th scope="col">Terminal ROM Version</th>
-                                <th scope="col">Terminal Serial No</th>
-                                {/* <th scope="col">Terminal Status</th> */}
-                                <th scope="col">Terminal Type</th>
-                                <th scope="col">Date Created</th>
-                                <th scope="col">View</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    terminalsList.length === 0 ? 
-                                        <NoResultFound /> : 
-                                    terminalsList.map((terminal, index) => {
-                                        const { id, terminalID, terminalROMVersion, terminalSerialNo, terminalType, dateCreated } = terminal;
-                                        return (
-                                            <tr key={index}>
-                                                <th scope="row">{index+1}</th>
-                                                <td>{terminalID}</td>
-                                                <td>{terminalROMVersion}</td>
-                                                <td>{terminalSerialNo}</td>
-                                                {/* <td>{terminalStatus}</td> */}
-                                                <td>{terminalType}</td>
-                                                <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
-                                                <td>
-                                                    <Link to={`/device-list/${id}`}><i className="fa fa-eye"></i></Link>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                        <Pagination
-                            currentPage={page + 1}
-                            totalSize={totalCount}
-                            sizePerPage={size}
-                            changeCurrentPage={changeCurrentPage}
-                            numberOfPagesNextToActivePage={2}
-                            theme="bootstrap"
-                        />
+                <div className="page-content">
+                    <div className="table-layout">
+                        <h3>List of Devices</h3>
+                        <div>
+                            <table className="table table-striped" id="table-to-xls">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">S/N</th>
+                                    <th scope="col">Terminal ID</th>
+                                    <th scope="col">Terminal ROM Version</th>
+                                    <th scope="col">Terminal Serial No</th>
+                                    {/* <th scope="col">Terminal Status</th> */}
+                                    <th scope="col">Terminal Type</th>
+                                    <th scope="col">Date Created</th>
+                                    <th scope="col">View</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        terminalsList.length === 0 ? 
+                                            <NoResultFound /> : 
+                                        terminalsList.map((terminal, index) => {
+                                            const { id, terminalID, terminalROMVersion, terminalSerialNo, terminalType, dateCreated } = terminal;
+                                            return (
+                                                <tr key={index}>
+                                                    <th scope="row">{index+1}</th>
+                                                    <td>{terminalID}</td>
+                                                    <td>{terminalROMVersion}</td>
+                                                    <td>{terminalSerialNo}</td>
+                                                    {/* <td>{terminalStatus}</td> */}
+                                                    <td>{terminalType}</td>
+                                                    <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
+                                                    <td>
+                                                        <Link to={`/device-list/${id}`}><i className="fa fa-eye"></i></Link>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                            <Pagination
+                                currentPage={page + 1}
+                                totalSize={totalCount}
+                                sizePerPage={size}
+                                changeCurrentPage={changeCurrentPage}
+                                numberOfPagesNextToActivePage={2}
+                                theme="bootstrap"
+                            />
+                        </div>
                     </div>
                 </div>
             </Layout>

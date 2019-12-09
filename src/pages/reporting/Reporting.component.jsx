@@ -1,10 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
-import { useHistory } from 'react-router-dom';
 import './Reporting.styles.scss';
 
-// Context for Authentication
-import { authContext } from '../../Context/Authentication.context';
 import Layout from '../../components/Layout/layout.component';
 
 import Pagination from "react-pagination-js";
@@ -95,20 +92,13 @@ const Reporting = () => {
 
         const interval = setInterval(() => {
             getTransactionsHistory();
-        }, 60000)
+        }, 30000)
 
         // Clearing autorefresh function when component unmounts
         return(() => {
             clearInterval(interval)
         })
     }, [page, size, authToken, fromDate, toDate])
-
-
-    const { isAuthenticated } = useContext(authContext);
-    const history = useHistory();
-    if(!isAuthenticated){
-        history.push('/')
-    }
 
     const changeCurrentPage = (pageNumber) => {
         setState({
@@ -119,7 +109,7 @@ const Reporting = () => {
 
     return (
         <Layout>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h2">Reporting</h1>
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <div className="btn-group mr-2">
@@ -134,63 +124,65 @@ const Reporting = () => {
                     </div>
                 </div>
             </div>
-            <div className="table-layout">
-            <h3>All Transactions</h3>
-            <div>
-                    <table className="table table-striped" id="table-to-xls">
-                        <thead>
-                            <tr>
-                            <th scope="col">S/N</th>
-                            <th scope="col">Terminal Id</th>
-                            <th scope="col">Institution Id</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Tran Id</th>
-                            <th scope="col">STAN</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Date and Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { 
-                                transactions.length === 0 ? 
-                                <NoResultFound />
-                                :
-                                transactions.map((transaction, i) => {
-                                    const { terminalID, amount, rrn, dateTime, status, stan, institutionID } = transaction;
-                                    const statusClass = () => {
-                                        if(status){
-                                            if (status.toLowerCase() === 'success'){
-                                                return 'success'
-                                            } else {
-                                                return 'failed'
+            <div className="page-content">
+                <div className="table-layout">
+                    <h3>All Transactions</h3>
+                    <div>
+                            <table className="table table-striped" id="table-to-xls">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">S/N</th>
+                                    <th scope="col">Terminal Id</th>
+                                    <th scope="col">Institution Id</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Tran Id</th>
+                                    <th scope="col">STAN</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date and Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { 
+                                        transactions.length === 0 ? 
+                                        <NoResultFound />
+                                        :
+                                        transactions.map((transaction, i) => {
+                                            const { terminalID, amount, rrn, dateTime, status, stan, institutionID } = transaction;
+                                            const statusClass = () => {
+                                                if(status){
+                                                    if (status.toLowerCase() === 'success'){
+                                                        return 'success'
+                                                    } else {
+                                                        return 'failed'
+                                                    }
+                                                }
                                             }
-                                        }
+                                            return (
+                                                <tr key={i}>
+                                                    <th scope="row">{i+1}</th>
+                                                    <td>{terminalID}</td>
+                                                    <td>{institutionID}</td>
+                                                    <td>{amount}</td>
+                                                    <td>{rrn}</td>
+                                                    <td>{stan}</td>
+                                                    <td><p className={statusClass()}>{status}</p></td>
+                                                    <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
+                                                </tr>
+                                            )
+                                        })
                                     }
-                                    return (
-                                        <tr key={i}>
-                                            <th scope="row">{i+1}</th>
-                                            <td>{terminalID}</td>
-                                            <td>{institutionID}</td>
-                                            <td>{amount}</td>
-                                            <td>{rrn}</td>
-                                            <td>{stan}</td>
-                                            <td><p className={statusClass()}>{status}</p></td>
-                                            <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
-                    </table>
-                    <Pagination
-                        currentPage={page + 1}
-                        totalSize={totalCount}
-                        sizePerPage={size}
-                        changeCurrentPage={changeCurrentPage}
-                        numberOfPagesNextToActivePage={2}
-                        theme="bootstrap"
-                    />
-            </div>
+                                </tbody>
+                            </table>
+                            <Pagination
+                                currentPage={page + 1}
+                                totalSize={totalCount}
+                                sizePerPage={size}
+                                changeCurrentPage={changeCurrentPage}
+                                numberOfPagesNextToActivePage={2}
+                                theme="bootstrap"
+                            />
+                    </div>
+                </div>
             </div>
         </Layout>
     )

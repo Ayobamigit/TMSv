@@ -2,10 +2,11 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 8px;
+    padding: 20px;
     background: linear-gradient(135deg, #007BFF, #262A62); 
     background-size: 200% 200%;
     animation: gradientBG 5s ease infinite;
+    color: #ffffff;
 
     &:hover {
         transform: scale(1.02);
@@ -25,11 +26,5 @@
         }
     }
 
-    .values {
-        color: #FFFFFF;
-    }
-    .titles{
-        font-weight: bolder;
-        color: #FFFFFF;
-    }
+    
 }

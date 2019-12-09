@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import { DashboardContext } from '../../pages/dashboard/Dashboard.component';
 
 export default function ChartFrame() {
@@ -29,7 +29,7 @@ export default function ChartFrame() {
             ]
         }
     return (
-        <Bar
+        <Doughnut
             data={data}
             options={{
                 // type: 'horizontal-bar',
@@ -40,8 +40,8 @@ export default function ChartFrame() {
                 },
                 maintainAspectRatio: false,
                 legend:{
-                    display: false,
-                    // position: 'bottom'
+                    display: true,
+                    position: 'bottom'
                 }
             }}
         />

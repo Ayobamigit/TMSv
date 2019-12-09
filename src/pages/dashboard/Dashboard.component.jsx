@@ -1,7 +1,6 @@
-import React, { useContext, useState, createContext, useEffect } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import './Dashboard.styles.scss';
-import { useHistory } from 'react-router-dom';
 import Layout from '../../components/Layout/layout.component';
 import Chart from '../../components/Chart/Chart.component';
 import axios from 'axios';
@@ -11,7 +10,6 @@ import DashboardCardsList from '../../components/DashboardCardsList/DashboardCar
 import DashboardTransactionHistoryComponent from '../../components/DashboardTransactionHistory.component.jsx/DashboardTransactionHistory.component';
 
 // Context for Authentication
-import { authContext } from '../../Context/Authentication.context';
 import { FetchTimeOut } from '../../Utils/FetchTimeout';
 import { transactionsHistoryURL } from '../../Utils/URLs';
 
@@ -29,7 +27,7 @@ const Dashboard = () => {
         },
         isLoading: false,
         page: 0,
-        size: 5,
+        size: 10,
         fromDate: '',
         toDate: ''
     })
@@ -106,7 +104,7 @@ const Dashboard = () => {
 
         const interval = setInterval(() => {
             getTransactionsHistory();
-        }, 60000)
+        }, 30000)
 
         // Clearing autorefresh function when component unmounts
         return(() => {
@@ -121,17 +119,13 @@ const Dashboard = () => {
         })
     }
 
-    const history = useHistory();
-    const { isAuthenticated } = useContext(authContext)
+    
     const customFileName = `tms-dashboard-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
     
-    if(!isAuthenticated){
-        history.push('/')
-    }
     const { totalCount } = transactionsList;
     return (
         <Layout>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h2">Dashboard</h1>
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <div className="btn-group mr-2">
@@ -146,25 +140,27 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <DashboardContext.Provider value={{
-                data,
-                transactionsList,
-                isLoading,
-                page,
-                totalCount,
-                size,
-                changeCurrentPage
-            }}>
-                <div id="alignChartAndCards">
-                    <div id="chart">
-                        <Chart />  
+            <div className="page-content mt-5">
+                <DashboardContext.Provider value={{
+                    data,
+                    transactionsList,
+                    isLoading,
+                    page,
+                    totalCount,
+                    size,
+                    changeCurrentPage
+                }}>
+                    <div id="alignChartAndCards">
+                        <div id="chart">
+                            <Chart />  
+                        </div>
+                        <div>
+                            <DashboardCardsList />
+                        </div>
                     </div>
-                    <div>
-                        <DashboardCardsList />
-                    </div>
-                </div>
-                <DashboardTransactionHistoryComponent />
-            </DashboardContext.Provider>
+                    <DashboardTransactionHistoryComponent />
+                </DashboardContext.Provider>
+            </div>
         </Layout>
     )
 }

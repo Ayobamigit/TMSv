@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
 import {allInstitutions} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import Pagination from "react-pagination-js";
 import "react-pagination-js/dist/styles.css";
-
-// Context for Authentication
-import { authContext } from '../../../Context/Authentication.context';
 
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Layout from '../../../components/Layout/layout.component';
@@ -70,11 +67,6 @@ const InstitutionsList = () => {
         });
     }, [state.page, state.size])
 
-    const { isAuthenticated } = useContext(authContext);
-    const history = useHistory();
-    if(!isAuthenticated){
-        history.push('/')
-    }
     const changeCurrentPage = (pageNumber) => {
         setState({
             ...state, 
@@ -88,58 +80,60 @@ const InstitutionsList = () => {
     } else {
         return (
             <Layout>
-                <div className="table-layout">
-                    <h3>List of Institutions</h3>
-                    <div>
-                        <table className="table table-striped" id="table-to-xls">
-                            <thead>
-                                <tr>
-                                <th scope="col">S/N</th>
-                                <th scope="col">Institution Name</th>
-                                <th scope="col">Institution Email</th>
-                                <th scope="col">Institution ID</th>
-                                <th scope="col">Settlement Account</th> 
-                                <th scope="col">Institution Phone</th>                                               
-                                <th scope="col">Created By</th>
-                                <th scope="col">Date Created</th>
-                                <th scope="col">View</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    institutionsList.length === 0 ?
-                                        <NoResultFound /> :
-                                    institutionsList.map((institution, index) => {
-                                        const { 
-                                            id,institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated
-                                        } = institution;
-                                        return (
-                                            <tr key={index}>
-                                                <th scope="row">{index+1}</th>
-                                                <td>{institutionName}</td>
-                                                <td>{institutionEmail}</td>
-                                                <td>{institutionID}</td>
-                                                <td>{settlementAccount}</td>
-                                                <td>{institutionPhone}</td>
-                                                <td>{createdBy}</td>
-                                                <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
-                                                <td>
-                                                    <Link to={`/institution-list/${id}`}><i className="fa fa-eye"></i></Link>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                        <Pagination
-                            currentPage={page + 1}
-                            totalSize={totalCount}
-                            sizePerPage={size}
-                            changeCurrentPage={changeCurrentPage}
-                            numberOfPagesNextToActivePage={2}
-                            theme="bootstrap"
-                        />
+                <div className="page-content">
+                    <div className="table-layout">
+                        <h3>List of Institutions</h3>
+                        <div>
+                            <table className="table table-striped" id="table-to-xls">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">S/N</th>
+                                    <th scope="col">Institution Name</th>
+                                    <th scope="col">Institution Email</th>
+                                    <th scope="col">Institution ID</th>
+                                    <th scope="col">Settlement Account</th> 
+                                    <th scope="col">Institution Phone</th>                                               
+                                    <th scope="col">Created By</th>
+                                    <th scope="col">Date Created</th>
+                                    <th scope="col">View</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        institutionsList.length === 0 ?
+                                            <NoResultFound /> :
+                                        institutionsList.map((institution, index) => {
+                                            const { 
+                                                id,institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated
+                                            } = institution;
+                                            return (
+                                                <tr key={index}>
+                                                    <th scope="row">{index+1}</th>
+                                                    <td>{institutionName}</td>
+                                                    <td>{institutionEmail}</td>
+                                                    <td>{institutionID}</td>
+                                                    <td>{settlementAccount}</td>
+                                                    <td>{institutionPhone}</td>
+                                                    <td>{createdBy}</td>
+                                                    <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
+                                                    <td>
+                                                        <Link to={`/institution-list/${id}`}><i className="fa fa-eye"></i></Link>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                            <Pagination
+                                currentPage={page + 1}
+                                totalSize={totalCount}
+                                sizePerPage={size}
+                                changeCurrentPage={changeCurrentPage}
+                                numberOfPagesNextToActivePage={2}
+                                theme="bootstrap"
+                            />
+                        </div>
                     </div>
                 </div>
             </Layout>

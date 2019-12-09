@@ -1,13 +1,7 @@
 const baseUrl = () => {
-    if (process.env.NODE_ENV === 'production') {
-        // return 'http://10.9.8.102:7070'; //Josh's Local
-        return 'http://10.2.2.47:5334'; //Test IP
-        // return 'http://41.219.149.51:5334'; //Public IP
-    } else {
-        // return 'http://10.9.8.102:7070'; //Josh's Local
-        return 'http://10.2.2.47:5334'; //Test IP
-        // return 'http://41.219.149.51:5334'; //Public IP
-    }
+    // return 'http://10.9.8.102:7070'; //Josh's Local
+    return 'http://10.2.2.47:5334'; //Test IP
+    // return 'http://10.9.8.63:5334'; //Public IP
 }
  
 export const institutionLoginUrl = `${baseUrl()}/api/v1/login`;
@@ -23,11 +17,10 @@ export const uploadTerminalsURL = `${baseUrl()}/api/v1/tms/upload`;
 export const viewATerminal = `${baseUrl()}/api/v1/tms`;
 
 //Institution Management
-export const allInstitutions = `${baseUrl()}/api/v1/institution/institutions`;
 export const registerInstitutionURL = `${baseUrl()}/api/v1/institution`;
 export const viewAnInstitution = `${baseUrl()}/api/v1/institution`;
 export const getBanks = `${baseUrl()}/api/v1/serviceProviders/banks`;
-export const getInstitutionsUnderTerminal = `${baseUrl()}/api/v1/institution/institutionslist`;
+export const allInstitutions = `${baseUrl()}/api/v1/institution/institutionslist`;
 
 //Configurations
 export const allServiceProviders = `${baseUrl()}/api/v1/serviceProviders`;

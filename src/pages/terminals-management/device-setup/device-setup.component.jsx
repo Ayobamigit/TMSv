@@ -1,19 +1,16 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { useHistory } from 'react-router-dom';
 import Swal from '../../../constants/swal';
-import { allServiceProviders, getProfilesByServiceProviderId, getInstitutionsUnderTerminal } from '../../../Utils/URLs';
+import { allServiceProviders, getProfilesByServiceProviderId, allInstitutions } from '../../../Utils/URLs';
 
 // Context for Authentication
-import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import { registerTerminalURL } from '../../../Utils/URLs';
 import FileUploadModal from './file-upload.component';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
-
-const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
 const DeviceRegistration = () => {
     const [state, setState ] =  useState({
@@ -30,10 +27,12 @@ const DeviceRegistration = () => {
         IsFetchingData: false
     });
 
+    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+
     useEffect(() => {
         //Get All institutions
         axios({
-            url: `${getInstitutionsUnderTerminal}`,
+            url: `${allInstitutions}`,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -102,7 +101,7 @@ const DeviceRegistration = () => {
                 footer: 'Please contact support'
             })
         });
-    }, [state.serviceProviderId])
+    }, [state.serviceProviderId, authToken])
 
     const getProfilesById = (id) => {
         if(!id){
@@ -221,22 +220,18 @@ const DeviceRegistration = () => {
             });
         }
     }
-
-    const { isAuthenticated } = useContext(authContext);
     const history = useHistory();
-    if(!isAuthenticated){
-        history.push('/')
-    }
+    
     const { IsFetchingData, serviceProviderId, profileName, institutionId } = state;
     return (
         <Layout>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h2">Terminals Registration</h1>
                 <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
                     Upload Excel
                 </button>
             </div>
-            <div className="row">
+            <div className="row page-content">
                 <div className="col-md-6">
                     <form onSubmit={registerDevice}>
                         <div className="form-group">
@@ -341,7 +336,7 @@ const DeviceRegistration = () => {
                             </select>
                         </div>
                         }               
-                        <div className="form-group">
+                        <div className="form-group d-flex justify-content-end">
                             <button 
                                 type="input"
                                 className="btn btn-primary" 

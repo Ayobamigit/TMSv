@@ -131,11 +131,11 @@ const ViewProfile = () => {
     const { profilePort, profileName, profileIP, profileZPK, isLoading } = state;
     return (
         <Layout>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h2">Profile View</h1>
                 <button className="btn btn-sm btn-primary" onClick={editFields}>Edit Fields</button>
             </div>
-            <div className="row">
+            <div className="row page-content">
                 <div className="col-md-6">
                     <form onSubmit={updateProfile}>
                         <div className="form-row">

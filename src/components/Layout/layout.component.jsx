@@ -1,7 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import './layout.styles.scss';
-
-import Header from '../Header/header.component';
 import Sidebar from '../Sidebar/sidebar.component';
 
 export default function Layout ({ children }) {
@@ -32,9 +30,10 @@ export default function Layout ({ children }) {
   const toggleSidebar = () => {
     setSidebar(!sidebar);
   }
+ 
   return (
     <React.Fragment>
-      <Header /> 
+      {/* <Header />  */}
       <div id="wrapper">
         <div style={{display:'none'}} id="mySidebar">
           <Sidebar />           

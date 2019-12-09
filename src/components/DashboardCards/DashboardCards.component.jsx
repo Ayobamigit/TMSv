@@ -3,9 +3,9 @@ import './DashboardCards.styles.scss';
 
 export default function ( { name, value}) {
     return (
-        <div className="card">
-            <h6 className="titles"> {name} </h6>
-            <h6 className="values"> {value} </h6>
+        <div className="card">            
+            <h4 className="values"> {value} </h4>
+            <small className="titles"> {name} </small>
         </div>
     )
 }

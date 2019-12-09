@@ -1,15 +1,26 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 import './sidebar.styles.scss';
+import Logo from '../../img/3linewhite.png';
+import { authContext } from '../../Context/Authentication.context';
 
 const Sidebar = () => {
-  const active = { fontWeight: 'bold', fontSize: '1.2', color: '#ff3547' }
+  const { setAuthenticationStatus } = useContext(authContext)
+    const logout = () => {
+        setAuthenticationStatus(false);
+        sessionStorage.clear();
+    }
     return (
       <React.Fragment>
+        <div className="logo-background">
+          <Link to="/dashboard">
+            <img src={Logo} alt="3Line Logo" width="72" height="auto" />
+          </Link>
+        </div>
         <ul className="list-unstyled components">             
           {/* Dashboard */}
           <li>
-            <NavLink className="nav-link" to="/dashboard" activeStyle={active}>
+            <NavLink className="nav-link" to="/dashboard" activeClassName="selected">
               <i className="fa fa-home"></i>
               <span>Dashboard</span>
             </NavLink>
@@ -25,12 +36,12 @@ const Sidebar = () => {
             </div>
             <ul className="collapse list-unstyled nav-link" id="userSubmenu">
               <li>
-                <NavLink to="/user-setup" activeStyle={active}>
+                <NavLink to="/user-setup" activeClassName="selected">
                   Register a User
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/user-list" activeStyle={active}>
+                <NavLink to="/user-list" activeClassName="selected">
                   View all Users  
                 </NavLink>
               </li>
@@ -47,12 +58,12 @@ const Sidebar = () => {
             </div>
             <ul className="collapse list-unstyled nav-link" id="deviceSubmenu">
               <li>
-                <NavLink to="/device-setup" activeStyle={active}>
+                <NavLink to="/device-setup" activeClassName="selected">
                   Register a Terminal
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/device-list" activeStyle={active}>
+                <NavLink to="/device-list" activeClassName="selected">
                   View all Terminals  
                 </NavLink>
               </li>
@@ -69,12 +80,12 @@ const Sidebar = () => {
             </div>
             <ul className="collapse list-unstyled nav-link" id="institutionSubmenu">
               <li>
-                <NavLink to="/institution-setup" activeStyle={active}>
+                <NavLink to="/institution-setup" activeClassName="selected">
                   Register an Institution
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/institution-list" activeStyle={active}>
+                <NavLink to="/institution-list" activeClassName="selected">
                   View all Instistutions  
                 </NavLink>
               </li>
@@ -83,7 +94,7 @@ const Sidebar = () => {
           
           {/*  Reporting */}
           <li>
-            <NavLink className="nav-link" to="/reporting" activeStyle={active}>
+            <NavLink className="nav-link" to="/reporting" activeClassName="selected">
               <i className="fa fa-book"></i>
               <span>Reporting</span>
             </NavLink>
@@ -91,7 +102,7 @@ const Sidebar = () => {
           
           {/*  Products */}
           <li>
-            <NavLink className="nav-link" to="/audit" activeStyle={active}>
+            <NavLink className="nav-link" to="/audit" activeClassName="selected">
               <i className="fa fa-file"></i>
               <span>Audit</span>
             </NavLink>
@@ -99,9 +110,17 @@ const Sidebar = () => {
 
           {/*  Configurations */}
           <li>
-            <NavLink className="nav-link" to="/configuration" activeStyle={active}>
+            <NavLink className="nav-link" to="/configuration" activeClassName="selected">
               <i className="fa fa-cog"></i>
               <span>Configuration</span>
+            </NavLink>
+          </li>
+
+          {/* { Logout } */}
+          <li>
+            <NavLink className="nav-link" to="/" onClick={logout}>
+              <i className="fa fa-sign-out"></i>
+              <span>Logout</span>
             </NavLink>
           </li>
         </ul>     

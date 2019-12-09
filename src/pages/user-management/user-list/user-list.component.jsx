@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 // import { useHttp } from '../../../CustomHooks/useHttp.hooks';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './user-list.styles.scss';
 import {superAdminGetAllUsers} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
@@ -11,17 +11,15 @@ import PreLoader from '../../../components/PreLoader/Preloader.component';
 import NoResultFound from "../../../components/NoResultFound/NoResultfound";
 import DeleteModal from './delete-user.component';
 
-// Context for Authentication
-import { authContext } from '../../../Context/Authentication.context';
 import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
-
-const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const UsersList = () => {
     const [usersList, setUsersList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     const [ idToDelete, setIdToDelete] = useState('')
+    const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+
     useEffect(() => {
         axios({
             url: `${superAdminGetAllUsers}`,
@@ -55,68 +53,64 @@ const UsersList = () => {
                 footer: 'Please contact support'
             })
         });
-    }, [])
-
-    const { isAuthenticated } = useContext(authContext);
-    const history = useHistory();
-    if(!isAuthenticated){
-        history.push('/')
-    }
+    }, [authToken])
 
     if(isLoading){
         return <PreLoader />
     } else {
         return (
             <Layout>
-                <div className="table-layout">
-                    <h3>List of Users</h3>
-                    <div>
-                        <table className="table table-striped" id="table-to-xls">
-                            <thead>
-                                <tr>
-                                    <th scope="col">S/N</th>
-                                    <th scope="col">First Name</th>
-                                    <th scope="col">Last Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Institution</th>
-                                    <th scope="col">Role</th>
-                                    <th scope="col">Date Created</th>
-                                    <th scope="col">View</th>
-                                    <th scope="col">Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    usersList.length === 0 ? 
-                                        <NoResultFound /> : 
-                                        usersList.map((terminal, index) => {
-                                            const { id, firstname, lastname, email, username, institution, role, datecreated } = terminal;
-                                            return (
-                                                <tr key={index}>
-                                                    <th scope="row">{index+1}</th>
-                                                    <td>{firstname}</td>
-                                                    <td>{lastname}</td>
-                                                    <td>{email}</td>
-                                                    <td>{username}</td>
-                                                    <td>{institution ? institution.institutionName : null}</td>
-                                                    <td>{role}</td>
-                                                    <td>{datecreated ? datecreated.substring(0,19) : null}</td>
-                                                    <td>
-                                                        <Link to={`/user/${id}`}><i className="fa fa-eye"></i></Link>
-                                                    </td>
-                                                    <td>
-                                                        <i className="fa fa-trash" data-toggle="modal" onClick={() => setIdToDelete(id)} data-target="#deleteModal"></i>
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })
-                                }
-                            </tbody>
-                        </table>
+                <div className="page-content">
+                    <div className="table-layout">
+                        <h3>List of Users</h3>
+                        <div>
+                            <table className="table table-striped" id="table-to-xls">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">S/N</th>
+                                        <th scope="col">First Name</th>
+                                        <th scope="col">Last Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Institution</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col">Date Created</th>
+                                        <th scope="col">View</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        usersList.length === 0 ? 
+                                            <NoResultFound /> : 
+                                            usersList.map((terminal, index) => {
+                                                const { id, firstname, lastname, email, username, institution, role, datecreated } = terminal;
+                                                return (
+                                                    <tr key={index}>
+                                                        <th scope="row">{index+1}</th>
+                                                        <td>{firstname}</td>
+                                                        <td>{lastname}</td>
+                                                        <td>{email}</td>
+                                                        <td>{username}</td>
+                                                        <td>{institution ? institution.institutionName : null}</td>
+                                                        <td>{role}</td>
+                                                        <td>{datecreated ? datecreated.substring(0,19) : null}</td>
+                                                        <td>
+                                                            <Link to={`/user/${id}`}><i className="fa fa-eye"></i></Link>
+                                                        </td>
+                                                        <td>
+                                                            <i className="fa fa-trash" data-toggle="modal" onClick={() => setIdToDelete(id)} data-target="#deleteModal"></i>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    <DeleteModal id={idToDelete} />
                 </div>
-                <DeleteModal id={idToDelete} />
             </Layout>
         )
     }

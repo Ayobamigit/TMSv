@@ -8,7 +8,7 @@ import NoResultFound from '../NoResultFound/NoResultfound';
 export default function () {
     const { transactionsList: { transactions }, page, totalCount, size, changeCurrentPage } = useContext(DashboardContext);
         return (
-            <div className="table-layout">
+            <div className="table-layout overflow-auto">
             <h3>Recent Transactions</h3>
             <div>
                     <table className="table table-striped" id="table-to-xls">
