@@ -20,6 +20,7 @@ const InstitutionsList = lazy(() => import('./pages/institution-management/insti
 const InstitutionList = lazy(() => import('./pages/institution-management/institution-view/institution-view.component'));
 
 const ReportingComponent = lazy(() => import('./pages/reporting/Reporting.component'));
+const ReportTransactionDetails = lazy(() => import('./pages/reporting/ReportTransactionDetails/ReportTransactionDetails.component'));
 const AuditComponent = lazy (() => import('./pages/audit/Audit.component'));
 const ConfigurationComponent = lazy (() => import('./pages/configuration/configuration-list/configuration.component'));
 const ViewServiceProvider = lazy (() => import('./pages/configuration/view-service-provider/view-service-provider.component'));
@@ -47,6 +48,8 @@ function App() {
               <Route exact path="/institution-list/:id" component={InstitutionList} />
 
               <Route exact path="/reporting" component={ReportingComponent} />
+              <Route exact path="/reporting/:id" component={ReportTransactionDetails} />
+
               <Route exact path="/audit" component={AuditComponent} />
               <Route exact path="/configuration" component={ConfigurationComponent} />
               <Route exact path="/configuration/:id" component={ViewServiceProvider} /> 

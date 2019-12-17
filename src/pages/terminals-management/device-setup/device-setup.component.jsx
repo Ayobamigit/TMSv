@@ -3,6 +3,7 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { useHistory } from 'react-router-dom';
 import Swal from '../../../constants/swal';
 import { allServiceProviders, getProfilesByServiceProviderId, allInstitutions } from '../../../Utils/URLs';
+import './device-setup.styles.scss';
 
 // Context for Authentication
 import Layout from '../../../components/Layout/layout.component';
@@ -14,7 +15,7 @@ import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const DeviceRegistration = () => {
     const [state, setState ] =  useState({
-        terminalID: '2058',
+        terminalID: '2',
         terminalType: '',
         terminalROMVersion: '',
         terminalSerialNo: '',
@@ -27,6 +28,7 @@ const DeviceRegistration = () => {
         IsFetchingData: false
     });
 
+    const history = useHistory();
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
 
     useEffect(() => {
@@ -54,8 +56,7 @@ const DeviceRegistration = () => {
                     text: `${result.data.respDescription}`,
                     footer: 'Please contact support'
                 })
-            }
-            
+            }            
         })
         .catch(err => {
             Swal.fire({
@@ -220,7 +221,6 @@ const DeviceRegistration = () => {
             });
         }
     }
-    const history = useHistory();
     
     const { IsFetchingData, serviceProviderId, profileName, institutionId } = state;
     return (
@@ -296,7 +296,7 @@ const DeviceRegistration = () => {
                         </div>
                         <div className="form-group">
                             <p>Choose Service Provider</p>
-                                <select className="custom-select" name="serviceProviderId" value={serviceProviderId} onChange={onChange} required >
+                            <select className="custom-select" name="serviceProviderId" value={serviceProviderId} onChange={onChange} required >
                                 <option value="">Select Service Provider</option>
                                 {
                                     state.serviceProvidersList ? 

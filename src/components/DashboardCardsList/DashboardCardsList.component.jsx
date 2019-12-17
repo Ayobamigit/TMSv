@@ -4,32 +4,32 @@ import './DashboardCardsList.styles.scss';
 import { DashboardContext } from "../../pages/dashboard/Dashboard.component";
 
 export default function () {
-    const { data: {activeDevices, inactiveDevices, transfers, deposits, withdrawals, billPayments} } = useContext(DashboardContext);
+    const { data: {withdrawals, totalSuccessfulAmount, totalTransactions, failed, success, institutions} } = useContext(DashboardContext);
     return (
         <div className="cards-list">
             <DashboardCards
-                name="Active Devices"
-                value={activeDevices}
+                name="Number of Transactions"
+                value={totalTransactions}
             />
 
             <DashboardCards
-                name="Inactive Devices"
-                value={inactiveDevices}
+                name="Transactions Value"
+                value={totalSuccessfulAmount}
             />
 
             <DashboardCards
-                name="Bill Payments"
-                value={billPayments}
+                name="Successful Transactions"
+                value={success}
             />
 
             <DashboardCards
-                name="Deposits"
-                value={deposits}
+                name="Failed Transactions"
+                value={failed}
             />
 
             <DashboardCards
-                name="Transfers"
-                value={transfers}
+                name="Number of Institutions"
+                value={institutions}
             />
 
             <DashboardCards

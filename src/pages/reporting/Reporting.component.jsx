@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import './Reporting.styles.scss';
+import { useHistory } from 'react-router-dom';
 
 import Layout from '../../components/Layout/layout.component';
 
@@ -12,6 +13,7 @@ import Swal from '../../constants/swal';
 import { FetchTimeOut } from '../../Utils/FetchTimeout';
 import { transactionsHistoryURL } from '../../Utils/URLs';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import IsLoadingData from '../../components/isLoadingData/isLoadingData';
 
 const Reporting = () => {
     const [state, setState] = useState({
@@ -23,8 +25,28 @@ const Reporting = () => {
         toDate: '',
         hasNextRecord: false
     })
-
-    const { transactions, totalCount, page, size, fromDate, toDate } = state;
+    const [searchValues, setSearchValues] = useState({
+        terminalID: '',
+        statusCode: '',
+        tranID: '',
+        status: ''
+    })
+    const onChange = (e) => {
+        if(e.target.name === 'size'){
+            setState({
+                ...state,
+                size: e.target.value
+            })
+            return;
+        }
+        setSearchValues({
+            ...searchValues,
+            [e.target.name] : e.target.value
+        })
+    }
+    const history= useHistory();
+    const { totalCount, page, size, fromDate, toDate, isLoading } = state;
+    let { transactions } = state;
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
     const customFileName = `tms-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
 
@@ -90,14 +112,14 @@ const Reporting = () => {
 
         //Autorefresh Function 
 
-        const interval = setInterval(() => {
-            getTransactionsHistory();
-        }, 30000)
+        // const interval = setInterval(() => {
+        //     getTransactionsHistory();
+        // }, 30000)
 
         // Clearing autorefresh function when component unmounts
-        return(() => {
-            clearInterval(interval)
-        })
+        // return(() => {
+        //     clearInterval(interval)
+        // })
     }, [page, size, authToken, fromDate, toDate])
 
     const changeCurrentPage = (pageNumber) => {
@@ -106,6 +128,30 @@ const Reporting = () => {
             page: pageNumber - 1
         })
     }
+
+    //Filter by Terminal ID
+    transactions = transactions.filter(transaction => {
+        return (transaction.terminalID.toLowerCase()).includes(searchValues.terminalID.toLowerCase())
+    });
+
+    //Filter by Tran ID and RRN
+    transactions = transactions.filter(transaction => {
+        return (transaction.rrn.toLowerCase()).includes(searchValues.tranID.toLowerCase())
+    });
+
+    //Filter by Status Code
+    transactions = transactions.filter(transaction => {
+        return (transaction.responseCode.toLowerCase()).includes(searchValues.statusCode.toLowerCase())
+    });
+
+    // //Filter by Status 
+    transactions = transactions.filter(transaction => {
+        if(transaction.status){
+            return (transaction.status.toLowerCase()).includes(searchValues.status.toLowerCase())
+        } else {
+            return transaction;
+        }
+    });
 
     return (
         <Layout>
@@ -127,60 +173,95 @@ const Reporting = () => {
             <div className="page-content">
                 <div className="table-layout">
                     <h3>All Transactions</h3>
-                    <div>
-                            <table className="table table-striped" id="table-to-xls">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">S/N</th>
-                                    <th scope="col">Terminal Id</th>
-                                    <th scope="col">Institution Id</th>
-                                    <th scope="col">Amount</th>
-                                    <th scope="col">Tran Id</th>
-                                    <th scope="col">STAN</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Date and Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    { 
-                                        transactions.length === 0 ? 
-                                        <NoResultFound />
-                                        :
-                                        transactions.map((transaction, i) => {
-                                            const { terminalID, amount, rrn, dateTime, status, stan, institutionID } = transaction;
-                                            const statusClass = () => {
-                                                if(status){
-                                                    if (status.toLowerCase() === 'success'){
-                                                        return 'success'
-                                                    } else {
-                                                        return 'failed'
+                    <div className="overflow-auto">
+                        <div className="d-flex justify-content-between">
+                            <select className="custom-select mx-2" name="size" value={state.size} onChange={onChange} required >
+                                <option value="20">Sort by size</option>
+                                <option value="50">50 Results</option>
+                                <option value="100">100 Results</option>
+                                <option value="200">200 Results</option>
+                                <option value="500">500 Results</option>
+                                <option value="1000000">All</option>                                
+                            </select>
+                            <input type="text" name="terminalID" value={searchValues.terminalID} className="form-control mx-2" placeholder="Filter by Terminal ID" onChange={onChange} />
+                            <input type="text" name="tranID" value={searchValues.tranID} className="form-control mx-2" placeholder="Filter by Tran ID" onChange={onChange} />
+                            <input type="text" name="statusCode" value={searchValues.statusCode} className="form-control mx-2" placeholder="Filter by Status Code" onChange={onChange} />
+                            <select className="custom-select mx-2" name="status" value={searchValues.status} onChange={onChange} required >
+                                <option value={null}>Sort by Status</option>
+                                <option value="success">Success</option>
+                                <option value="failed">Failed</option>                               
+                            </select>
+                        </div>
+                        {
+                            isLoading ? 
+                            <IsLoadingData />
+                            :
+                            <Fragment>
+                                <table className="table table-striped overflow-auto" id="table-to-xls">
+                                    <thead>
+                                        <tr>
+                                        <th scope="col">S/N</th>
+                                        <th scope="col">Terminal Id</th>
+                                        <th scope="col">Institution Id</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Tran Id</th>
+                                        <th scope="col">STAN</th>
+                                        <th scope="col">PAN</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Date and Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        { 
+                                            transactions.length === 0 ? 
+                                            <NoResultFound />
+                                            :
+                                            transactions.map((transaction, i) => {
+                                                const { terminalID, amount, rrn, dateTime, status, stan, pan, responseDesc, responseCode, institutionID, id } = transaction;
+                                                const statusClass = () => {
+                                                    if(status){
+                                                        if (status.toLowerCase() === 'success'){
+                                                            return 'success'
+                                                        } else {
+                                                            return 'failed'
+                                                        }
+                                                    }
+                                                    if(responseCode === '-1'){
+                                                        return 'pending'
                                                     }
                                                 }
-                                            }
-                                            return (
-                                                <tr key={i}>
-                                                    <th scope="row">{i+1}</th>
-                                                    <td>{terminalID}</td>
-                                                    <td>{institutionID}</td>
-                                                    <td>{amount}</td>
-                                                    <td>{rrn}</td>
-                                                    <td>{stan}</td>
-                                                    <td><p className={statusClass()}>{status}</p></td>
-                                                    <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </table>
-                            <Pagination
-                                currentPage={page + 1}
-                                totalSize={totalCount}
-                                sizePerPage={size}
-                                changeCurrentPage={changeCurrentPage}
-                                numberOfPagesNextToActivePage={2}
-                                theme="bootstrap"
-                            />
+                                                return (                                                
+                                                    <tr key={i} onClick={() => {history.push(`/reporting/${id}`)}}>
+                                                        <th scope="row">{i+1}</th>
+                                                        <td>{terminalID}</td>
+                                                        <td>{institutionID}</td>
+                                                        <td>{amount}</td>
+                                                        <td>{rrn}</td>
+                                                        <td>{stan}</td>
+                                                        <td>{pan}</td>
+                                                        <td>{responseDesc}</td>
+                                                        <td>{responseCode}</td>
+                                                        <td><p className={statusClass()}>{responseCode === '-1' ? 'Pending' : status}</p></td>
+                                                        <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                                <Pagination
+                                    currentPage={page + 1}
+                                    totalSize={totalCount}
+                                    sizePerPage={size}
+                                    changeCurrentPage={changeCurrentPage}
+                                    numberOfPagesNextToActivePage={2}
+                                    theme="bootstrap"
+                                />
+                            </Fragment>
+                        }
+                        
                     </div>
                 </div>
             </div>

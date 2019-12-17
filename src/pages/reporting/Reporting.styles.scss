@@ -16,3 +16,14 @@
     @include standardButton;
     background: red;
 }
+
+.pending {
+    @include standardButton;
+    background: #ffc107;
+}   
+
+tr{
+    &:hover{
+        cursor: pointer;
+    }
+}

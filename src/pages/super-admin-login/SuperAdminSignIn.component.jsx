@@ -5,7 +5,7 @@ import { authContext } from '../../Context/Authentication.context';
 import { superAdminLoginUrl } from '../../Utils/URLs';
 import { FetchTimeOut } from "../../Utils/FetchTimeout";
 
-import Logo from '../../img/3line_logo.png';
+import Logo from '../../img/logo.png';
 import IsFetching from '../../components/isFetching/IsFetching.component';
 import LoginError from '../../components/LoginError/LoginError.component';
 

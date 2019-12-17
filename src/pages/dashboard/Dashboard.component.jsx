@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect } from 'react';
-import withTimeout from '../../HOCs/withTimeout.hoc';
+import dashboardHOC from '../../HOCs/DashboardHOC.hoc';
 import './Dashboard.styles.scss';
 import Layout from '../../components/Layout/layout.component';
 import Chart from '../../components/Chart/Chart.component';
@@ -11,19 +11,20 @@ import DashboardTransactionHistoryComponent from '../../components/DashboardTran
 
 // Context for Authentication
 import { FetchTimeOut } from '../../Utils/FetchTimeout';
-import { transactionsHistoryURL } from '../../Utils/URLs';
+import { transactionsHistoryURL, transactionsStatistics, totalNumberOfInstitutions, getNewTokenUrl } from '../../Utils/URLs';
+import TopInstitutions from '../../components/TopInstitutions/TopInstitutions.component';
 
 export const DashboardContext = createContext();
 
 const Dashboard = () => {
     const [state, setState ] = useState({
         data: {
-            activeDevices: 80,
-            inactiveDevices: 75,
-            transfers: 119,
-            deposits: 150,
-            withdrawals: 120,
-            billPayments: 160
+            totalSuccessfulAmount: '',
+            totalTransactions: '',
+            failed: '',
+            success: '',
+            withdrawals: 12,
+            institutions: ''
         },
         isLoading: false,
         page: 0,
@@ -37,11 +38,43 @@ const Dashboard = () => {
         totalCount: 0,
         hasNextRecord: false
     })
-    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+    let { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
     const { data, page, size, isLoading, toDate, fromDate } = state;
 
+    //Get New Token when token expires
+    const getNewToken = () => {
+        axios.post(`${getNewTokenUrl}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            timeout: FetchTimeOut
+          })
+          .then (res => {
+              if(res.data.respCode === '00'){
+                authToken = res.data.respBody;
+              } else {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${res.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+              }
+          })
+          .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+          })
+    }
+
     useEffect(() => {
-        const getTransactionsHistory = () => {
+        //Fetch Statistics 
+        const getDashboardStatistics = () => {
             let reqBody = {
                 fromDate,
                 institutionID: "",
@@ -53,60 +86,83 @@ const Dashboard = () => {
                 ...state,
                 isLoading: true
             }))
-            axios({
-                url: `${transactionsHistoryURL}`,
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                data: reqBody,
-                timeout: FetchTimeOut
-            })
-            .then(result => {
+
+            axios.all([
+                axios.get(`${transactionsStatistics}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    timeout: FetchTimeOut
+                  }),
+                axios.get(`${totalNumberOfInstitutions}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    timeout: FetchTimeOut
+                  }),
+                axios({
+                    url: `${transactionsHistoryURL}`,
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
+                })
+              ])
+              .then(axios.spread((stats1, stats2, stats3) => {
                 setState(state =>({
                     ...state,
                     isLoading: false
-                }))
-                if(result.data.respCode === '00'){
-                    const { transactions, totalCount, hasNextRecord } = result.data.respBody;
+                }))                   
+                  if(stats3.data.respCode === '00'){
+                    const { transactions, totalCount, hasNextRecord } = stats3.data.respBody;
+                    const { totalSuccessfulAmount, totalTransactions, failed, success } = stats1.data.respBody; 
                     setTransactionsList(transactionsList =>({
                         ...transactionsList,
                         transactions,
                         totalCount,
                         hasNextRecord
                     }))
+                    setState(state => ({
+                        ...state,
+                        data: {
+                            ...state.data,
+                            totalSuccessfulAmount,
+                            totalTransactions,
+                            failed: failed,
+                            success,
+                            institutions: stats2.data.respBody
+                        }
+                      }))
                 } else {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.data.respDescription}`,
+                        text: `${stats3.data.respDescription}`,
                         footer: 'Please contact support'
                     })
-                }            
-            })
-            .catch(err => {
+                }                
+              }))
+              .catch(error => {
                 setState(state =>({
                     ...state,
                     isLoading: false
-                }))
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${err}`,
-                    footer: 'Please contact support'
-                })
+                }))            
+                return getNewToken();
             });
         }
-        getTransactionsHistory();
+        getDashboardStatistics();
 
-        //Autorefresh Function 
-
+        //Autorefresh Transaction History Function  (Every thirty seconds)
         const interval = setInterval(() => {
-            getTransactionsHistory();
+            getDashboardStatistics();
         }, 30000)
 
-        // Clearing autorefresh function when component unmounts
+        // Clearing autorefresh function when component unmounts. To avoid memory leaks
         return(() => {
             clearInterval(interval)
         })
@@ -118,7 +174,6 @@ const Dashboard = () => {
             page: pageNumber - 1
         })
     }
-
     
     const customFileName = `tms-dashboard-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
     
@@ -140,7 +195,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <div className="page-content mt-5">
+            <div className="page-content">
                 <DashboardContext.Provider value={{
                     data,
                     transactionsList,
@@ -158,10 +213,11 @@ const Dashboard = () => {
                             <DashboardCardsList />
                         </div>
                     </div>
+                    <TopInstitutions />
                     <DashboardTransactionHistoryComponent />
                 </DashboardContext.Provider>
             </div>
         </Layout>
     )
 }
-export default withTimeout(Dashboard)
+export default dashboardHOC(Dashboard)

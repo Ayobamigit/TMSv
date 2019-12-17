@@ -19,6 +19,9 @@ const DeviceView = () => {
         terminalStatus: '',
         terminalROMVersion: '',
         terminalSerialNo: '',
+        institutionName: '',
+        serviceProvider: '',
+        profile: '',
         IsFetchingData: false
     });
     const [readOnly, setIsReadOnly ] = useState(true);
@@ -40,13 +43,16 @@ const DeviceView = () => {
             .then(result => {
                 setIsLoading(false)
                 if(result.data.respCode === '00'){
-                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo } = result.data.respBody;
+                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution:{institutionName, serviceProviders: {providerName, profile}}, profile: {profileName} } = result.data.respBody;
                     setState(state => ({...state, 
                         terminalID,
                         terminalType,
                         terminalStatus,
                         terminalROMVersion,
-                        terminalSerialNo
+                        terminalSerialNo,
+                        institutionName,
+                        serviceProvider: providerName,
+                        profile: profileName
                     }))
                 }else{
                     Swal.fire({
@@ -211,6 +217,39 @@ const DeviceView = () => {
                                     readOnly={readOnly}
                                 />
                             </div>  
+                            <div className="form-group">
+                                <p>Institution</p>
+                                <input 
+                                    name="terminalSerialNo" 
+                                    className="form-control" 
+                                    value={state.institutionName} 
+                                    onChange={onChange}
+                                    required 
+                                    readOnly
+                                />
+                            </div>
+                            <div className="form-group">
+                                <p>Service Provider</p>
+                                <input 
+                                    name="terminalSerialNo" 
+                                    className="form-control" 
+                                    value={state.serviceProvider} 
+                                    onChange={onChange}
+                                    required 
+                                    readOnly
+                                />
+                            </div>
+                            <div className="form-group">
+                                <p>Profile</p>
+                                <input 
+                                    name="terminalSerialNo" 
+                                    className="form-control" 
+                                    value={state.profile} 
+                                    onChange={onChange}
+                                    required 
+                                    readOnly
+                                />
+                            </div>
                             {
                                 readOnly ?
                                 null :

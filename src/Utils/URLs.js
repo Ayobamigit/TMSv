@@ -8,7 +8,10 @@ export const institutionLoginUrl = `${baseUrl()}/api/v1/login`;
 
 //Dashboard 
 export const transactionsHistoryURL = `${baseUrl()}/api/v1/transactions/tranHistory`;
-
+export const transactionsStatistics = `${baseUrl()}/api/v1/dashboard/transationStatistics`;
+export const totalNumberOfInstitutions = `${baseUrl()}/api/v1/dashboard/getTotalInstitutions`;
+export const getNewTokenUrl = `${baseUrl()}/api/v1/superadmin/gettoken`;
+export const getTransactionByIdUrl = `${baseUrl()}/api/v1/transactions`;
 
 //Terminal Management
 export const allTerminals = `${baseUrl()}/api/v1/tms/terminals`;

@@ -8,9 +8,10 @@ const ListOfServiceProvidersComponent = ({ isLoading, serviceProviders }) => {
     const [state, setState ] = useState({
         idToBeDeleted: ''
     })
-    if(isLoading){
-        return <IsLoadingData />
-    } else {
+    // if(isLoading){
+    //     return <IsLoadingData />
+    // } else 
+    // {
         return (
             <div>
                 <div className="table-layout">
@@ -51,6 +52,6 @@ const ListOfServiceProvidersComponent = ({ isLoading, serviceProviders }) => {
                 <DeleteServiceProvider id={state.idToBeDeleted} />
             </div>
         )
-    }
+    // }
 }
 export default ListOfServiceProvidersComponent;

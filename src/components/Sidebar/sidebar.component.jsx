@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar.styles.scss';
-import Logo from '../../img/3linewhite.png';
+import Logo from '../../img/logo.png';
 import { authContext } from '../../Context/Authentication.context';
 
 const Sidebar = () => {

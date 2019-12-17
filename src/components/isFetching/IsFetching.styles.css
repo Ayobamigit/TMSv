@@ -1,5 +1,5 @@
 .isloading-ring {
-    display: inline-block;
+    display: flex;
     position: relative;
     width: 15px;
     height: 15px;

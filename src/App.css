@@ -1,3 +1,10 @@
+:root{
+	--primaryColor: #037b86;
+	--secondaryColor: #02737e;
+	--primaryAsh: #f8fafc;
+	--primaryBlack: #191919;
+	--primaryWhite: #ffffff;
+}
 *, *:before, *:after{
     box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -8,19 +15,19 @@
 }
 
 .btn.btn-primary{
-	background-color: #262A62 !important;
-	border-color: #262A62;
+	background-color: var(--primaryBlack) !important;
+	border-color: var(--primaryBlack);
 }
 
 ::-webkit-scrollbar-track {
 	border: 1px solid #FAA831;
 	border-radius: 5px;
-	background-color: #F3F3F3;
+	background-color: var(--primaryAsh);
 }
 
 ::-webkit-scrollbar {
 	width: 3px;
-	background-color: #F3F3F3;
+	background-color: var(--primaryAsh);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -33,6 +40,6 @@ td, th{
 
 .page-content{
 	padding: 20px;
-	background: #ffffff;
+	background: var(--primaryWhite);
 	overflow: auto;
 }

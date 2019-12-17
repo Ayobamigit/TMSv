@@ -5,9 +5,9 @@
     max-height: 100vh;
 
     .signInContent{
-        background: #262A62;
-        color: #fff;  
-        padding: 10% 20%;  
+        background: var(--primaryColor);
+        color: var(--primaryWhite);  
+        padding: 10% 20% 10% 30%;  
         
         img {
             margin-bottom: 80px;
@@ -44,7 +44,7 @@ footer{
     bottom: 0px;
     right: 5%;
     .copyright{
-        color: blue;
+        color: #5194c6;
         padding-left: 5px;
     }
 }
@@ -52,6 +52,7 @@ footer{
 @media only screen and (max-width: 960px){
     .signInContainerWrapper{
         grid-template-columns: 1fr;
+        background-color: var(--primaryColor);
 
         .signInContent{
             display: none;

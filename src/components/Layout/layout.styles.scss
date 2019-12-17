@@ -2,36 +2,40 @@
     position: relative;
 
     ::-webkit-scrollbar-track {
-        border: 1px solid #222876;
+        border: 1px solid var(--primaryColor);
         border-radius: 5px;
-        background-color: #f3f3f3;
+        background-color: var(--primaryAsh);
     }
     
     ::-webkit-scrollbar {
         width: 1px;
-        background-color: #f3f3f3;
+        background-color: var(--primaryAsh);
     }
     
     ::-webkit-scrollbar-thumb {
-        background-color: #ffffff;	
+        background-color: var(--primaryWhite);	
     }
 }
 
 #main{
     transition:margin-left .75s;
     overflow-y: none;
-    background-color: #f3f3f3;
+    background-color: var(--primaryAsh);
 
 }
-#mySidebar{
+@mixin sidebars {
     height:100%;
-    width:200px;
-    background-color:#222876;
-    border-right: 1px solid #ffffff;
+    padding-top: 0px !important;
+    background-color:var(--primaryColor);
+    border-right: 1px solid var(--primaryWhite);
     position:fixed!important;
     z-index:1;
     overflow:auto
 }
+#mySidebar, #myFancySidebar{
+    @include sidebars;
+}
+
 .children{
     overflow-y: auto;
     overflow-x: auto;
@@ -52,9 +56,9 @@
     position: fixed;
     padding: 10px;
     box-sizing: border-box;
-    background: #f3f3f3;
+    background: var(--primaryAsh);
     width: 100%;
-    box-shadow: inset 0 3em 3em #f3f3f3, 0 0 2px #f3f3f3, 0.3em 0.3em 1em #f3f3f3;
+    box-shadow: inset 0 3em 3em var(--primaryAsh), 0 0 2px var(--primaryAsh), 0.3em 0.3em 1em var(--primaryAsh);
     z-index: 100;
 
     span{

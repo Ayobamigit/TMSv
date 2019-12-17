@@ -15,12 +15,12 @@ export default function () {
                         <thead>
                             <tr>
                             <th scope="col">S/N</th>
+                            <th scope="col">Date and Time</th>
                             <th scope="col">Terminal Id</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Tran Id</th>
-                            {/* <th scope="col">STAN</th> */}
-                            <th scope="col">Status</th>
-                            <th scope="col">Date and Time</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Status and Description</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -29,7 +29,7 @@ export default function () {
                                 <NoResultFound />
                                 :
                                 transactions.map((transaction, i) => {
-                                    const { terminalID, amount, rrn, dateTime, status } = transaction;
+                                    const { terminalID, amount, rrn, dateTime, status, responseCode, responseDesc } = transaction;
                                     const statusClass = () => {
                                         if(status){
                                             if (status.toLowerCase() === 'success'){
@@ -42,11 +42,12 @@ export default function () {
                                     return (
                                         <tr key={i}>
                                             <th scope="row">{i+1}</th>
+                                            <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
                                             <td>{terminalID}</td>
                                             <td>{amount}</td>
                                             <td>{rrn}</td>
-                                            <td><p className={statusClass()}>{status}</p></td>
-                                            <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
+                                            <td>{responseCode}</td>
+                                            <td><p className={statusClass()}>{responseDesc}</p></td>
                                         </tr>
                                     )
                                 })

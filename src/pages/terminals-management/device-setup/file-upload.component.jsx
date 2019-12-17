@@ -1,5 +1,4 @@
-import React, { useState, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState, useRef, Fragment } from 'react';
 import Axios from 'axios';
 import Swal from '../../../constants/swal';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
@@ -7,15 +6,16 @@ import { uploadTerminalsURL } from '../../../Utils/URLs';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 import ProgressBar from '../../../components/ProgressBar/ProgressBar';
 import TerminalsUploadSample from '../../../assets/sampleExcelFile.xlsx';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import './device-setup.styles.scss';
 
 const FileUploadModal = () => {
-    const history = useHistory();
     let dismissModal = useRef()
     const [state, setState] = useState({
         selectedFile: null,
         inputTypeError: false,
         uploadProgress: 0,
+        uploadReport: [],
         isLoggingIn: false,
         errorMessage: ''
     })
@@ -79,11 +79,13 @@ const FileUploadModal = () => {
                     if(result.data.respCode === '00'){
                         Swal.fire({
                             type: 'success',
-                            title: 'Successful Registration...',
-                            text: 'Terminal Registration was Successful!'
+                            title: 'Successful Uploads...',
+                            text: 'Terminal have been uploaded Successful!'
                         })
-                        dismissModal.current.click();
-                        history.push('/dashboard');
+                        setState({
+                            ...state, 
+                            uploadReport: result.data.respBody
+                        })
                     }else{
                         Swal.fire({
                             type: 'error',
@@ -109,7 +111,7 @@ const FileUploadModal = () => {
         }
         
     }
-    const { inputTypeError, isLoggingIn, errorMessage, uploadProgress } = state;
+    const { inputTypeError, isLoggingIn, errorMessage, uploadProgress, uploadReport } = state;
     return (
         <div className="modal fade" id="exampleModalCenter" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered" role="document">
@@ -120,48 +122,118 @@ const FileUploadModal = () => {
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form onSubmit={uploadFile}>
-                    <div className="modal-body">
-                        <label htmlFor="fileToBeUploaded">Select an excel file to upload</label>
-                        <input 
-                            type="file" 
-                            name="fileToBeUploaded" 
-                            id="fileToBeUploaded"
-                            onChange={fileChangedHandler}
-                        /> 
-                        <ProgressBar percentage={uploadProgress} />
-                        <br/>
-                        <a href={TerminalsUploadSample}>Download a sample excel file <i className="fa fa-file"></i></a>
-                        
-                        {
-                            inputTypeError ? 
-                            <div className="alert alert-sm alert-danger" role="alert">
-                                {errorMessage}
-                            </div> 
-                            : null
-                        }                          
-                    </div>
-                    <div className="modal-footer">
-                        <button 
-                            type="button" 
-                            className="btn btn-secondary" 
-                            data-dismiss="modal"
-                            ref={dismissModal}
-                        >
-                            Close
-                        </button>
-                        <button 
-                            type="submit" 
-                            className="btn btn-primary" 
-                            disabled={isLoggingIn}
-                            onClick={uploadFile}
-                        >
+                {
+                    uploadReport.length ? 
+                    <Fragment>
+                        <div className="modal-body">
+                            <div className="d-flex justify-content-between">
+                                <label htmlFor="fileToBeUploaded">Summary of Uploaded Terminals</label>
+                                <div className="btn-toolbar mb-2 mb-md-0">
+                                    <div className="btn-group mr-2">
+                                        <ReactHTMLTableToExcel
+                                            id="test-table-xls-button"
+                                            className="btn btn-sm btn-outline-secondary"
+                                            table="table-to-xls"
+                                            filename="Summary of uploaded terminals"
+                                            sheet="tablexls"
+                                            buttonText="Export to Excel"
+                                        />
+                                    </div>
+                                </div>
+                            </div>                            
+                            <table className="table table-striped" id="table-to-xls">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">S/N</th>
+                                        <th scope="col">Terminal ID</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        uploadReport.map((reportStatus, i) => {
+                                            const {terminalID, saved} = reportStatus;
+                                            const statusClass = () => {
+                                                if(saved){
+                                                    return 'success'
+                                                } else {
+                                                    return 'failed'
+                                                }                                               
+                                            }
+                                            return (
+                                                <tr key={i}>
+                                                    <th scope="row">{i+1}</th>
+                                                    <td>{terminalID}</td>
+                                                    <td><p className={statusClass()}>{saved ? 'Success' : 'Failed'}</p></td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div> 
+                        <div className="modal-footer">
+                            <button 
+                                type="button" 
+                                className="btn btn-secondary" 
+                                data-dismiss="modal"
+                                ref={dismissModal}
+                            >
+                                Close
+                            </button>
+                            <button 
+                                type="submit" 
+                                className="btn btn-primary"
+                                onClick={() => setState({...state, uploadReport: []})}
+                            >
+                                Upload More Terminals
+                            </button>
+                        </div>
+                    </Fragment>
+                    :
+                    <form onSubmit={uploadFile}>
+                        <div className="modal-body">
+                            <label htmlFor="fileToBeUploaded">Select an excel file to upload</label>
+                            <input 
+                                type="file" 
+                                name="fileToBeUploaded" 
+                                id="fileToBeUploaded"
+                                onChange={fileChangedHandler}
+                            /> 
+                            <ProgressBar percentage={uploadProgress} />
+                            <br/>
+                            <a href={TerminalsUploadSample}>Download a sample excel file <i className="fa fa-file"></i></a>
+                            
                             {
-                                isLoggingIn ? <IsFetching /> : 'Upload'
-                            }
-                        </button>
-                    </div>
-                </form>
+                                inputTypeError ? 
+                                <div className="alert alert-sm alert-danger" role="alert">
+                                    {errorMessage}
+                                </div> 
+                                : null
+                            }                          
+                        </div>
+                        <div className="modal-footer">
+                            <button 
+                                type="button" 
+                                className="btn btn-secondary" 
+                                data-dismiss="modal"
+                                ref={dismissModal}
+                            >
+                                Close
+                            </button>
+                            <button 
+                                type="submit" 
+                                className="btn btn-primary" 
+                                disabled={isLoggingIn}
+                                onClick={uploadFile}
+                            >
+                                {
+                                    isLoggingIn ? <IsFetching /> : 'Upload'
+                                }
+                            </button>
+                        </div>
+                    </form>
+                }
                 </div>
             </div>
         </div>

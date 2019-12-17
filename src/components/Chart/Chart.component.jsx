@@ -3,27 +3,26 @@ import { Doughnut } from 'react-chartjs-2';
 import { DashboardContext } from '../../pages/dashboard/Dashboard.component';
 
 export default function ChartFrame() {
-    const { data: {activeDevices, inactiveDevices, transfers, deposits, withdrawals, billPayments} } = useContext(DashboardContext);
+    const { data: {success, failed, institutions, totalTransactions} } = useContext(DashboardContext);
         const data = {
-            labels: ['Active Devices', 'Inactive Devices', 'Deposits', 'Transfers', 'Bill Payments', 'Withdrawals'],
+            labels: ['Success', 'Failed', 'Institutions', 'Transactions'],
             datasets:[
                 {
                     // label:'Population',
                     data: [
-                        activeDevices,
-                        inactiveDevices,
-                        billPayments,
-                        deposits,
-                        transfers,
-                        withdrawals
+                        success,
+                        failed,
+                        institutions,
+                        totalTransactions
                     ],
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
+                        '#28a745',
+                        '#dc3545',
+                        '#222876',
+                        '#ffc107'
+                        // 'rgba(54, 162, 235, 0.6)',
+                        // 'rgba(255, 206, 86, 0.6)',
+                        // 'rgba(75, 192, 192, 0.6)',
                     ]
                 }
             ]

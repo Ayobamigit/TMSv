@@ -6,7 +6,7 @@
     background: linear-gradient(135deg, #007BFF, #262A62); 
     background-size: 200% 200%;
     animation: gradientBG 5s ease infinite;
-    color: #ffffff;
+    color: var(--primaryWhite);
 
     &:hover {
         transform: scale(1.02);

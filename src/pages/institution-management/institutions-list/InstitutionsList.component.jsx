@@ -101,7 +101,7 @@ const InstitutionsList = () => {
                                 <tbody>
                                     {
                                         institutionsList.length === 0 ?
-                                            <NoResultFound /> :
+                                        <NoResultFound /> :
                                         institutionsList.map((institution, index) => {
                                             const { 
                                                 id,institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated

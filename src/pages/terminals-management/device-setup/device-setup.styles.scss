@@ -1,4 +1,20 @@
-object{
-    height: 50px;
-    width: 50px;
+@mixin standardButton{
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+}
+
+.success{
+    @include standardButton;
+    background: green;
+}
+
+.failed{
+    @include standardButton;
+    background: red;
+}
+
+.pending {
+    @include standardButton;
+    background: #ffc107;
 }

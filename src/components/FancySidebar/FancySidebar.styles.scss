@@ -1,0 +1,45 @@
+.logoIcon-background{
+  display: flex;
+  justify-content: center;
+  background: var(--secondaryColor);
+  height: 55px;
+  padding: 10px;
+}
+  .fancy-sidebar.components{
+    display: block;   
+    list-style: none;
+    padding: 0px;
+    margin-top: 80px;
+       
+    @media only screen and (max-width: 900px) {
+      margin-top: 5%;
+    }
+  
+    .selected{
+      border-left: 2px solid var(--primaryWhite);
+    }
+  
+    li {
+      font-size: 15px;
+      margin-top: 15px;
+      color: var(--primaryWhite);
+      
+      span{
+        color: var(--primaryWhite);
+      }
+      
+      a:hover{
+        text-decoration: none;
+      }
+  
+      
+      @media only screen and (max-width: 900px) {
+        margin-bottom: 1vh;
+      }
+  
+      .fa{
+        color: var(--primaryWhite);
+        margin-right: 10px;
+      }
+    }
+  }
