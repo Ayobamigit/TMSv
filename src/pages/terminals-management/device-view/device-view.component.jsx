@@ -43,7 +43,7 @@ const DeviceView = () => {
             .then(result => {
                 setIsLoading(false)
                 if(result.data.respCode === '00'){
-                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution:{institutionName, serviceProviders: {providerName, profile}}, profile: {profileName} } = result.data.respBody;
+                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution:{institutionName, serviceProviders: {providerName}}, profile: {profileName} } = result.data.respBody;
                     setState(state => ({...state, 
                         terminalID,
                         terminalType,

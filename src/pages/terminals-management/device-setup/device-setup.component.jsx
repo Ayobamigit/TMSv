@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { useHistory } from 'react-router-dom';
 import Swal from '../../../constants/swal';
-import { allServiceProviders, getProfilesByServiceProviderId, allInstitutions } from '../../../Utils/URLs';
+import { getProfilesByServiceProviderName, allInstitutions } from '../../../Utils/URLs';
 import './device-setup.styles.scss';
 
 // Context for Authentication
@@ -19,10 +19,10 @@ const DeviceRegistration = () => {
         terminalType: '',
         terminalROMVersion: '',
         terminalSerialNo: '',
-        serviceProvidersList: [],
         serviceProviderId: '',
         profilesList: [],
         institutionsList: [],
+        institution: '',
         institutionId: '',
         profileName: '',
         IsFetchingData: false
@@ -67,55 +67,28 @@ const DeviceRegistration = () => {
             })
         });
 
-        //Get Service Providers
-        axios({
-            url: `${allServiceProviders}`,
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: {},
-            timeout: FetchTimeOut
-        })
-            .then(result => {
-            if(result.data.respCode === '00'){
-                setState( state => ({
-                    ...state,
-                    serviceProvidersList: result.data.respBody
-                }))
-            }else{
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${result.data.respDescription}`,
-                    footer: 'Please contact support'
-                })
-            }
-            
-        })
-        .catch(err => {
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
-            })
-        });
-    }, [state.serviceProviderId, authToken])
+    }, [state.institution, authToken])
 
-    const getProfilesById = (id) => {
-        if(!id){
+    const getProfilesByName = (name) => {
+        if(!name){
             return;
         }
+        let result = state.institutionsList.find((element) => {
+            return element.institutionName === name
+        })
+        setState({
+            ...state,
+            institutionId: result.institutionID,
+            institution: result.institutionName
+        })
         axios({
-            url: `${getProfilesByServiceProviderId}`,
+            url: `${getProfilesByServiceProviderName}`,
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            data: id,
+            data: name,
             timeout: FetchTimeOut
         })
             .then(result => {
@@ -147,9 +120,12 @@ const DeviceRegistration = () => {
     const onChange = async (e) => {
         let name = e.target.name;
         let value = e.target.value;
-        setState({...state, [e.target.name]: e.target.value})
-        if(name === 'serviceProviderId'){
-            getProfilesById(value);
+        setState({
+            ...state, 
+            [e.target.name]: e.target.value
+        })
+        if(name === 'institution'){
+            getProfilesByName(value);
         }
     }
     const registerDevice = (e) => {
@@ -162,7 +138,6 @@ const DeviceRegistration = () => {
             terminalSerialNo,
             terminalType,
             institutionID: institutionId,
-            // institutionID: serviceProviderId,
             profileName
         }
         if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === '' || institutionId.trim() === ''){
@@ -222,7 +197,7 @@ const DeviceRegistration = () => {
         }
     }
     
-    const { IsFetchingData, serviceProviderId, profileName, institutionId } = state;
+    const { IsFetchingData, profileName, institution } = state;
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -276,66 +251,45 @@ const DeviceRegistration = () => {
                         </div> 
                         <div className="form-group">
                             <p>Select Institution</p>
-                                <select className="custom-select" name="institutionId" value={institutionId} onChange={onChange} required >
-                                <option value="">Select Institution</option>
-                                {
-                                    state.institutionsList ? 
-                                    state.institutionsList.map((institution, i) => {
-                                        return(
-                                            <option 
-                                                value={institution.institutionID} 
-                                                key={i}
-                                            >
-                                                {institution.institutionName}
-                                            </option>
-                                        )
-                                    })
-                                    :null
-                                }
-                            </select>
+                                <select className="custom-select" name="institution" value={institution} onChange={onChange} required >
+                                    <option value="">Select Institution</option>
+                                    {
+                                        state.institutionsList ? 
+                                        state.institutionsList.map((institution, i) => {
+                                            return(
+                                                <option 
+                                                    value= {institution.institutionName}
+                                                    key={i}
+                                                >
+                                                    {institution.institutionName}
+                                                </option>
+                                            )
+                                        })
+                                        :null
+                                    }
+                                </select>
                         </div>
+                          
                         <div className="form-group">
-                            <p>Choose Service Provider</p>
-                            <select className="custom-select" name="serviceProviderId" value={serviceProviderId} onChange={onChange} required >
-                                <option value="">Select Service Provider</option>
-                                {
-                                    state.serviceProvidersList ? 
-                                    state.serviceProvidersList.map((serviceProvider, i) => {
-                                        return(
-                                            <option 
-                                                value={serviceProvider.id} 
-                                                key={i}
-                                            >
-                                                {serviceProvider.providerName}
-                                            </option>
-                                        )
-                                    })
-                                    :null
-                                }
-                            </select>
-                        </div>  
-                        {
-                            <div className="form-group">
-                            <p>Select Profile</p>
-                                <select className="custom-select" name="profileName" value={profileName} onChange={onChange} required >
+                            <p>Select Profiles</p>  
+                            <select className="custom-select" name="profileName" value={profileName} onChange={onChange} required >
                                 <option value="">Select Profile</option>
                                 {
                                     state.profilesList ? 
                                     state.profilesList.map((profile, i) => {
                                         return(
                                             <option 
-                                                value={profile.profileName} 
+                                                value= {profile.profileName}
                                                 key={i}
                                             >
                                                 {profile.profileName}
                                             </option>
                                         )
-                                    })
-                                    :null
+                                    }): null
                                 }
-                            </select>
-                        </div>
-                        }               
+                            </select>                                 
+                            
+                        </div>                
                         <div className="form-group d-flex justify-content-end">
                             <button 
                                 type="input"

@@ -1,11 +1,18 @@
 .top-institutions-container{
     padding: 0px 40px;
-    background: #222876;
-    color: var(--primaryWhite);
+    background: var(--primaryWhite);
+    color: var(--primaryColor);
 }
 .slick-slide > div {
-    margin: auto 20px;
-    text-align: center;
-    padding: 5px;
-    background: var(--primaryBlack);
-  }
+    margin: 10px 20px; 
+    box-shadow: 2px 2px 5px var(--secondaryAsh);
+    padding: 20px 50px;
+    background: var(--primaryWhite);
+
+    p{
+        color: var(--primaryBlack);
+    }
+}
+.slick-prev:before, .slick-next:before{
+    color: var(--primaryBlack) !important;
+}

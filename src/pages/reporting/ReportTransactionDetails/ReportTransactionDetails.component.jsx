@@ -17,7 +17,9 @@ const ReportTransactionDetails = () => {
         isLoading: false
     })
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
-    const history = useHistory()
+    const history = useHistory();
+    const componentRef = useRef();
+    const match = useRouteMatch();
     useEffect(() => {
         setState(state =>({
             ...state,
@@ -63,9 +65,7 @@ const ReportTransactionDetails = () => {
                 footer: 'Please contact support'
             })
         });
-    }, [authToken])
-    const componentRef = useRef();
-    const match = useRouteMatch();
+    }, [authToken, match.params.id])
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">

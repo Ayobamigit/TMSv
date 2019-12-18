@@ -41,7 +41,7 @@ const SignIn = ({ history }) => {
                 data: reqBody,
                 timeout: FetchTimeOut
             })
-                .then(response => {
+            .then(response => {
                 setState({ ...state, isLoggingIn: false })
                 if (response.data.respCode === '00') {
                     setAuthenticationStatus(true)

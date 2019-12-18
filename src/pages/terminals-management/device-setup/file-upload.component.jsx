@@ -147,12 +147,13 @@ const FileUploadModal = () => {
                                         <th scope="col">S/N</th>
                                         <th scope="col">Terminal ID</th>
                                         <th scope="col">Status</th>
+                                        <th scope="col">Comment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
                                         uploadReport.map((reportStatus, i) => {
-                                            const {terminalID, saved} = reportStatus;
+                                            const {terminalID, saved, statusDescription} = reportStatus;
                                             const statusClass = () => {
                                                 if(saved){
                                                     return 'success'
@@ -165,6 +166,7 @@ const FileUploadModal = () => {
                                                     <th scope="row">{i+1}</th>
                                                     <td>{terminalID}</td>
                                                     <td><p className={statusClass()}>{saved ? 'Success' : 'Failed'}</p></td>
+                                                    <td>{statusDescription}</td>
                                                 </tr>
                                             )
                                         })
@@ -194,12 +196,14 @@ const FileUploadModal = () => {
                     <form onSubmit={uploadFile}>
                         <div className="modal-body">
                             <label htmlFor="fileToBeUploaded">Select an excel file to upload</label>
-                            <input 
-                                type="file" 
-                                name="fileToBeUploaded" 
-                                id="fileToBeUploaded"
-                                onChange={fileChangedHandler}
-                            /> 
+                            <div className="form-group">
+                                <input 
+                                    type="file" 
+                                    name="fileToBeUploaded" 
+                                    id="fileToBeUploaded"
+                                    onChange={fileChangedHandler}
+                                />
+                            </div>
                             <ProgressBar percentage={uploadProgress} />
                             <br/>
                             <a href={TerminalsUploadSample}>Download a sample excel file <i className="fa fa-file"></i></a>

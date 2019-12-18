@@ -2,29 +2,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 20px;
-    background: linear-gradient(135deg, #007BFF, #262A62); 
-    background-size: 200% 200%;
-    animation: gradientBG 5s ease infinite;
+    padding: 7.5px 20px;
     color: var(--primaryWhite);
 
     &:hover {
         transform: scale(1.02);
-        box-shadow: 4px 4px #fafafa;
+        box-shadow: 4px 4px var(--primaryAsh);
         cursor: pointer;
-    }
-    
-    @keyframes gradientBG {
-        0% {
-            background-position: 0% 50%;
-        }
-        50% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
-    }
-
-    
+    }    
 }

@@ -1,48 +1,56 @@
-import React, { useContext } from 'react';
+import React, { useContext, Fragment } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { DashboardContext } from '../../pages/dashboard/Dashboard.component';
+import IsLoadingData from '../isLoadingData/isLoadingData';
 
 export default function ChartFrame() {
-    const { data: {success, failed, institutions, totalTransactions} } = useContext(DashboardContext);
+    const { data: {success, failed, institutions, totalTransactions}, terminalsStatistics: {allTerminals, activeTerminals, inactiveTerminals} } = useContext(DashboardContext);
         const data = {
-            labels: ['Success', 'Failed', 'Institutions', 'Transactions'],
+            labels: ['Successful Transactions', 'Failed Transactions', 'Number of Institutions', 'Number of Transactions', 'Total Terminals', 'Active Terminals', 'Inactive Terminals'],
             datasets:[
                 {
-                    // label:'Population',
                     data: [
                         success,
                         failed,
                         institutions,
-                        totalTransactions
+                        totalTransactions,
+                        allTerminals,
+                        activeTerminals,
+                        inactiveTerminals
                     ],
                     backgroundColor: [
-                        '#28a745',
-                        '#dc3545',
-                        '#222876',
-                        '#ffc107'
-                        // 'rgba(54, 162, 235, 0.6)',
-                        // 'rgba(255, 206, 86, 0.6)',
-                        // 'rgba(75, 192, 192, 0.6)',
+                        '#59833f',
+                        '#a32f80',
+                        '#f39422',
+                        '#ff6363',
+                        '#85a8e3',
+                        '#037b86',
+                        '#860342',
                     ]
                 }
             ]
         }
     return (
-        <Doughnut
-            data={data}
-            options={{
-                // type: 'horizontal-bar',
-                title: {
-                    display: true,
-                    text:'Summary of Activities',
-                    fontSize: 16
-                },
-                maintainAspectRatio: false,
-                legend:{
-                    display: true,
-                    position: 'bottom'
-                }
-            }}
-        />
+        <Fragment>
+        {
+            totalTransactions ?
+            <Doughnut
+                data={data}
+                options={{
+                    title: {
+                        display: true,
+                        text:'Summary of Activities',
+                        fontSize: 16
+                    },
+                    maintainAspectRatio: true,
+                    legend:{
+                        display: false,
+                    }
+                }}
+            />
+            :
+            <IsLoadingData />
+        }
+        </Fragment>
     )
 }

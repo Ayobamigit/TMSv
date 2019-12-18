@@ -210,6 +210,8 @@ const Reporting = () => {
                                         <th scope="col">Description</th>
                                         <th scope="col">Code</th>
                                         <th scope="col">Status</th>
+                                        <th scope="col">Institution Status Code</th>
+                                        <th scope="col">Institution Description</th>
                                         <th scope="col">Date and Time</th>
                                         </tr>
                                     </thead>
@@ -219,7 +221,7 @@ const Reporting = () => {
                                             <NoResultFound />
                                             :
                                             transactions.map((transaction, i) => {
-                                                const { terminalID, amount, rrn, dateTime, status, stan, pan, responseDesc, responseCode, institutionID, id } = transaction;
+                                                const { terminalID, amount, rrn, dateTime, status, stan, pan, responseDesc, responseCode, institutionID, id, institutionResponseCode, institutionResponseDesc } = transaction;
                                                 const statusClass = () => {
                                                     if(status){
                                                         if (status.toLowerCase() === 'success'){
@@ -244,6 +246,8 @@ const Reporting = () => {
                                                         <td>{responseDesc}</td>
                                                         <td>{responseCode}</td>
                                                         <td><p className={statusClass()}>{responseCode === '-1' ? 'Pending' : status}</p></td>
+                                                        <td>{institutionResponseCode}</td>
+                                                        <td>{institutionResponseDesc}</td>
                                                         <td>{dateTime ? dateTime.substring(0, 19) : null}</td>
                                                     </tr>
                                                 )

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import IsLoadingData from '../../../components/isLoadingData/isLoadingData';
 import { Link } from 'react-router-dom';
 import NoResultFound from '../../../components/NoResultFound/NoResultfound';
 import DeleteServiceProvider from './deleteServiceProvider.component';

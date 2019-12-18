@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import './DashboardCards.styles.scss';
 import IsLoadingData from '../isLoadingData/isLoadingData';
 
-export default function ( { name, value}) {
+export default function ( { name, value, bgColor }) {
     return (
-        <div className="card"> 
+        <div className="card" style={{background: bgColor}}> 
             {
                 value.toString().length ?
                 <Fragment>

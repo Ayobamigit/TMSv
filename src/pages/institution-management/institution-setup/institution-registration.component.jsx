@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import Swal from '../../../constants/swal';
-import { registerInstitutionURL, allServiceProviders, getBanks, getProfileById } from '../../../Utils/URLs';
+import { registerInstitutionURL, allServiceProviders, getBanks } from '../../../Utils/URLs';
 import { useHistory } from 'react-router-dom';
 
 // Context for Authentication
@@ -61,42 +61,6 @@ const InstitutionRegistration = () => {
                 setState( state => ({
                     ...state,
                     serviceProvidersList: result.data.respBody
-                }))
-            }else{
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${result.data.respDescription}`,
-                    footer: 'Please contact support'
-                })
-            }
-            
-        })
-        .catch(err => {
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
-            })
-        });
-
-        // Get all Profiles 
-        axios({
-            url: `${getProfileById}`,
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: {},
-            timeout: FetchTimeOut
-        })
-            .then(result => {
-            if(result.data.respCode === '00'){
-                setState( state => ({
-                    ...state,
-                    profiles: result.data.respBody
                 }))
             }else{
                 Swal.fire({
@@ -342,21 +306,7 @@ const InstitutionRegistration = () => {
                                         :null
                                     }
                                 </select>
-                            </div>  
-                            <div className="col-md-12">
-                                <p>Select Profiles</p>                                    
-                                {
-                                    state.profiles ? 
-                                    state.profiles.map((profile, i) => {
-                                        return (
-                                            <div className="custom-control custom-checkbox custom-control-inline" key={i}>
-                                                <input type="checkbox" className="custom-control-input" id={profile.profileName} />
-                                                <label className="custom-control-label" htmlFor={profile.profileName}>{profile.profileName}</label>
-                                            </div>
-                                        )
-                                    }): null
-                                }
-                            </div> 
+                            </div>
                         </div>
                         <div className="col-md-12 mt-5 d-flex justify-content-end">
                             <button 

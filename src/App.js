@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import './App.css';
+import './App.scss';
 
 import { Route, Switch, HashRouter } from 'react-router-dom';
 

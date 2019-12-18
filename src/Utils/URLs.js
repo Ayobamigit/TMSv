@@ -9,6 +9,8 @@ export const institutionLoginUrl = `${baseUrl()}/api/v1/login`;
 //Dashboard 
 export const transactionsHistoryURL = `${baseUrl()}/api/v1/transactions/tranHistory`;
 export const transactionsStatistics = `${baseUrl()}/api/v1/dashboard/transationStatistics`;
+export const activeAndInactiveTerminalsStatistics = `${baseUrl()}/api/v1/dashboard/activeinactive`;
+export const allTerminalsStatistics = `${baseUrl()}/api/v1/dashboard/terminalCount`;
 export const totalNumberOfInstitutions = `${baseUrl()}/api/v1/dashboard/getTotalInstitutions`;
 export const getNewTokenUrl = `${baseUrl()}/api/v1/superadmin/gettoken`;
 export const getTransactionByIdUrl = `${baseUrl()}/api/v1/transactions`;
@@ -18,6 +20,7 @@ export const allTerminals = `${baseUrl()}/api/v1/tms/terminals`;
 export const registerTerminalURL = `${baseUrl()}/api/v1/tms`;
 export const uploadTerminalsURL = `${baseUrl()}/api/v1/tms/upload`;
 export const viewATerminal = `${baseUrl()}/api/v1/tms`;
+export const getProfilesByServiceProviderName = `${baseUrl()}/api/v1/tms/getprofilesByInstitutionName`;
 
 //Institution Management
 export const registerInstitutionURL = `${baseUrl()}/api/v1/institution`;

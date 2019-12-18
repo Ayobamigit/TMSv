@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-// import { useHttp } from '../../../CustomHooks/useHttp.hooks';
 import { Link } from 'react-router-dom';
 import './user-list.styles.scss';
 import {superAdminGetAllUsers} from '../../../Utils/URLs';

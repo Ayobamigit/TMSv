@@ -11,7 +11,7 @@ import DashboardTransactionHistoryComponent from '../../components/DashboardTran
 
 // Context for Authentication
 import { FetchTimeOut } from '../../Utils/FetchTimeout';
-import { transactionsHistoryURL, transactionsStatistics, totalNumberOfInstitutions, getNewTokenUrl } from '../../Utils/URLs';
+import { transactionsHistoryURL, transactionsStatistics, totalNumberOfInstitutions, getNewTokenUrl, allTerminalsStatistics, activeAndInactiveTerminalsStatistics } from '../../Utils/URLs';
 import TopInstitutions from '../../components/TopInstitutions/TopInstitutions.component';
 
 export const DashboardContext = createContext();
@@ -23,8 +23,12 @@ const Dashboard = () => {
             totalTransactions: '',
             failed: '',
             success: '',
-            withdrawals: 12,
-            institutions: ''
+            institutions: '',
+        },
+        terminalsStatistics: {
+            allTerminals: '',
+            activeTerminals: '',
+            inactiveTerminals: ''
         },
         isLoading: false,
         page: 0,
@@ -38,41 +42,42 @@ const Dashboard = () => {
         totalCount: 0,
         hasNextRecord: false
     })
-    let { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
     const { data, page, size, isLoading, toDate, fromDate } = state;
 
-    //Get New Token when token expires
-    const getNewToken = () => {
-        axios.post(`${getNewTokenUrl}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            timeout: FetchTimeOut
-          })
-          .then (res => {
-              if(res.data.respCode === '00'){
-                authToken = res.data.respBody;
-              } else {
+    useEffect(() => {
+        let { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+
+        //Get New Token when token expires
+        const getNewToken = () => {
+            axios.post(`${getNewTokenUrl}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                timeout: FetchTimeOut
+            })
+            .then (res => {
+                if(res.data.respCode === '00'){
+                    authToken = res.data.respBody;
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${res.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }
+            })
+            .catch(err => {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${res.data.respDescription}`,
+                    text: `${err}`,
                     footer: 'Please contact support'
                 })
-              }
-          })
-          .catch(err => {
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
             })
-          })
-    }
+        }
 
-    useEffect(() => {
         //Fetch Statistics 
         const getDashboardStatistics = () => {
             let reqBody = {
@@ -111,16 +116,31 @@ const Dashboard = () => {
                     },
                     data: reqBody,
                     timeout: FetchTimeOut
-                })
+                }),
+                axios.get(`${activeAndInactiveTerminalsStatistics}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    timeout: FetchTimeOut
+                }),
+                  axios.get(`${allTerminalsStatistics}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    timeout: FetchTimeOut
+                }),
               ])
-              .then(axios.spread((stats1, stats2, stats3) => {
+              .then(axios.spread((transactionsStatistics, totalNumberOfInstitutions, transactionsHistory, activeAndInactiveTerminalsStatistics, allTerminalsStatistics) => {
                 setState(state =>({
                     ...state,
                     isLoading: false
                 }))                   
-                  if(stats3.data.respCode === '00'){
-                    const { transactions, totalCount, hasNextRecord } = stats3.data.respBody;
-                    const { totalSuccessfulAmount, totalTransactions, failed, success } = stats1.data.respBody; 
+                  if(transactionsHistory.data.respCode === '00'){
+                    const { transactions, totalCount, hasNextRecord } = transactionsHistory.data.respBody;
+                    const { totalSuccessfulAmount, totalTransactions, failed, success } = transactionsStatistics.data.respBody;
+                    const { activeTerminals, inactiveTerminals} = activeAndInactiveTerminalsStatistics.data.respBody;
                     setTransactionsList(transactionsList =>({
                         ...transactionsList,
                         transactions,
@@ -135,19 +155,26 @@ const Dashboard = () => {
                             totalTransactions,
                             failed: failed,
                             success,
-                            institutions: stats2.data.respBody
-                        }
+                            institutions: totalNumberOfInstitutions.data.respBody
+                        },
+                        terminalsStatistics: {
+                            ...state.terminalsStatistics,
+                            allTerminals: allTerminalsStatistics.data.respBody,
+                            activeTerminals,
+                            inactiveTerminals
+                        },
                       }))
                 } else {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${stats3.data.respDescription}`,
+                        text: `${transactionsHistory.data.respDescription}`,
                         footer: 'Please contact support'
                     })
                 }                
               }))
               .catch(error => {
+                  console.log(error)
                 setState(state =>({
                     ...state,
                     isLoading: false
@@ -166,7 +193,7 @@ const Dashboard = () => {
         return(() => {
             clearInterval(interval)
         })
-    }, [page, size, authToken, fromDate, toDate])
+    }, [page, size, fromDate, toDate])
 
     const changeCurrentPage = (pageNumber) => {
         setState({
@@ -195,9 +222,10 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <div className="page-content">
+            <div>
                 <DashboardContext.Provider value={{
                     data,
+                    terminalsStatistics: state.terminalsStatistics,
                     transactionsList,
                     isLoading,
                     page,
@@ -205,8 +233,8 @@ const Dashboard = () => {
                     size,
                     changeCurrentPage
                 }}>
-                    <div id="alignChartAndCards">
-                        <div id="chart">
+                    <div className="mb-5" id="alignChartAndCards">
+                        <div className="page-content" id="chart">
                             <Chart />  
                         </div>
                         <div>

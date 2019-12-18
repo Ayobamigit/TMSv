@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Slider from "react-slick";
 import './TopInstitutions.styles.scss';
 import "slick-carousel/slick/slick.css";
@@ -10,19 +10,19 @@ export default function TopInstitutions() {
     })
     useEffect(() => {
         if(window.innerWidth < 960){
-            setState({
+            setState(state => ({
                 ...state,
                 slidesToShow: 1
-            })
+            }))
         } else {
-            setState({
+            setState(state => ({
                 ...state,
                 slidesToShow: 3
-            })
+            }))
         }
     }, [])
     let settings = {
-        dots: true,
+        dots: false,
         autoplay: true,
         infinite: true,
         speed: 1000,
@@ -31,36 +31,36 @@ export default function TopInstitutions() {
         slidesToScroll: 1
       };
     return (
-        <Fragment>
+        <div>
             <h4 className="mt-5">Top Performing institutions</h4>
-            <div className="top-institutions-container mt-2">
+            <div className="page-content top-institutions-container mt-2">
                 <Slider {...settings}>
                     <div>
-                        <h5>Name</h5>
-                        <h6>Value</h6>
+                        <p>Name</p>
+                        <h5>N100,000</h5>
                     </div>
                     <div>
-                        <h5>Name</h5>
-                        <h6>Value</h6>
+                        <p>Name</p>
+                        <h5>N100,000</h5>
                     </div>
                     <div>
-                        <h5>Name</h5>
-                        <h6>Value</h6>
+                        <p>Name</p>
+                        <h5>N100,000</h5>
                     </div>
                     <div>
-                        <h5>Name</h5>
-                        <h6>Value</h6>
+                        <p>Name</p>
+                        <h5>N100,000</h5>
                     </div>
                     <div>
-                        <h5>Name</h5>
-                        <h6>Value</h6>
+                        <p>Name</p>
+                        <h5>N100,000</h5>
                     </div>
                     <div>
-                        <h5>Name</h5>
-                        <h6>Value</h6>
+                        <p>Name</p>
+                        <h5>N100,000</h5>
                     </div>
                 </Slider>
         </div>
-      </Fragment>
+      </div>
     )
 }
