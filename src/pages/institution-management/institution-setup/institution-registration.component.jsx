@@ -3,6 +3,7 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 import Swal from '../../../constants/swal';
 import { registerInstitutionURL, allServiceProviders, getBanks } from '../../../Utils/URLs';
 import { useHistory } from 'react-router-dom';
+import { manipulateNumber } from '../../../Utils/manipulateNumber';
 
 // Context for Authentication
 import Layout from '../../../components/Layout/layout.component';
@@ -260,7 +261,9 @@ const InstitutionRegistration = () => {
                                     placeholder="Settlement Account Number" 
                                     value={state.settlementAccount} 
                                     name="settlementAccount"
-                                    onChange={onChange}                               
+                                    maxLength="10"
+                                    onChange={onChange}  
+                                    onKeyPress={(e) => manipulateNumber(e)}                             
                                 />
                             </div>
                             <div className="col-md-6">
@@ -284,7 +287,9 @@ const InstitutionRegistration = () => {
                                     value={state.institutionPhone} 
                                     name="institutionPhone"
                                     onChange={onChange}
-                                    required                                 
+                                    required 
+                                    maxLength="11"
+                                    onKeyPress={(e) => manipulateNumber(e)}                             
                                 />
                             </div>
                             <div className="col-md-6">

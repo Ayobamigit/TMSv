@@ -46,7 +46,7 @@
     height: 22px;
     margin-top: -22px;
     margin-left: -22px;
-    border-color: #262A62;
+    border-color: var(--primaryColor);
     border-top-left-radius: 36px;
     border-top-right-radius: 36px;
   }
@@ -58,7 +58,7 @@
     height: 29px;
     margin-top: -29px;
     margin-left: -29px;
-    border-color: #ff3547;
+    border-color: var(--primaryBlack);
     border-top-left-radius: 42px;
     border-top-right-radius: 42px;
   }
@@ -70,7 +70,7 @@
     height: 36px;
     margin-top: -36px;
     margin-left: -36px;
-    border-color: #262A62;
+    border-color: var(--primaryColor);
     border-top-left-radius: 48px;
     border-top-right-radius: 48px;
   }
@@ -82,7 +82,7 @@
     height: 43px;
     margin-top: -43px;
     margin-left: -43px;
-    border-color: #ff3547;
+    border-color: var(--primaryBlack);
     border-top-left-radius: 54px;
     border-top-right-radius: 54px;
   }
@@ -94,7 +94,7 @@
     height: 50px;
     margin-top: -50px;
     margin-left: -50px;
-    border-color: #262A62;
+    border-color: var(--primaryColor);
     border-top-left-radius: 60px;
     border-top-right-radius: 60px;
   }
@@ -106,7 +106,7 @@
     height: 57px;
     margin-top: -57px;
     margin-left: -57px;
-    border-color: #ff3547;
+    border-color: var(--primaryBlack);
     border-top-left-radius: 66px;
     border-top-right-radius: 66px;
   }
@@ -118,7 +118,7 @@
     height: 64px;
     margin-top: -64px;
     margin-left: -64px;
-    border-color: #262A62;
+    border-color: var(--primaryColor);
     border-top-left-radius: 72px;
     border-top-right-radius: 72px;
   }
@@ -130,7 +130,7 @@
     height: 71px;
     margin-top: -71px;
     margin-left: -71px;
-    border-color: #ff3547;
+    border-color: var(--primaryBlack);
     border-top-left-radius: 78px;
     border-top-right-radius: 78px;
   }

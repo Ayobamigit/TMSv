@@ -15,7 +15,7 @@ import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const DeviceRegistration = () => {
     const [state, setState ] =  useState({
-        terminalID: '2',
+        terminalID: '',
         terminalType: '',
         terminalROMVersion: '',
         terminalSerialNo: '',
@@ -223,10 +223,9 @@ const DeviceRegistration = () => {
                             <p>Terminal Type</p>
                             <select className="browser-default custom-select" name="terminalType" value={state.terminalType} onChange={onChange} required >
                                 <option value="" disabled>Choose your option</option>                                
-                                <option value="justTide">justTide</option>
-                                <option value="PACS">PACS</option>
+                                <option value="PAX">PAX</option>
                                 <option value="TELPO">TELPO</option>
-                                <option value="Topwise">Topwise</option>
+                                <option value="TOPWISE">TOPWISE</option>
                             </select>
                         </div>
                         <div className="form-group">

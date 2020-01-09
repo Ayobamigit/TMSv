@@ -4,7 +4,7 @@ import './TransactionDetails.styles.scss';
 
 class TransactionDetails extends Component{
     render(){
-        const { transactionDetails: {amount, dateTime, institutionID, pan, responseCode, responseDesc, rrn, stan, status, terminalID }} = this.props;
+        const { transactionDetails: {amount, dateTime, institutionID, pan, responseCode, responseDesc, rrn, stan, status, terminalID, institutionResponseCode, institutionResponseDesc }} = this.props;
         return (
             <div className="transaction-receipt">
                 <TransactionReportDiv 
@@ -38,6 +38,14 @@ class TransactionDetails extends Component{
                 <TransactionReportDiv 
                     title="Response Description"
                     value={responseDesc}
+                />
+                <TransactionReportDiv 
+                    title="Institution Response Code"
+                    value={institutionResponseCode}
+                />
+                <TransactionReportDiv 
+                    title="Institution Response Description"
+                    value={institutionResponseDesc}
                 />
                 <TransactionReportDiv 
                     title="RRN"

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { Link } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
-import {allInstitutions} from '../../../Utils/URLs';
+import {allInstitutionsList} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import Pagination from "react-pagination-js";
 import "react-pagination-js/dist/styles.css";
@@ -29,7 +29,7 @@ const InstitutionsList = () => {
             size: state.size
         }
         axios({
-            url: `${allInstitutions}`,
+            url: `${allInstitutionsList}`,
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

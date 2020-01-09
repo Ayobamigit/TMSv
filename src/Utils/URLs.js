@@ -1,7 +1,7 @@
 const baseUrl = () => {
     // return 'http://10.9.8.102:7070'; //Josh's Local
-    return 'http://10.2.2.47:5334'; //Test IP
-    // return 'http://10.9.8.63:5334'; //Public IP
+    // return 'http://10.2.2.47:5334'; //Test IP
+    return 'http://10.9.8.63:5334'; //Public IP
 }
  
 export const institutionLoginUrl = `${baseUrl()}/api/v1/login`;
@@ -27,6 +27,7 @@ export const registerInstitutionURL = `${baseUrl()}/api/v1/institution`;
 export const viewAnInstitution = `${baseUrl()}/api/v1/institution`;
 export const getBanks = `${baseUrl()}/api/v1/serviceProviders/banks`;
 export const allInstitutions = `${baseUrl()}/api/v1/institution/institutionslist`;
+export const allInstitutionsList = `${baseUrl()}/api/v1/institution/institutions`;
 
 //Configurations
 export const allServiceProviders = `${baseUrl()}/api/v1/serviceProviders`;

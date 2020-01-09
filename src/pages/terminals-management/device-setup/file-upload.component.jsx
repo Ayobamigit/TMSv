@@ -82,9 +82,10 @@ const FileUploadModal = () => {
                             title: 'Successful Uploads...',
                             text: 'Terminal have been uploaded Successful!'
                         })
+                        console.log(result.data.respBody)
                         setState({
                             ...state, 
-                            uploadReport: result.data.respBody
+                            uploadReport: result.data.respBody ? result.data.respBody : []
                         })
                     }else{
                         Swal.fire({
@@ -153,9 +154,9 @@ const FileUploadModal = () => {
                                 <tbody>
                                     {
                                         uploadReport.map((reportStatus, i) => {
-                                            const {terminalID, saved, statusDescription} = reportStatus;
+                                            const {terminalID, savedStatus, statusDescription} = reportStatus;
                                             const statusClass = () => {
-                                                if(saved){
+                                                if(savedStatus){
                                                     return 'success'
                                                 } else {
                                                     return 'failed'
@@ -165,7 +166,7 @@ const FileUploadModal = () => {
                                                 <tr key={i}>
                                                     <th scope="row">{i+1}</th>
                                                     <td>{terminalID}</td>
-                                                    <td><p className={statusClass()}>{saved ? 'Success' : 'Failed'}</p></td>
+                                                    <td><p className={statusClass()}>{savedStatus ? 'Success' : 'Failed'}</p></td>
                                                     <td>{statusDescription}</td>
                                                 </tr>
                                             )

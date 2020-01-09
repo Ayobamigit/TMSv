@@ -4,7 +4,7 @@ import { DashboardContext } from '../../pages/dashboard/Dashboard.component';
 import IsLoadingData from '../isLoadingData/isLoadingData';
 
 export default function ChartFrame() {
-    const { data: {success, failed, institutions, totalTransactions}, terminalsStatistics: {allTerminals, activeTerminals, inactiveTerminals} } = useContext(DashboardContext);
+    const { data: {success, failed, institutions, totalTransactions}, terminalsStatistics: {allTerminals, activeTerminals, inactiveTerminals}, fetchingTransactions } = useContext(DashboardContext);
         const data = {
             labels: ['Successful Transactions', 'Failed Transactions', 'Number of Institutions', 'Number of Transactions', 'Total Terminals', 'Active Terminals', 'Inactive Terminals'],
             datasets:[
@@ -32,25 +32,32 @@ export default function ChartFrame() {
         }
     return (
         <Fragment>
-        {
-            totalTransactions ?
-            <Doughnut
-                data={data}
-                options={{
-                    title: {
-                        display: true,
-                        text:'Summary of Activities',
-                        fontSize: 16
-                    },
-                    maintainAspectRatio: true,
-                    legend:{
-                        display: false,
+            {
+                fetchingTransactions ? 
+                <IsLoadingData />
+                :
+                <Fragment>
+                    {
+                        totalTransactions >= 0 ?
+                        <Doughnut
+                            data={data}
+                            options={{
+                                title: {
+                                    display: true,
+                                    text:'Summary of Activities',
+                                    fontSize: 16
+                                },
+                                maintainAspectRatio: true,
+                                legend:{
+                                    display: false,
+                                }
+                            }}
+                        />
+                        :
+                        <IsLoadingData />
                     }
-                }}
-            />
-            :
-            <IsLoadingData />
-        }
+                </Fragment>
+            }
         </Fragment>
     )
 }

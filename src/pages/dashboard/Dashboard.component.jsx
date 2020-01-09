@@ -30,7 +30,8 @@ const Dashboard = () => {
             activeTerminals: '',
             inactiveTerminals: ''
         },
-        isLoading: false,
+        isLoading: false,        
+        fetchingTransactions: false,
         page: 0,
         size: 10,
         fromDate: '',
@@ -40,9 +41,9 @@ const Dashboard = () => {
     const [ transactionsList, setTransactionsList ] = useState({
         transactions: [],
         totalCount: 0,
-        hasNextRecord: false
+        hasNextRecord: false,
     })
-    const { data, page, size, isLoading, toDate, fromDate } = state;
+    const { data, page, size, isLoading, toDate, fromDate, fetchingTransactions, terminalsStatistics } = state;
 
     useEffect(() => {
         let { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
@@ -77,6 +78,12 @@ const Dashboard = () => {
                 })
             })
         }
+
+        // Add spinner to transactions once
+        setState(state => ({
+            ...state,
+            fetchingTransactions: true
+        }))
 
         //Fetch Statistics 
         const getDashboardStatistics = () => {
@@ -135,7 +142,8 @@ const Dashboard = () => {
               .then(axios.spread((transactionsStatistics, totalNumberOfInstitutions, transactionsHistory, activeAndInactiveTerminalsStatistics, allTerminalsStatistics) => {
                 setState(state =>({
                     ...state,
-                    isLoading: false
+                    isLoading: false,
+                    fetchingTransactions: false
                 }))                   
                   if(transactionsHistory.data.respCode === '00'){
                     const { transactions, totalCount, hasNextRecord } = transactionsHistory.data.respBody;
@@ -174,7 +182,6 @@ const Dashboard = () => {
                 }                
               }))
               .catch(error => {
-                  console.log(error)
                 setState(state =>({
                     ...state,
                     isLoading: false
@@ -225,11 +232,12 @@ const Dashboard = () => {
             <div>
                 <DashboardContext.Provider value={{
                     data,
-                    terminalsStatistics: state.terminalsStatistics,
+                    terminalsStatistics,
                     transactionsList,
                     isLoading,
                     page,
                     totalCount,
+                    fetchingTransactions,
                     size,
                     changeCurrentPage
                 }}>
