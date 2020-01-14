@@ -11,8 +11,9 @@ import DashboardTransactionHistoryComponent from '../../components/DashboardTran
 
 // Context for Authentication
 import { FetchTimeOut } from '../../Utils/FetchTimeout';
-import { transactionsHistoryURL, transactionsStatistics, totalNumberOfInstitutions, getNewTokenUrl, allTerminalsStatistics, activeAndInactiveTerminalsStatistics } from '../../Utils/URLs';
+import { dashboardUtilities, getNewTokenUrl } from '../../Utils/URLs';
 import TopInstitutions from '../../components/TopInstitutions/TopInstitutions.component';
+import formatter from '../../Utils/formatter';
 
 export const DashboardContext = createContext();
 
@@ -40,8 +41,7 @@ const Dashboard = () => {
 
     const [ transactionsList, setTransactionsList ] = useState({
         transactions: [],
-        totalCount: 0,
-        hasNextRecord: false,
+        totalCount: 0
     })
     const { data, page, size, isLoading, toDate, fromDate, fetchingTransactions, terminalsStatistics } = state;
 
@@ -87,87 +87,47 @@ const Dashboard = () => {
 
         //Fetch Statistics 
         const getDashboardStatistics = () => {
-            let reqBody = {
-                fromDate,
-                institutionID: "",
-                page,
-                size,
-                toDate
-            }
             setState(state =>({
                 ...state,
                 isLoading: true
             }))
 
             axios.all([
-                axios.get(`${transactionsStatistics}`, {
+                axios.get(`${dashboardUtilities}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${authToken}`
                     },
                     timeout: FetchTimeOut
-                  }),
-                axios.get(`${totalNumberOfInstitutions}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    timeout: FetchTimeOut
-                  }),
-                axios({
-                    url: `${transactionsHistoryURL}`,
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    data: reqBody,
-                    timeout: FetchTimeOut
-                }),
-                axios.get(`${activeAndInactiveTerminalsStatistics}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    timeout: FetchTimeOut
-                }),
-                  axios.get(`${allTerminalsStatistics}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    timeout: FetchTimeOut
-                }),
+                  })
               ])
-              .then(axios.spread((transactionsStatistics, totalNumberOfInstitutions, transactionsHistory, activeAndInactiveTerminalsStatistics, allTerminalsStatistics) => {
+              .then(axios.spread((dashboardStats) => {
                 setState(state =>({
                     ...state,
                     isLoading: false,
                     fetchingTransactions: false
                 }))                   
-                  if(transactionsHistory.data.respCode === '00'){
-                    const { transactions, totalCount, hasNextRecord } = transactionsHistory.data.respBody;
-                    const { totalSuccessfulAmount, totalTransactions, failed, success } = transactionsStatistics.data.respBody;
-                    const { activeTerminals, inactiveTerminals} = activeAndInactiveTerminalsStatistics.data.respBody;
+                  if(dashboardStats.data.respCode === '00'){
+                    //   console.log(dashboardStats.data.respBody)
+                    const { dashboardTransactions, success, failed, totalSuccessfulAmount, totalTransactions, totalInstitutions, topFiveActiveInstitutions, totalTerminals, activeInactiveTerminals: { activeTerminals, inactiveTerminals} } = dashboardStats.data.respBody;
                     setTransactionsList(transactionsList =>({
                         ...transactionsList,
-                        transactions,
-                        totalCount,
-                        hasNextRecord
+                        transactions: dashboardTransactions,
+                        totalCount: dashboardTransactions.length
                     }))
                     setState(state => ({
                         ...state,
                         data: {
                             ...state.data,
-                            totalSuccessfulAmount,
+                            totalSuccessfulAmount: formatter.format(totalSuccessfulAmount),
                             totalTransactions,
-                            failed: failed,
+                            failed,
                             success,
-                            institutions: totalNumberOfInstitutions.data.respBody
+                            institutions: totalInstitutions
                         },
                         terminalsStatistics: {
                             ...state.terminalsStatistics,
-                            allTerminals: allTerminalsStatistics.data.respBody,
+                            allTerminals: totalTerminals,
                             activeTerminals,
                             inactiveTerminals
                         },
@@ -176,7 +136,7 @@ const Dashboard = () => {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${transactionsHistory.data.respDescription}`,
+                        text: `${dashboardStats.data.respDescription}`,
                         footer: 'Please contact support'
                     })
                 }                
