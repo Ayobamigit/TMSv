@@ -33,6 +33,7 @@ const UsersList = () => {
         .then(result => {
             setIsLoading(false)
             if(result.data.respCode === '00'){
+                // console.log(result.data.respBody)
                 setUsersList(result.data.respBody)
             } else {
                 Swal.fire({

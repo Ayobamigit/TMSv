@@ -15,6 +15,7 @@ export const getTransactionByIdUrl = `${baseUrl()}/api/v1/transactions`;
 
 //Terminal Management
 export const allTerminals = `${baseUrl()}/api/v1/tms/terminals`;
+// export const institutionTerminals = `${baseUrl()}/api/v1/InstitutionTerminalList`;
 export const registerTerminalURL = `${baseUrl()}/api/v1/tms`;
 export const uploadTerminalsURL = `${baseUrl()}/api/v1/tms/upload`;
 export const viewATerminal = `${baseUrl()}/api/v1/tms`;

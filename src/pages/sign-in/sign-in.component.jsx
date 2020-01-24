@@ -44,12 +44,14 @@ const SignIn = ({ history }) => {
             .then(response => {
                 setState({ ...state, isLoggingIn: false })
                 if (response.data.respCode === '00') {
+                    const { role, institution, authToken } = response.data.respBody
+                    // console.log(response.data.respBody)
                     setAuthenticationStatus(true)
                     sessionStorage.setItem('userDetails', JSON.stringify({
-                        authToken: response.data.respBody.authToken,
+                        authToken,
                         userName: state.username.toUpperCase(),
-                        institution: response.data.respBody.institution,
-                        role: response.data.respBody.role
+                        institution,
+                        role
                     }))
                     history.push('/dashboard')
                 } else {
@@ -119,7 +121,7 @@ const SignIn = ({ history }) => {
                                 className="btn btn-md btn-primary" 
                                 type="submit"
                                 disabled={isLoggingIn}
-                            >
+                                >
                                 {
                                     isLoggingIn ? <IsFetching /> : 'Sign in'
                                 }

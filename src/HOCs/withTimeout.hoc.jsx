@@ -12,7 +12,7 @@ const withTimeout = (WrappedComponent) => {
         logout = () => { 
             if(this._isMounted && this.props.history.push){ 
                 this.props.history.push("/"); 
-                alert('Your session timed out'); 
+                alert('Your session timed out due to inactivity'); 
             }
             sessionStorage.clear();  
         };

@@ -18,6 +18,9 @@ const InstitutionRegistration = () => {
         settlementAccount: '', 
         institutionAddress: '',
         institutionPhone: '',
+        institutionAppKey: '',
+        institutionIntegrationVersion: '',
+        institutionURL: '',
         serviceProvidersList: [],
         banks: [],
         profiles: [],
@@ -45,7 +48,6 @@ const InstitutionRegistration = () => {
     }    
     
     useEffect(() => {
-
         //Get all service providers
         axios({
             url: `${allServiceProviders}`,
@@ -125,7 +127,7 @@ const InstitutionRegistration = () => {
             ...state, 
             IsFetchingData: true
         })
-        const { institutionName, institutionEmail, settlementAccount, institutionAddress, institutionPhone, settlementBank } = state;
+        const { institutionName, institutionEmail, settlementAccount, institutionAddress, institutionPhone, settlementBank, institutionAppKey, institutionIntegrationVersion, institutionURL } = state;
         
         const reqBody = {
             institutionName, 
@@ -134,12 +136,15 @@ const InstitutionRegistration = () => {
             settlementBank,              
             institutionAddress, 
             institutionPhone,
+            institutionAppKey,
+            institutionIntegrationVersion,
+            institutionURL,
             createdBy: userName, 
             dateCreated: date, 
             serviceProviderName: serviceProviderInfo.providerName        
 
         };
-        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAddress.trim() === '' || settlementAccount.trim() === '' || settlementBank.trim() === '') {
+        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAddress.trim() === '' || institutionAppKey.trim() === '' || institutionURL.trim() === '' || institutionIntegrationVersion.trim() === '' || settlementAccount.trim() === '' || settlementBank.trim() === '') {
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -231,6 +236,42 @@ const InstitutionRegistration = () => {
                                     required                                 
                                     className="form-control" 
                                     placeholder="Institution Email" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Institution URL</p>
+                                <input 
+                                    type="url" 
+                                    value={state.institutionURL}
+                                    name="institutionURL" 
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Institution URL" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Institution Integration Version</p>
+                                <input 
+                                    type="text" 
+                                    value={state.institutionIntegrationVersion}
+                                    name="institutionIntegrationVersion" 
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Institution Integrated Version" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Institution App Key</p>
+                                <input 
+                                    type="text" 
+                                    value={state.institutionAppKey}
+                                    name="institutionAppKey" 
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Institution App Key" 
                                 />
                             </div>
                             <div className="col-md-6">
