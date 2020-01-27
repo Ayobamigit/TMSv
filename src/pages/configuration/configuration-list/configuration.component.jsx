@@ -108,7 +108,7 @@ const Configuration = () => {
         });
     }, [authToken])
 
-    const onSwitchChange = () => {
+    const onSwitchChange = async() => {
         let value;
         if (state.switchButton){
             value =  false;
@@ -118,7 +118,11 @@ const Configuration = () => {
         globalSettingsActivation(value)
     }
 
-    const globalSettingsActivation = (value) => {
+    const globalSettingsActivation = async (value) => {
+        setState({
+            ...state,
+            disableSwitchButton: true
+        })
         axios({
             url: `${globalSettings}?request=${value}`,
             method: 'post',
@@ -131,11 +135,12 @@ const Configuration = () => {
         .then(result => {
             setState(state =>({
                 ...state,
-                isLoading: false
+                isLoading: false,
+                disableSwitchButton: false
             }))
             if(result.data.respCode === '00'){
                 setState({
-                    ...state,
+                    ...state,                    
                     switchButton: !state.switchButton
                 })                
             } else {
@@ -150,7 +155,8 @@ const Configuration = () => {
         .catch(err => {
             setState(state =>({
                 ...state,
-                isLoading: false
+            disableSwitchButton: false,
+            isLoading: false
             }))
             Swal.fire({
                 type: 'error',
@@ -174,7 +180,7 @@ const Configuration = () => {
                         <div className="switch">
                             <span  onClick={onSwitchChange}>
                                 <input type="checkbox" checked={switchButton} disabled={disableSwitchButton} readOnly />
-                                <span className="slider round"></span>
+                                <span className={`slider round ${disableSwitchButton ? 'disabled' : ''}`}></span>
                             </span>
                         </div>
                     </div>
