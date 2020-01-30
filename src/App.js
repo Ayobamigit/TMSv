@@ -33,6 +33,8 @@ function App() {
               <Route exact path="/configuration/:id" component={ProtectedRoutes} /> 
               <Route exact path="/configuration/profile/:id" component={ProtectedRoutes} />  
 
+              <Route exact path="/roles" component={ProtectedRoutes} />
+
               <Route exact path="/reporting" component={ProtectedRoutes} />
               <Route exact path="/reporting/:id" component={ProtectedRoutes} />
 

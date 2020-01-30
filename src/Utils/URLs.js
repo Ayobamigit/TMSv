@@ -40,6 +40,15 @@ export const deleteServiceProviderById = `${baseUrl()}/api/v1/serviceProviders/d
 export const deleteProfileById = `${baseUrl()}/api/v1/serviceProviders/deleteProfile`;
 export const getProfilesByServiceProviderId = `${baseUrl()}/api/v1/serviceProviders/profilesbyProvidersID`;
 
+//Roles and Permissions
+export const getRolesAndPermissions = `${baseUrl()}/api/v1/rolePermissions`;
+export const addPermissions = `${baseUrl()}/api/v1/rolePermissions/addPermissions`;
+export const deletePermissions = `${baseUrl()}/api/v1/rolePermissions/deletePermissions`;
+export const updatePermissions = `${baseUrl()}/api/v1/rolePermissions/updatePermissions`;
+export const addRoles = `${baseUrl()}/api/v1/rolePermissions/addRoles`;
+export const deleteRoles = `${baseUrl()}/api/v1/rolePermissions/deleteRoles`;
+export const editRoles = `${baseUrl()}/api/v1/rolePermissions/editRoles`;
+export const getAllPermissions = `${baseUrl()}/api/v1/rolePermissions/getAllPermissions`;
 
 // SuperAdmin
 export const superAdminLoginUrl = `${baseUrl()}/api/v1/superadmin/login`;

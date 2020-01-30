@@ -60,7 +60,7 @@ const FancySidebar = () => {
             </NavLink>
           </li>
           
-          {/*  Products */}
+          {/*  Audit */}
           <li title="Audit">
             <NavLink className="nav-link" to="/audit" activeClassName="selected">
               <i className="fa fa-file"></i>
@@ -74,6 +74,13 @@ const FancySidebar = () => {
             </NavLink>
           </li>
 
+          {/*  Roles and Permissions */}
+          <li title="Configuration">
+            <NavLink className="nav-link" to="/roles" activeClassName="selected">
+              <i className="fa fa-key"></i>
+            </NavLink>
+          </li>         
+          
           {/* { Logout } */}
           <li title="Logout">
             <NavLink className="nav-link" to="/" onClick={logout}>

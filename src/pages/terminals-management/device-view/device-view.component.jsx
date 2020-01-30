@@ -16,7 +16,7 @@ const DeviceView = () => {
     const [state, setState ] =  useState({
         terminalID: '',
         terminalType: '',
-        terminalStatus: '',
+        terminalStatus: 'good',
         terminalROMVersion: '',
         terminalSerialNo: '',
         institutionName: '',
@@ -162,109 +162,160 @@ const DeviceView = () => {
                     <button className="btn btn-sm btn-primary" onClick={editFields}>Edit Fields</button>
                 </div>
                 <div className="row page-content">
-                    <div className="col-md-6">
+                    <div className="col-md-12">
                         <form onSubmit={editDeviceData}>
-                            <div className="form-group">
-                                <p>Terminal Id</p>
-                                <input 
-                                    name="terminalID" 
-                                    className="form-control" 
-                                    value={state.terminalID} 
-                                    onChange={onChange}
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <p>Terminal Type</p>
-                                <select className="browser-default custom-select" name="terminalType" value={state.terminalType} onChange={onChange} required disabled={readOnly} >
-                                    <option value="" disabled>Choose your option</option>                                
-                                    <option value="justTide">justTide</option>
-                                    <option value="PACS">PACS</option>
-                                    <option value="TELPO">TELPO</option>
-                                    <option value="Topwise">Topwise</option>
-                                </select>
-                            </div>
-                            {/* <div className="form-group">
-                                <p>Terminal Status</p>
-                                <select className="browser-default custom-select" name="terminalStatus" value={state.terminalStatus} onChange={onChange} required disabled={readOnly} >
-                                    <option value="" disabled>Choose your option</option>                                
-                                    <option value="Good">Good</option>
-                                    <option value="Printer Error">Printer Error</option>
-                                    <option value="No Paper">No Paper</option>
-                                    <option value="Network Malfunction">Network Malfunction</option>
-                                </select>
-                            </div> */}
-                            <div className="form-group">
-                                <p>Terminal Version</p>
-                                <input 
-                                    name="terminalROMVersion" 
-                                    className="form-control" 
-                                    value={state.terminalROMVersion} 
-                                    onChange={onChange} 
-                                    required
-                                    readOnly={readOnly}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <p>Terminal App Version</p>
-                                <input 
-                                    name="terminalSerialNo" 
-                                    className="form-control" 
-                                    value={state.terminalSerialNo} 
-                                    onChange={onChange}
-                                    required 
-                                    readOnly={readOnly}
-                                />
-                            </div>  
-                            <div className="form-group">
-                                <p>Institution</p>
-                                <input 
-                                    name="terminalSerialNo" 
-                                    className="form-control" 
-                                    value={state.institutionName} 
-                                    onChange={onChange}
-                                    required 
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <p>Service Provider</p>
-                                <input 
-                                    name="terminalSerialNo" 
-                                    className="form-control" 
-                                    value={state.serviceProvider} 
-                                    onChange={onChange}
-                                    required 
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <p>Profile</p>
-                                <input 
-                                    name="terminalSerialNo" 
-                                    className="form-control" 
-                                    value={state.profile} 
-                                    onChange={onChange}
-                                    required 
-                                    readOnly
-                                />
-                            </div>
-                            {
-                                readOnly ?
-                                null :
-                                <div className="form-group">
-                                    <button 
-                                        type="input"
-                                        className="btn btn-primary" 
-                                        disabled={IsFetchingData}
-                                    >
-                                        {
-                                            IsFetchingData ? <IsFetching /> : 'Update'
-                                        }
-                                    </button>
+                            <div className="form-row">
+                                <div className="form-group col-md-6">
+                                    <p>Terminal Id</p>
+                                    <input 
+                                        name="terminalID" 
+                                        className="form-control" 
+                                        value={state.terminalID} 
+                                        onChange={onChange}
+                                        required
+                                        readOnly={readOnly}
+                                    />
                                 </div>
-                            }               
+                                <div className="form-group col-md-6">
+                                    <p>Terminal Type</p>
+                                    <select className="browser-default custom-select" name="terminalType" value={state.terminalType} onChange={onChange} required disabled={readOnly} >
+                                        <option value="" disabled>Choose your option</option>                                
+                                        <option value="justTide">justTide</option>
+                                        <option value="PACS">PACS</option>
+                                        <option value="TELPO">TELPO</option>
+                                        <option value="Topwise">Topwise</option>
+                                    </select>
+                                </div>
+
+                                {/* Hardcoded Values */}
+                                <div className="form-group col-md-6">
+                                    <p>Terminal Status</p>
+                                    <select className="browser-default custom-select" name="terminalStatus" value={state.terminalStatus} onChange={onChange} required disabled >
+                                        <option value="" disabled>Choose your option</option>                                
+                                        <option value="Good">Good</option>
+                                        <option value="Printer Error">Printer Error</option>
+                                        <option value="No Paper">No Paper</option>
+                                        <option value="Network Malfunction">Network Malfunction</option>
+                                    </select>
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <p>Battery Percentage</p>
+                                    <input 
+                                        name="terminalROMVersion" 
+                                        className="form-control" 
+                                        value="87%" 
+                                        onChange={onChange} 
+                                        required
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <p>Paper Level</p>
+                                    <input 
+                                        name="terminalROMVersion" 
+                                        className="form-control" 
+                                        value="56%" 
+                                        onChange={onChange} 
+                                        required
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <p>Terminal Location</p>
+                                    <input 
+                                        name="terminalROMVersion" 
+                                        className="form-control" 
+                                        value={state.terminalID === '2101CX82' ? 'Banana Island, Lagos.' : '7a Idejo Street, Lagos.'} 
+                                        onChange={onChange} 
+                                        required
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <p>Number of Applications Installed</p>
+                                    <input 
+                                        name="terminalROMVersion" 
+                                        className="form-control" 
+                                        value="6" 
+                                        onChange={onChange} 
+                                        required
+                                        readOnly
+                                    />
+                                </div>
+
+                                {/* Hardcoded Values */}
+
+                                <div className="form-group col-md-6">
+                                    <p>Terminal Version</p>
+                                    <input 
+                                        name="terminalROMVersion" 
+                                        className="form-control" 
+                                        value={state.terminalROMVersion} 
+                                        onChange={onChange} 
+                                        required
+                                        readOnly={readOnly}
+                                    />
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <p>Terminal App Version</p>
+                                    <input 
+                                        name="terminalSerialNo" 
+                                        className="form-control" 
+                                        value={state.terminalSerialNo} 
+                                        onChange={onChange}
+                                        required 
+                                        readOnly={readOnly}
+                                    />
+                                </div>  
+                                <div className="form-group col-md-6">
+                                    <p>Institution</p>
+                                    <input 
+                                        name="terminalSerialNo" 
+                                        className="form-control" 
+                                        value={state.institutionName} 
+                                        onChange={onChange}
+                                        required 
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <p>Service Provider</p>
+                                    <input 
+                                        name="terminalSerialNo" 
+                                        className="form-control" 
+                                        value={state.serviceProvider} 
+                                        onChange={onChange}
+                                        required 
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <p>Profile</p>
+                                    <input 
+                                        name="terminalSerialNo" 
+                                        className="form-control" 
+                                        value={state.profile} 
+                                        onChange={onChange}
+                                        required 
+                                        readOnly
+                                    />
+                                </div>
+                                {
+                                    readOnly ?
+                                    null :
+                                    <div className="form-group col-md-12">
+                                        <button 
+                                            type="input"
+                                            className="btn btn-primary" 
+                                            disabled={IsFetchingData}
+                                        >
+                                            {
+                                                IsFetchingData ? <IsFetching /> : 'Update'
+                                            }
+                                        </button>
+                                    </div>
+                                }   
+                            </div>            
                         </form>
                     </div>
                 </div>

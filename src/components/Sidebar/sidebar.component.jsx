@@ -100,7 +100,7 @@ const Sidebar = () => {
             </NavLink>
           </li>
           
-          {/*  Products */}
+          {/*  Audit */}
           <li>
             <NavLink className="nav-link" to="/audit" activeClassName="selected">
               <i className="fa fa-file"></i>
@@ -113,6 +113,14 @@ const Sidebar = () => {
             <NavLink className="nav-link" to="/configuration" activeClassName="selected">
               <i className="fa fa-cog"></i>
               <span>Configuration</span>
+            </NavLink>
+          </li>
+
+          {/*  Roles and Permissions */}
+          <li>
+            <NavLink className="nav-link" to="/roles" activeClassName="selected">
+              <i className="fa fa-key"></i>
+              <span>Roles</span>
             </NavLink>
           </li>
 

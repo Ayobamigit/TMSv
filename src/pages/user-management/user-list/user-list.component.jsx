@@ -33,7 +33,7 @@ const UsersList = () => {
         .then(result => {
             setIsLoading(false)
             if(result.data.respCode === '00'){
-                // console.log(result.data.respBody)
+                console.log(result.data.respBody)
                 setUsersList(result.data.respBody)
             } else {
                 Swal.fire({
@@ -73,7 +73,7 @@ const UsersList = () => {
                                         <th scope="col">Email</th>
                                         <th scope="col">Username</th>
                                         <th scope="col">Institution</th>
-                                        <th scope="col">Role</th>
+                                        {/* <th scope="col">Role</th> */}
                                         <th scope="col">Date Created</th>
                                         <th scope="col">View</th>
                                         <th scope="col">Delete</th>
@@ -93,7 +93,7 @@ const UsersList = () => {
                                                         <td>{email}</td>
                                                         <td>{username}</td>
                                                         <td>{institution ? institution.institutionName : null}</td>
-                                                        <td>{role}</td>
+                                                        {/* <td>{role}</td> */}
                                                         <td>{datecreated ? datecreated.substring(0,19) : null}</td>
                                                         <td>
                                                             <Link to={`/user/${id}`}><i className="fa fa-eye"></i></Link>

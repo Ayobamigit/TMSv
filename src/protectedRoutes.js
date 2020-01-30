@@ -18,10 +18,14 @@ const InstitutionList = lazy(() => import('./pages/institution-management/instit
 
 const ReportingComponent = lazy(() => import('./pages/reporting/Reporting.component'));
 const ReportTransactionDetails = lazy(() => import('./pages/reporting/ReportTransactionDetails/ReportTransactionDetails.component'));
+
 const AuditComponent = lazy (() => import('./pages/audit/Audit.component'));
+
 const ConfigurationComponent = lazy (() => import('./pages/configuration/configuration-list/configuration.component'));
 const ViewServiceProvider = lazy (() => import('./pages/configuration/view-service-provider/view-service-provider.component'));
 const ViewProfile = lazy (() => import('./pages/configuration/view-service-provider/view-profile.component'));
+
+const RolesAndPermissionsComponent = lazy (() => import('./pages/roles-and-permissions/roles-and-permissions.component'));
 
 const UsersList = lazy(() => import('./pages/user-management/user-list/user-list.component'))
 const User = lazy(() => import('./pages/user-management/user-view/user.component'))
@@ -50,6 +54,8 @@ function ProtectedRoutes() {
 
                 <Route exact path="/reporting" component={ReportingComponent} />
                 <Route exact path="/reporting/:id" component={ReportTransactionDetails} />
+
+                <Route exact path="/roles" component={RolesAndPermissionsComponent} />
 
                 <Route exact path="/audit" component={AuditComponent} />        
 

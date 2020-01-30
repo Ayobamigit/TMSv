@@ -230,8 +230,8 @@ const UserRegistration = () => {
                                 <p>User Role</p>
                                 <select className="browser-default custom-select" name="role" value={state.role} onChange={onChange} required >
                                     <option value="" disabled>Choose role</option>                                
-                                    <option value="InstitutionAdmin">Admin</option>
-                                    <option value="InstitutionUser">User</option>
+                                    <option value="institutionAdmin">Admin</option>
+                                    <option value="institutionUser">User</option>
                                 </select>
                             </div>
                             <div className="form-group d-flex justify-content-end">

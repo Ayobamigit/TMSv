@@ -98,61 +98,61 @@ export default function AddProfiles({ id, providerName }) {
                 </div>
                 <div className="modal-body">
                     <form onSubmit={addProfile}>
-                    <div className="form-row">
-                        <div className="col-md-12">
-                            <p>Profile Name</p>
-                            <input 
-                                type="text" 
-                                value={profileName}
-                                name="profileName"
-                                onChange={onChange}
-                                required 
-                                className="form-control" 
-                                placeholder="Profile Name" 
-                            />
-                        </div>
-                        <div className="col-md-12">
-                            <p>Profile IP</p>
-                            <input 
-                                type="text" 
-                                value={profileIP}
-                                name="profileIP" 
-                                onChange={onChange}
-                                required                                 
-                                className="form-control" 
-                                placeholder="IP" 
-                            />
-                        </div>
+                        <div className="form-row">
+                            <div className="col-md-12">
+                                <p>Profile Name</p>
+                                <input 
+                                    type="text" 
+                                    value={profileName}
+                                    name="profileName"
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Profile Name" 
+                                />
+                            </div>
+                            <div className="col-md-12">
+                                <p>Profile IP</p>
+                                <input 
+                                    type="text" 
+                                    value={profileIP}
+                                    name="profileIP" 
+                                    onChange={onChange}
+                                    required                                 
+                                    className="form-control" 
+                                    placeholder="IP" 
+                                />
+                            </div>
 
-                        <div className="col-md-12">
-                            <p>Port</p>
-                            <input 
-                                name="profilePort" 
-                                type="text"
-                                className="form-control" 
-                                value={profilePort} 
-                                onChange={onChange}
-                                placeholder="Port" 
-                                required                                    
-                            />
+                            <div className="col-md-12">
+                                <p>Port</p>
+                                <input 
+                                    name="profilePort" 
+                                    type="text"
+                                    className="form-control" 
+                                    value={profilePort} 
+                                    onChange={onChange}
+                                    placeholder="Port" 
+                                    required                                    
+                                />
+                            </div>
+                            <div className="col-md-12">
+                                <p>ZPK</p>
+                                <input  
+                                    type="text"
+                                    name="profileZPK" 
+                                    className="form-control" 
+                                    value={profileZPK} 
+                                    onChange={onChange}
+                                    placeholder="ZPK"
+                                    required                                     
+                                />
+                            </div> 
+                            <div className="modal-footer">                            
+                                <button type="submit" className="btn btn-primary">Submit</button>
+                                <button type="button" className="btn btn-secondary" ref={dismissModal} data-dismiss="modal">Close</button>
+                            </div>
                         </div>
-                        <div className="col-md-12">
-                            <p>ZPK</p>
-                            <input  
-                                type="text"
-                                name="profileZPK" 
-                                className="form-control" 
-                                value={profileZPK} 
-                                onChange={onChange}
-                                placeholder="ZPK"
-                                required                                     
-                            />
-                        </div> 
-                        <div className="modal-footer">                            
-                            <button type="submit" className="btn btn-primary">Submit</button>
-                            <button type="button" className="btn btn-secondary" ref={dismissModal} data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
                     </form>
                 </div>
                 </div>

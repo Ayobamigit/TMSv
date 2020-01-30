@@ -44,10 +44,10 @@ const SignIn = ({ history }) => {
             .then(response => {
                 setState({ ...state, isLoggingIn: false })
                 if (response.data.respCode === '00') {
-                    const { role, institution, authToken } = response.data.respBody
+                    const { role, institution, token } = response.data.respBody
                     setAuthenticationStatus(true)
                     sessionStorage.setItem('userDetails', JSON.stringify({
-                        authToken,
+                        authToken: token,
                         userName: state.username.toUpperCase(),
                         institution,
                         role

@@ -3,7 +3,7 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 // import { useHttp } from '../../../CustomHooks/useHttp.hooks';
 import { Link } from 'react-router-dom';
 import './TerminalsList.styles.scss';
-import {allTerminals, institutionTerminals} from '../../../Utils/URLs';
+import {allTerminals} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import Pagination from "react-pagination-js";
