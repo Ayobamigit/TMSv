@@ -1,6 +1,7 @@
 const baseUrl = () => {
     // return 'http://10.9.8.102:7070'; //Josh's Local
     return 'http://10.2.2.47:5334'; //Test IP
+    // return 'http://41.219.149.51:5334'; //Test Public IP
     // return 'http://10.9.8.63:5334'; //Public IP
     // return 'http://medusa.3lineng.com'; //New Public IP
 }
@@ -42,7 +43,7 @@ export const getProfilesByServiceProviderId = `${baseUrl()}/api/v1/serviceProvid
 
 //Roles and Permissions
 export const getRolesAndPermissions = `${baseUrl()}/api/v1/rolePermissions`;
-export const addPermissions = `${baseUrl()}/api/v1/rolePermissions/addPermissions`;
+export const addPermissionsUrl = `${baseUrl()}/api/v1/rolePermissions/addPermissions`;
 export const deletePermissions = `${baseUrl()}/api/v1/rolePermissions/deletePermissions`;
 export const updatePermissions = `${baseUrl()}/api/v1/rolePermissions/updatePermissions`;
 export const addRoles = `${baseUrl()}/api/v1/rolePermissions/addRoles`;

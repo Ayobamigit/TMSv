@@ -26,6 +26,7 @@ const ViewServiceProvider = lazy (() => import('./pages/configuration/view-servi
 const ViewProfile = lazy (() => import('./pages/configuration/view-service-provider/view-profile.component'));
 
 const RolesAndPermissionsComponent = lazy (() => import('./pages/roles-and-permissions/roles-and-permissions.component'));
+const ViewRole = lazy (() => import('./pages/roles-and-permissions/roles/view-role.component'));
 
 const UsersList = lazy(() => import('./pages/user-management/user-list/user-list.component'))
 const User = lazy(() => import('./pages/user-management/user-view/user.component'))
@@ -56,6 +57,7 @@ function ProtectedRoutes() {
                 <Route exact path="/reporting/:id" component={ReportTransactionDetails} />
 
                 <Route exact path="/roles" component={RolesAndPermissionsComponent} />
+                <Route exact path="/roles/:id" component={ViewRole} />
 
                 <Route exact path="/audit" component={AuditComponent} />        
 

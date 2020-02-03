@@ -7,9 +7,11 @@ import { FetchTimeOut } from '../../Utils/FetchTimeout';
 import './roles-and-permissions.styles.scss';
 
 import Layout from '../../components/Layout/layout.component';
-import AddRole from './add-role.component';
-import DeleteRole from './delete-role.component';
-import AddPermissions from './add-permissions';
+import AddRole from './roles/add-role.component';
+import DeleteRole from './roles/delete-role.component';
+import AddPermissions from './permissions/add-permissions';
+import ViewPermissions from './permissions/view-permissions';
+import { Link } from 'react-router-dom';
 
 const RolesAndPermissions = () => {
     const [state, setState] = useState({
@@ -63,11 +65,17 @@ const RolesAndPermissions = () => {
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h2">Roles and Permissions</h1>
             </div>
-            <div className="page-content">
+            <div className="page-content accordion">
                 <div className="d-flex justify-content-between mb-4">
                     <h6>All Roles and Permissions</h6>
                     <button className="btn btn-primary" data-toggle="modal" data-target="#addRoleModal">
                         Add Role
+                    </button>
+                    <button className="btn btn-primary" data-toggle="modal" data-target="#addPermissionsModal">
+                        Add Permissions
+                    </button>
+                    <button className="btn btn-primary" data-toggle="modal" data-target="#viewPermissionsModal">
+                        View All Permissions
                     </button>
                 </div>
                 <div>
@@ -86,15 +94,16 @@ const RolesAndPermissions = () => {
                                                     </button>
                                                 </h2>
                                                 <div className="d-flex justify-content-between">
-                                                    <i className="fa fa-2x fa-eye ml-5" title="View this Role"></i>
+                                                    <Link 
+                                                        to={{pathname: `/roles/${name.toLowerCase()}`, 
+                                                        state: roleAndPermission} }>
+                                                        <i className="fa fa-2x fa-eye ml-5" title="View this Role"></i>
+                                                    </Link>
                                                     <i className="fa fa-2x fa-trash ml-5" data-toggle="modal" onClick={() => {setState({ ...state, roleToBeDeleted: roleAndPermission })}} data-target="#deleteRoleModal" title="Delete this Role"></i>
                                                 </div>
                                             </div>
                                             <div id={`collapse${i}`} className={`collapse ${i === 0 ? 'show': ''}`} data-parent="#rolesAccordion">
                                                 <div className="card-body">
-                                                    <div className="d-flex justify-content-end align-items-center">
-                                                        <button className="btn btn-primary" data-toggle="modal" data-target="#addPermissionsModal">Add Permissions</button>
-                                                    </div>
                                                     <p><b>Email: </b>{email}</p>
                                                     <p><b>Description: </b>{description}</p>
                                                     <p><b>User Type: </b>{userType}</p>
@@ -141,6 +150,7 @@ const RolesAndPermissions = () => {
             <AddRole />
             <DeleteRole roleToBeDeleted={state.roleToBeDeleted} />
             <AddPermissions />
+            <ViewPermissions />
         </Layout>
     )
 }

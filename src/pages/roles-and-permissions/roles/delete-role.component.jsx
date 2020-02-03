@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react'
-import { deleteRoles } from '../../Utils/URLs';
-import Swal from '../../constants/swal';
+import { deleteRoles } from '../../../Utils/URLs';
+import Swal from '../../../constants/swal';
 import axios from 'axios';
-import { FetchTimeOut } from '../../Utils/FetchTimeout';
-import IsFetching from '../../components/isFetching/IsFetching.component';
+import { FetchTimeOut } from '../../../Utils/FetchTimeout';
+import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 export default function DeleteRole( { roleToBeDeleted }) {
     const [state, setState] = useState({

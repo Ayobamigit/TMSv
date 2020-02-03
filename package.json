@@ -15,6 +15,7 @@
     "react-pagination-js": "^2.0.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.1.1",
+    "react-select": "^3.0.8",
     "react-slick": "^0.25.2",
     "react-to-print": "^2.5.1",
     "slick-carousel": "^1.8.1",
