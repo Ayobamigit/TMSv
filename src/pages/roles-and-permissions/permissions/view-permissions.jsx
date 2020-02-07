@@ -1,10 +1,11 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, Fragment, useRef } from 'react'
 import { getAllPermissions } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import axios from 'axios';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 import DeletePermission from './delete-permission.component';
+import { Link } from 'react-router-dom';
 
 export default function ViewPermissions() {
     const [state, setState] = useState({
@@ -12,6 +13,7 @@ export default function ViewPermissions() {
         isFetchingData: false,
         permissionToBeDeleted: []
     })
+    let dismissModal = useRef();
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
     useEffect(() => {
         axios({
@@ -62,8 +64,8 @@ export default function ViewPermissions() {
                 <div className="modal-content">
                 <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLabel">All Permissions</h5>
-                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <button type="button" className="close" ref={dismissModal} data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div className="modal-body">
@@ -85,7 +87,14 @@ export default function ViewPermissions() {
                                                         </button>
                                                     </h2>
                                                     <div className="d-flex justify-content-between">
-                                                        <i className="fa fa-2x fa-eye ml-5" title="View this Role"></i>
+                                                        <Link 
+                                                            onClick={() => {
+                                                                dismissModal.current.click();
+                                                            }}
+                                                            to={{pathname: `/roles/permission/${name.toLowerCase()}`, 
+                                                            state: permission} }
+                                                        >
+                                                            <i className="fa fa-2x fa-eye ml-5" title="View this Permission"></i></Link>
                                                         <i className="fa fa-2x fa-trash ml-5" data-toggle="modal" onClick={() => {setState({ ...state, permissionToBeDeleted: permission })}} data-target="#deletePermissionModal" title="Delete this Permission"></i>
                                                     </div>
                                                 </div>
