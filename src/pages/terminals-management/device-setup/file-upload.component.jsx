@@ -8,6 +8,7 @@ import ProgressBar from '../../../components/ProgressBar/ProgressBar';
 import TerminalsUploadSample from '../../../assets/sampleExcelFile.xlsx';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import './device-setup.styles.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FileUploadModal = () => {
     let dismissModal = useRef()
@@ -207,7 +208,7 @@ const FileUploadModal = () => {
                             </div>
                             <ProgressBar percentage={uploadProgress} />
                             <br/>
-                            <a href={TerminalsUploadSample}>Download a sample excel file <i className="fa fa-file"></i></a>
+                            <a href={TerminalsUploadSample}>Download a sample excel file <FontAwesomeIcon icon="file" /></a>
                             
                             {
                                 inputTypeError ? 

@@ -10,6 +10,7 @@ import NoResultFound from '../../../components/NoResultFound/NoResultfound';
 import AddProfiles from './add-profiles';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import DeleteProfile from './deleteProfile.component';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ViewServiceProvider = () => {
     const [state, setState] = useState({
@@ -149,7 +150,7 @@ const ViewServiceProvider = () => {
                 <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                     <h1 className="h2">Service Provider Registration</h1>
                     <button type="button" onClick={updateServiceProviderButton} className="btn btn-primary">Update Service Provider</button>
-                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#addProfileModal">Add Profile <i className="fa fa-plus-square"></i></button>
+                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#addProfileModal">Add Profile</button>
                 </div>
                 <div className="page-content">
                     <div className="col-md-12">
@@ -217,10 +218,10 @@ const ViewServiceProvider = () => {
                                                         <td>{port}</td>
                                                         <td>{zpk}</td>  
                                                         <td data-toggle="modal" data-target="#deleteModal" onClick={() => setState({...state, idToBeDeleted: id})}>
-                                                            <Link to="#"><i className="fa fa-2x fa-trash"></i></Link>
+                                                            <Link to="#"><FontAwesomeIcon icon="trash" size="2x" /></Link>
                                                         </td> 
                                                         <td>
-                                                            <Link to={`/configuration/profile/${id}`}><i className="fa fa-2x fa-eye"></i></Link>
+                                                            <Link to={`/configuration/profile/${id}`}><FontAwesomeIcon icon="eye" size="2x" /></Link>
                                                         </td>                                                                                                 
                                                     </tr>
                                                 )

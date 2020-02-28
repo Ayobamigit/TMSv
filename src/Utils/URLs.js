@@ -1,8 +1,7 @@
 const baseUrl = () => {
-    // return 'http://10.9.8.102:7070'; //Josh's Local
-    return 'http://10.2.2.47:5334'; //Test IP
+    return 'http://10.9.8.63:7070'; //Test IP
+    // return 'http://10.9.8.63:5334'; //Live IP
     // return 'http://41.219.149.51:5334'; //Test Public IP
-    // return 'http://10.9.8.63:5334'; //Public IP
     // return 'http://medusa.3lineng.com'; //New Public IP
 }
  
@@ -10,13 +9,14 @@ export const institutionLoginUrl = `${baseUrl()}/api/v1/login`;
 
 //Dashboard 
 export const transactionsHistoryURL = `${baseUrl()}/api/v1/transactions/tranHistory`;
+// export const institutionTransactionsHistoryURL = `${baseUrl()}/api/v1/InstitutionTransactions`;
 export const dashboardUtilities = `${baseUrl()}/api/v1/dashboard/DashboardUtilities`;
 export const getNewTokenUrl = `${baseUrl()}/api/v1/superadmin/gettoken`;
 export const getTransactionByIdUrl = `${baseUrl()}/api/v1/transactions`;
 
 //Terminal Management
 export const allTerminals = `${baseUrl()}/api/v1/tms/terminals`;
-// export const institutionTerminals = `${baseUrl()}/api/v1/InstitutionTerminalList`;
+export const institutionTerminals = `${baseUrl()}/api/v1/tms/Institutionterminals`;
 export const registerTerminalURL = `${baseUrl()}/api/v1/tms`;
 export const uploadTerminalsURL = `${baseUrl()}/api/v1/tms/upload`;
 export const viewATerminal = `${baseUrl()}/api/v1/tms`;
@@ -28,6 +28,11 @@ export const viewAnInstitution = `${baseUrl()}/api/v1/institution`;
 export const getBanks = `${baseUrl()}/api/v1/serviceProviders/banks`;
 export const allInstitutions = `${baseUrl()}/api/v1/institution/institutionslist`;
 export const allInstitutionsList = `${baseUrl()}/api/v1/institution/institutions`;
+
+// Create Wallet
+export const allWalletsList = `${baseUrl()}/api/v1/walletAccount/getWallets`;
+export const getAWalletURL = `${baseUrl()}/api/v1/walletAccount`;
+export const updateWalletInformation = `${baseUrl()}/api/v1/walletAccount/updateWalletAccount`;
 
 // Configurations
 export const allServiceProviders = `${baseUrl()}/api/v1/serviceProviders`;

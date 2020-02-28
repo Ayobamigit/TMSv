@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-// import { useHttp } from '../../../CustomHooks/useHttp.hooks';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Swal from '../../../constants/swal';
 import { useHistory } from 'react-router-dom';
-import { allInstitutions, createAUser } from '../../../Utils/URLs';
+import { allInstitutions, createAUser, getRolesAndPermissions } from '../../../Utils/URLs';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 
 import Layout from '../../../components/Layout/layout.component';
@@ -21,41 +20,50 @@ const UserRegistration = () => {
         institutionsList: [],
         password: '',
         role: '',
-        IsFetchingData: false
+        IsFetchingData: false,
+        rolesAndPermissions: [],
+        selectedRoleAndPermission: []
     });
     const [ isLoading, setIsLoading ] = useState(true);
     const [ institutionInformation, setInstitutionInformation] = useState({})
-    const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+    const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'))
 
     useEffect(() => {
-        axios({
-            url: `${allInstitutions}`,
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: {},
-            timeout: FetchTimeOut
-        })
-            .then(result => {
+        axios.all([
+            axios.get(`${allInstitutions}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                timeout: FetchTimeOut
+            }),
+            axios({
+                url: `${getRolesAndPermissions}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                timeout: FetchTimeOut
+            })
+          ])
+          .then(axios.spread((result1, result2) => {
             setIsLoading(false)
-            if(result.data.respCode === '00'){
+            if(result1.data.respCode === '00'){
                 setState( state => ({
                     ...state,
-                    institutionsList: result.data.respBody
+                    institutionsList: result1.data.respBody,
+                    rolesAndPermissions: result2.data.respBody
                 }))
             }else{
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${result.data.respDescription}`,
+                    text: `${result1.data.respDescription}`,
                     footer: 'Please contact support'
                 })
-            }
-            
-        })
-        .catch(err => {
+            }}))
+          .catch(err => {
             setIsLoading(false)
             Swal.fire({
                 type: 'error',
@@ -68,7 +76,15 @@ const UserRegistration = () => {
 
     const createUser = (e) => {
         e.preventDefault();
-        const { firstname, lastname, email, password, role } = state;
+
+        // Institution Users/Admin need not select their institution, this is done automatically using this code below
+        if(institutionID){
+            let result = state.institutionsList.find((element) => {
+                return element.institutionID === institutionID
+            })
+            setInstitutionInformation(result)
+        }
+        const { firstname, lastname, email, password, role, selectedRoleAndPermission } = state;
         const reqBody = {
             id: 0,
             firstname,
@@ -76,7 +92,8 @@ const UserRegistration = () => {
             lastname,
             email,
             password,
-            role,
+            token: authToken,
+            role: selectedRoleAndPermission,
             institution: institutionInformation
         }
         if (firstname.trim() === '' || lastname.trim() === '' || email.trim() === '' || password.trim() === '' || role.trim() === ''){
@@ -150,9 +167,20 @@ const UserRegistration = () => {
             })
             setInstitutionInformation(result)
         }
+
+        if(name === 'role'){
+            let result = state.rolesAndPermissions.find((element) => {
+                return element.name === value
+            })
+            setState({
+                ...state,
+                [name]: value,
+                selectedRoleAndPermission: result
+            })
+        }
     }
 
-    const { IsFetchingData } = state;
+    const { IsFetchingData, rolesAndPermissions } = state;
     if(isLoading){
         return <PreLoader />
     } else {
@@ -206,32 +234,45 @@ const UserRegistration = () => {
                                     required                                     
                                 />
                             </div> 
-                            <div className="form-group">
-                                <p>Choose Institution</p>
-                                 <select className="custom-select" name="institutionName" value={state.institutionName} onChange={onChange} required >
-                                    <option value="" disabled>Choose institution</option>
-                                    {
-                                        state.institutionsList ? 
-                                        state.institutionsList.map((institution, i) => {
-                                            return(
-                                                <option 
-                                                    value={institution.institutionID} 
-                                                    key={i}
-                                                >
-                                                    {institution.institutionName}
-                                                </option>
-                                            )
-                                        })
-                                        :null
-                                    }
-                                </select>
-                            </div>
+                            {
+                                // Institutions dont have to select their institution
+                                !institutionID ?
+                                <div className="form-group">
+                                    <p>Choose Institution</p>
+                                    <select className="custom-select" name="institutionName" value={state.institutionName} onChange={onChange} required >
+                                        <option value="" disabled>Choose institution</option>
+                                        {
+                                            state.institutionsList ? 
+                                            state.institutionsList.map((institution, i) => {
+                                                return(
+                                                    <option 
+                                                        value={institution.institutionID} 
+                                                        key={i}
+                                                    >
+                                                        {institution.institutionName}
+                                                    </option>
+                                                )
+                                            })
+                                            :null
+                                        }
+                                    </select>
+                                </div>
+                                :
+                                null
+                            }                            
                             <div className="form-group">
                                 <p>User Role</p>
-                                <select className="browser-default custom-select" name="role" value={state.role} onChange={onChange} required >
-                                    <option value="" disabled>Choose role</option>                                
-                                    <option value="institutionAdmin">Admin</option>
-                                    <option value="institutionUser">User</option>
+                                <select className="custom-select" name="role" value={state.role} onChange={onChange} required >
+                                    <option value="" disabled>Choose role</option>
+                                    {
+                                        rolesAndPermissions.length ?
+                                        rolesAndPermissions.map((role, i) => {
+                                            return (
+                                                <option value={role.name} key={i}>{role.name}</option>
+                                            )
+                                        })
+                                        : null
+                                    }                                
                                 </select>
                             </div>
                             <div className="form-group d-flex justify-content-end">

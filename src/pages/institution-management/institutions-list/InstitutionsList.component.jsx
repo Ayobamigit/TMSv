@@ -12,6 +12,7 @@ import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import NoResultFound from '../../../components/NoResultFound/NoResultfound';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
@@ -117,7 +118,7 @@ const InstitutionsList = () => {
                                                     <td>{createdBy}</td>
                                                     <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
                                                     <td>
-                                                        <Link to={`/institution-list/${id}`}><i className="fa fa-eye"></i></Link>
+                                                        <Link to={`/institution-list/${institutionID}`}><FontAwesomeIcon icon="eye" /></Link>
                                                     </td>
                                                 </tr>
                                             )

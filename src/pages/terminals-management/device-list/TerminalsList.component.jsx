@@ -15,8 +15,9 @@ import NoResultFound from "../../../components/NoResultFound/NoResultfound";
 // Context for Authentication
 import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const DeviceList = () => {
     const [state, setState ] = useState({
@@ -28,6 +29,7 @@ const DeviceList = () => {
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
         let reqBody = {
+            institutionID,
             page: state.page,
             size: state.size
         }
@@ -116,7 +118,7 @@ const DeviceList = () => {
                                                     <td>{terminalType}</td>
                                                     <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
                                                     <td>
-                                                        <Link to={`/device-list/${id}`}><i className="fa fa-eye"></i></Link>
+                                                        <Link to={`/device-list/${id}`}><FontAwesomeIcon icon="eye" /></Link>
                                                     </td>
                                                 </tr>
                                             )

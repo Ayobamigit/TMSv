@@ -16,16 +16,17 @@ const InstitutionRegistration = () => {
         institutionName: '', 
         institutionEmail: '', 
         settlementAccount: '', 
-        institutionAddress: '',
         institutionPhone: '',
         institutionAppKey: '',
         institutionIntegrationVersion: '',
         institutionURL: '',
         serviceProvidersList: [],
         banks: [],
-        profiles: [],
         settlementBank: '',
         serviceProvider: '',
+        feePercentage: '',
+        maximumCharge: '',
+        minimumCharge: '',
         IsFetchingData: false
     });
     const [serviceProviderInfo, setServiceProviderInfo] = useState({})
@@ -127,24 +128,28 @@ const InstitutionRegistration = () => {
             ...state, 
             IsFetchingData: true
         })
-        const { institutionName, institutionEmail, settlementAccount, institutionAddress, institutionPhone, settlementBank, institutionAppKey, institutionIntegrationVersion, institutionURL } = state;
+        const { institutionName, institutionEmail, settlementAccount, institutionPhone, settlementBank, institutionAppKey, institutionIntegrationVersion, institutionURL, feePercentage, maximumCharge, minimumCharge, } = state;
         
         const reqBody = {
             institutionName, 
             institutionEmail,              
             settlementAccount, 
-            settlementBank,              
-            institutionAddress, 
+            bank: settlementBank,
+            globalSettings: false,
+            token: authToken,              
             institutionPhone,
             institutionAppKey,
             institutionIntegrationVersion,
             institutionURL,
             createdBy: userName, 
             dateCreated: date, 
+            feePercentage: Number(feePercentage),
+            maximumCharge,
+            minimumCharge,
             serviceProviderName: serviceProviderInfo.providerName        
 
         };
-        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAddress.trim() === '' || institutionAppKey.trim() === '' || institutionURL.trim() === '' || institutionIntegrationVersion.trim() === '' || settlementAccount.trim() === '' || settlementBank.trim() === '') {
+        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAppKey.trim() === '' || institutionURL.trim() === '' || institutionIntegrationVersion.trim() === '' || settlementAccount.trim() === '' || settlementBank.trim() === '') {
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -308,18 +313,6 @@ const InstitutionRegistration = () => {
                                 />
                             </div>
                             <div className="col-md-6">
-                                <p>Address</p>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Institution Address" 
-                                    value={state.institutionAddress} 
-                                    name="institutionAddress"
-                                    onChange={onChange}
-                                    required                                
-                                />
-                            </div>
-                            <div className="col-md-6">
                                 <p>Phone Number</p>
                                 <input 
                                     type="text" 
@@ -353,7 +346,52 @@ const InstitutionRegistration = () => {
                                     }
                                 </select>
                             </div>
+                        
+                            <h5 className="text-center col-12 mt-5 mb-3"> Wallet Information</h5>
+                            <div className="col-md-6">
+                                <p>Charge Percentage (in %)</p>
+                                <input 
+                                    name="feePercentage" 
+                                    className="form-control" 
+                                    value={state.feePercentage} 
+                                    onChange={onChange}
+                                    type="number"
+                                    maxLength="2"
+                                    min="0"
+                                    max="100"
+                                    step="0.001"
+                                    onKeyPress={(e) => manipulateNumber(e)}
+                                    required                                    
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Minimum Charge (in naira)</p>
+                                <input 
+                                    name="minimumCharge" 
+                                    className="form-control" 
+                                    value={state.minimumCharge} 
+                                    onChange={onChange} 
+                                    type="number"
+                                    maxLength="5"
+                                    onKeyPress={(e) => manipulateNumber(e)}
+                                    required                                    
+                                />
+                            </div> 
+                            <div className="col-md-6">
+                                <p>Maximum Charge (in naira)</p>
+                                <input 
+                                    name="maximumCharge" 
+                                    className="form-control" 
+                                    value={state.maximumCharge} 
+                                    onChange={onChange} 
+                                    type="number"
+                                    maxLength="5"
+                                    onKeyPress={(e) => manipulateNumber(e)}
+                                    required                                    
+                                />
+                            </div> 
                         </div>
+
                         <div className="col-md-12 mt-5 d-flex justify-content-end">
                             <button 
                                 type="input"

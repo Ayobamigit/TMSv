@@ -12,7 +12,6 @@ export default function ViewAPermission() {
         id: '',
         readOnly: true,
         name: '', 
-        userType: '',  
         description: '',
         isFetchingData: false
     })
@@ -21,13 +20,12 @@ export default function ViewAPermission() {
         if (history.location.state === undefined){
             history.goBack();
 		} else{
-            const { id, name, description, userType } = history.location.state;
+            const { id, name, description } = history.location.state;
             setState( state => ({
                 ...state,
                 id,
                 name,
-                description,
-                userType
+                description
             }))
         }
     }, [history])
@@ -51,10 +49,9 @@ export default function ViewAPermission() {
             ...state, 
             isFetchingData: true
         })
-        const { name, userType, description, id } = state;
+        const { name, description, id } = state;
         let reqBody = {
             name,
-            userType,
             description,
             id
         }
@@ -103,7 +100,7 @@ export default function ViewAPermission() {
             })
         });
     }
-    const { name, userType, description, readOnly, isFetchingData } = state; 
+    const { name, description, readOnly, isFetchingData } = state; 
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -124,18 +121,7 @@ export default function ViewAPermission() {
                                 required
                                 readOnly={readOnly}
                             />
-                        </div>
-                        <div className="form-group">
-                            <p>User Type</p>
-                            <input 
-                                name="userType" 
-                                className="form-control" 
-                                defaultValue={userType} 
-                                onChange={onChange}
-                                required 
-                                readOnly
-                            />
-                        </div>  
+                        </div> 
                         <div className="form-group">
                             <p>Description</p>
                             <textarea

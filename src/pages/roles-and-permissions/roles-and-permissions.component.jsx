@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react';
+import React, {useState, useEffect, Fragment } from 'react';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import { getRolesAndPermissions } from '../../Utils/URLs';
 import Swal from '../../constants/swal';
@@ -9,9 +9,11 @@ import './roles-and-permissions.styles.scss';
 import Layout from '../../components/Layout/layout.component';
 import AddRole from './roles/add-role.component';
 import DeleteRole from './roles/delete-role.component';
-import AddPermissions from './permissions/add-permissions';
 import ViewPermissions from './permissions/view-permissions';
 import { Link } from 'react-router-dom';
+import IsLoadingData from '../../components/isLoadingData/isLoadingData';
+import { hasPermission, CREATE_ROLES } from '../../Utils/getPermission'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const RolesAndPermissions = () => {
     const [state, setState] = useState({
@@ -21,6 +23,10 @@ const RolesAndPermissions = () => {
     })
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
     useEffect(() => {
+        setState(state =>({
+            ...state,
+            isLoading: true
+        }))
         axios({
             url: `${getRolesAndPermissions}`,
             method: 'get',
@@ -31,6 +37,10 @@ const RolesAndPermissions = () => {
             timeout: FetchTimeOut
         })
         .then(result => {
+            setState(state =>({
+                ...state,
+                isLoading: false
+            }))
             if(result.data.respCode === '00'){
                 setState(state => ({
                     ...state,
@@ -58,7 +68,7 @@ const RolesAndPermissions = () => {
             })
         });
     }, [authToken])
-    const { rolesAndPermissions } =  state;
+    const { rolesAndPermissions, isLoading } =  state;
 
     return (
         <Layout>
@@ -68,89 +78,106 @@ const RolesAndPermissions = () => {
             <div className="page-content accordion">
                 <div className="d-flex justify-content-between mb-4">
                     <h6>All Roles and Permissions</h6>
-                    <button className="btn btn-primary" data-toggle="modal" data-target="#addRoleModal">
-                        Add Role
-                    </button>
-                    <button className="btn btn-primary" data-toggle="modal" data-target="#addPermissionsModal">
-                        Add Permissions
-                    </button>
-                    <button className="btn btn-primary" data-toggle="modal" data-target="#viewPermissionsModal">
-                        View All Permissions
-                    </button>
+                    {
+                        hasPermission(CREATE_ROLES) ?
+                        <Fragment>
+                            <button className="btn btn-primary" data-toggle="modal" data-target="#addRoleModal">
+                                Add Role
+                            </button>
+                            <button className="btn btn-primary" data-toggle="modal" data-target="#viewPermissionsModal">
+                                View All Permissions
+                            </button>
+                        </Fragment>
+                        :
+                        null
+                    }
                 </div>
                 <div>
                     {
-                        rolesAndPermissions.length ?
-                        <div className="accordion" id="rolesAccordion">
-                            {
-                                rolesAndPermissions.map((roleAndPermission, i) => {
-                                    const { name, email, description, userType, permissions } = roleAndPermission;
-                                    return (
-                                        <div className="card" key={i}>
-                                            <div className="card-header d-flex justify-content-between align-items-center">
-                                                <h2 className="mb-0">
-                                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target={`#collapse${i}`} aria-expanded="true">
-                                                        {name}
-                                                    </button>
-                                                </h2>
-                                                <div className="d-flex justify-content-between">
-                                                    <Link 
-                                                        to={{pathname: `/roles/${name.toLowerCase()}`, 
-                                                        state: roleAndPermission} }>
-                                                        <i className="fa fa-2x fa-eye ml-5" title="View this Role"></i>
-                                                    </Link>
-                                                    <i className="fa fa-2x fa-trash ml-5" data-toggle="modal" onClick={() => {setState({ ...state, roleToBeDeleted: roleAndPermission })}} data-target="#deleteRoleModal" title="Delete this Role"></i>
-                                                </div>
-                                            </div>
-                                            <div id={`collapse${i}`} className={`collapse ${i === 0 ? 'show': ''}`} data-parent="#rolesAccordion">
-                                                <div className="card-body">
-                                                    <p><b>Email: </b>{email}</p>
-                                                    <p><b>Description: </b>{description}</p>
-                                                    <p><b>User Type: </b>{userType}</p>
-                                                    <p><b>Permissions: </b></p>
-                                                    <table className="table">
-                                                        <thead>
-                                                            <tr>
-                                                            <th scope="col">S/N</th>
-                                                            <th scope="col">Name</th>
-                                                            <th scope="col">Description</th>
-                                                            <th scope="col">User Type</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {
-                                                            permissions.map((permission, i) => {
-                                                                const { name, description, userType } = permission;
-                                                                return( 
-                                                                    <tr key={i}>
-                                                                        <th scope="row">{i + 1}</th>
-                                                                        <td>{name}</td>
-                                                                        <td>{description}</td>
-                                                                        <td>{userType}</td>
-                                                                    </tr>
-                                                                )
-                                                            })
-                                                        }
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
+                        isLoading ? <IsLoadingData />
                         :
-                        'No Roles and Permissions Added yet.'
+                        <Fragment>
+                            {
+                                rolesAndPermissions.length ?
+                                <div className="accordion" id="rolesAccordion">
+                                    {
+                                        rolesAndPermissions.map((roleAndPermission, i) => {
+                                            const { name, description, permissions } = roleAndPermission;
+                                            return (
+                                                <div className="card" key={i}>
+                                                    <div className="card-header d-flex justify-content-between align-items-center">
+                                                        <h2 className="mb-0">
+                                                            <button className="btn btn-link" type="button" data-toggle="collapse" data-target={`#collapse${i}`} aria-expanded="true">
+                                                                {name}
+                                                            </button>
+                                                        </h2>
+                                                        {
+                                                            hasPermission(CREATE_ROLES) ?
+                                                                <div className="d-flex justify-content-between">
+                                                                    <Link 
+                                                                        to={{pathname: `/roles/${name.toLowerCase()}`, 
+                                                                        state: roleAndPermission} }>
+                                                                        <FontAwesomeIcon icon="eye" size="2x" className="ml-5" title="View this Role" />
+                                                                    </Link>
+                                                                    <FontAwesomeIcon icon="trash" size="2x" className="ml-5" data-toggle="modal" onClick={() => {setState({ ...state, roleToBeDeleted: roleAndPermission })}} data-target="#deleteRoleModal" title="Delete this Role" />
+                                                                </div>
+                                                            :
+                                                            null
+                                                        }
+                                                    </div>
+                                                    <div id={`collapse${i}`} className={`collapse ${i === 0 ? 'show': ''}`} data-parent="#rolesAccordion">
+                                                        <div className="card-body">
+                                                            <p><b>Description: </b>{description}</p>
+                                                            <p><b>Permissions: </b></p>
+                                                            <table className="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                    <th scope="col">S/N</th>
+                                                                    <th scope="col">Name</th>
+                                                                    <th scope="col">Description</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {
+                                                                    permissions.map((permission, i) => {
+                                                                        const { name, description } = permission;
+                                                                        return( 
+                                                                            <tr key={i}>
+                                                                                <th scope="row">{i + 1}</th>
+                                                                                <td>{name}</td>
+                                                                                <td>{description}</td>
+                                                                            </tr>
+                                                                        )
+                                                                    })
+                                                                }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                :
+                                'No Roles and Permissions Added yet.'
+                            }
+                        </Fragment>
                     }
                 </div>
             </div>
 
             {/* Add role Modal */}
-            <AddRole />
-            <DeleteRole roleToBeDeleted={state.roleToBeDeleted} />
-            <AddPermissions />
-            <ViewPermissions />
+            {
+                hasPermission(CREATE_ROLES) ?
+                <Fragment>
+                    <AddRole />
+                    <DeleteRole roleToBeDeleted={state.roleToBeDeleted} />
+                    <ViewPermissions />
+                </Fragment>
+                :
+                null
+            }
         </Layout>
     )
 }

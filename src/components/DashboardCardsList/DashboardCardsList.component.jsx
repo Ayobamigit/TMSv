@@ -4,6 +4,7 @@ import './DashboardCardsList.styles.scss';
 import { DashboardContext } from "../../pages/dashboard/Dashboard.component";
 
 export default function () {
+    let { institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
     const { data: {totalSuccessfulAmount, totalTransactions, failed, success, institutions}, terminalsStatistics: {allTerminals, activeTerminals, inactiveTerminals} } = useContext(DashboardContext);
     return (
         <div className="cards-list">
@@ -31,11 +32,15 @@ export default function () {
                 bgColor="#a32f80"
             />
 
-            <DashboardCards
-                name="Number of Institutions"
-                value={institutions}
-                bgColor="#f39422"
-            />
+            {
+                institutionID ? null: 
+                <DashboardCards
+                    name="Number of Institutions"
+                    value={institutions}
+                    bgColor="#f39422"
+                />
+            }
+            
 
             <DashboardCards
                 name="Total Terminals"
@@ -51,7 +56,7 @@ export default function () {
 
             <DashboardCards
                 name="Inactive Terminals"
-                value={inactiveTerminals}
+                value={inactiveTerminals ? Math.abs(inactiveTerminals): ''}
                 bgColor="#860342"
             />
         </div>

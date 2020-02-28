@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
-import { viewAnInstitution } from '../../../Utils/URLs';
+import { viewAnInstitution, getBanks } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 
 import Layout from '../../../components/Layout/layout.component';
-import Axios from 'axios';
+import axios from 'axios';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
@@ -23,6 +23,12 @@ const InstitutionView = () => {
         institutionID: '', 
         settlementAccount: '', 
         institutionPhone: '',
+        institutionAppKey: '', 
+        institutionIntegrationVersion: '', 
+        institutionURL: '',
+        banks: [],
+        settlementBank: '',
+        serviceProvider: '',
         createdBy: '', 
         dateCreated: '',
         IsFetchingData: false
@@ -32,7 +38,7 @@ const InstitutionView = () => {
 
     useEffect(() => {
         const getDeviceData = () => {
-            Axios({
+            axios({
                 url: `${viewAnInstitution}/${match.params.id}`,
                 method: 'get',
                 headers: {
@@ -46,7 +52,8 @@ const InstitutionView = () => {
                 setIsLoading(false)
                 if (result.data.respCode === '00'){
                     const { 
-                    institutionName, institutionEmail, institutionID, settlementAccount, id, institutionPhone, createdBy, dateCreated
+                        institutionName, institutionEmail, institutionID, settlementAccount, id, institutionPhone, serviceProvider,
+                        institutionAppKey, institutionIntegrationVersion, institutionURL, createdBy, dateCreated, bank
                     } = result.data.respBody;
                     setState(state => ({
                         ...state, 
@@ -57,7 +64,12 @@ const InstitutionView = () => {
                         settlementAccount,
                         institutionPhone,
                         createdBy,
-                        dateCreated
+                        institutionAppKey, 
+                        institutionIntegrationVersion, 
+                        institutionURL,
+                        dateCreated,
+                        settlementBank: bank,
+                        serviceProvider
                     }))
                 } else {                    
                     Swal.fire({
@@ -79,10 +91,49 @@ const InstitutionView = () => {
             });
         }
         getDeviceData();
+
+        // Get all banks 
+        axios({
+            url: `${getBanks}`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            data: {},
+            timeout: FetchTimeOut
+        })
+            .then(result => {
+            if(result.data.respCode === '00'){
+                setState( state => ({
+                    ...state,
+                    banks: result.data.respBody
+                }))
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }
+            
+        })
+        .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
     }, [match.params.id])
 
     const onChange = (e) => {
-        setState({...state, [e.target.name]: e.target.value})
+        setState({
+            ...state, 
+            [e.target.name]: e.target.value
+        })
     }
 
     const editFields = () => {
@@ -92,7 +143,8 @@ const InstitutionView = () => {
     const editInstitutionData = (e) => {
         e.preventDefault();
         const { 
-            id, institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated
+            id, institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated, 
+            institutionAppKey, institutionIntegrationVersion, institutionURL, settlementBank, serviceProvider
          } = state;
         const reqBody = {
             id,
@@ -102,9 +154,20 @@ const InstitutionView = () => {
             settlementAccount, 
             institutionPhone,
             createdBy, 
-            dateCreated
+            dateCreated,
+            institutionAppKey, 
+            institutionIntegrationVersion, 
+            institutionURL,
+            bank: settlementBank,
+            serviceProvider,
+            token: authToken
         };
-        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || settlementAccount.trim() === '' || institutionPhone.trim() === '' || createdBy.trim() === '' || dateCreated.trim() === ''){
+        if (
+                institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || 
+                settlementAccount.trim() === '' || institutionPhone.trim() === '' || createdBy.trim() === '' || 
+                dateCreated.trim() === '' || settlementBank.trim() === ''  || institutionAppKey.trim() === ''  || 
+                institutionIntegrationVersion.trim() === ''  || institutionURL.trim() === ''
+            ){
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -115,7 +178,7 @@ const InstitutionView = () => {
                 ...state, 
                 IsFetchingData: true
             })
-            Axios({
+            axios({
                 url: `${viewAnInstitution}/${match.params.id}`,
                 method: 'put',
                 headers: {
@@ -212,11 +275,50 @@ const InstitutionView = () => {
                                     name="institutionID"
                                     onChange={onChange}
                                     required
-                                    readOnly={readOnly}
+                                    readOnly
                                 />
                             </div>
                             <div className="col-md-6">
-                                <p>Merchant Account</p>
+                                <p>Institution URL</p>
+                                <input 
+                                    type="url" 
+                                    value={state.institutionURL}
+                                    name="institutionURL" 
+                                    readOnly={readOnly} 
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Institution URL" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Institution Integration Version</p>
+                                <input 
+                                    type="text" 
+                                    value={state.institutionIntegrationVersion}
+                                    name="institutionIntegrationVersion" 
+                                    readOnly={readOnly} 
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Institution Integrated Version" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Institution App Key</p>
+                                <input 
+                                    type="text" 
+                                    value={state.institutionAppKey}
+                                    name="institutionAppKey" 
+                                    readOnly={readOnly} 
+                                    onChange={onChange}
+                                    required 
+                                    className="form-control" 
+                                    placeholder="Institution App Key" 
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Settlement Account</p>
                                 <input 
                                     type="text" 
                                     className="form-control" 
@@ -242,6 +344,26 @@ const InstitutionView = () => {
                                 />
                             </div>
                             <div className="col-md-6">
+                                <p>Choose Settlement Bank</p>
+                                    <select className="custom-select mb-4" name="settlementBank" disabled={readOnly} value={state.settlementBank} onChange={onChange} required >
+                                    <option value="">Select Settlement Bank</option>
+                                    {
+                                        state.banks ? 
+                                        state.banks.map((bank, i) => {
+                                            return(
+                                                <option 
+                                                    value={bank.bankName} 
+                                                    key={i}
+                                                >
+                                                    {bank.bankName}
+                                                </option>
+                                            )
+                                        })
+                                        :null
+                                    }
+                                </select>
+                            </div> 
+                            <div className="col-md-6">
                                 <p>Created By</p>
                                 <input 
                                     type="text" 
@@ -262,7 +384,7 @@ const InstitutionView = () => {
                                     required
                                     readOnly 
                                 />
-                            </div>
+                            </div> 
                         </div>
                         {
                             readOnly ?

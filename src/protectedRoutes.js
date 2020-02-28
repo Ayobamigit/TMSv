@@ -6,6 +6,8 @@ import { Route, Switch, HashRouter } from 'react-router-dom';
 import PreLoader from './components/PreLoader/Preloader.component';
 
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import { hasPermission, ADD_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_ROLES, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
+import PrivateRoute from './privateRoute';
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard.component'));
 
 const DeviceSetup = lazy(() => import('./pages/terminals-management/device-setup/device-setup.component'));
@@ -22,6 +24,7 @@ const ReportTransactionDetails = lazy(() => import('./pages/reporting/ReportTran
 const AuditComponent = lazy (() => import('./pages/audit/Audit.component'));
 
 const ConfigurationComponent = lazy (() => import('./pages/configuration/configuration-list/configuration.component'));
+const GlobalSetting = lazy (() => import('./pages/configuration/global-setting/global-setting.component'));
 const ViewServiceProvider = lazy (() => import('./pages/configuration/view-service-provider/view-service-provider.component'));
 const ViewProfile = lazy (() => import('./pages/configuration/view-service-provider/view-profile.component'));
 
@@ -33,42 +36,53 @@ const UsersList = lazy(() => import('./pages/user-management/user-list/user-list
 const User = lazy(() => import('./pages/user-management/user-view/user.component'))
 const UserRegistration = lazy(() => import('./pages/user-management/user-setup/user-setup.component'))
 
+const WalletsList = lazy(() => import('./pages/wallet/view-all-wallets/view-all-wallets.component'))
+const WalletView = lazy(() => import('./pages/wallet/view-wallet/view-wallet.component'))
+
 function ProtectedRoutes() {
   return (
     <React.Fragment>
       <HashRouter>
         <ErrorBoundary>
           <Suspense fallback={<PreLoader />}>
-            <Switch>  
-                <Route exact path="/" component={Dashboard} /> 
-                <Route exact path="/dashboard" component={Dashboard} />
-                <Route exact path="/device-setup" component={DeviceSetup} />
-                <Route exact path="/device-list" component={DeviceLists} />
-                <Route exact path="/device-list/:id" component={DeviceList} />
- 
-                <Route exact path="/institution-setup" component={InstitutionSetup} />
-                <Route exact path="/institution-list" component={InstitutionsList} />
-                <Route exact path="/institution-list/:id" component={InstitutionList} />
+            <Switch> 
+              <Route exact path="/" component={Dashboard} /> 
+              <Route exact path="/dashboard" component={Dashboard} />
 
-                <Route exact path="/configuration" component={ConfigurationComponent} />
-                <Route exact path="/configuration/:id" component={ViewServiceProvider} /> 
-                <Route exact path="/configuration/profile/:id" component={ViewProfile} />  
+              <PrivateRoute exact path='/roles/:id' condition={hasPermission(CREATE_ROLES)} component={ViewRole} />
+              <PrivateRoute exact path='/roles' condition={hasPermission(CREATE_ROLES)} component={RolesAndPermissionsComponent} />
+              <PrivateRoute exact path='/roles/permission/:id' condition={hasPermission(CREATE_ROLES)} component={ViewAPermission} />
 
-                <Route exact path="/reporting" component={ReportingComponent} />
-                <Route exact path="/reporting/:id" component={ReportTransactionDetails} />
+              {/* Route is only active for users that have permission create_user  */}
+              <PrivateRoute exact path='/user-setup' condition={hasPermission(CREATE_USER)} component={UserRegistration} />                
+              <Route exact path="/user-list" component={UsersList} />
+              <Route exact path="/user/:id" component={User} />
+            
+              {/* Route is only active for users that have permission add_terminals  */}
+              <PrivateRoute exact path='/device-setup' condition={hasPermission(ADD_TERMINALS)} component={DeviceSetup} />                
+              <Route exact path="/device-list" component={DeviceLists} />
+              <Route exact path="/device-list/:id" component={DeviceList} />
 
-                <Route exact path="/roles" component={RolesAndPermissionsComponent} />
-                <Route exact path="/roles/:id" component={ViewRole} />
-                <Route exact path="/roles/permission/:id" component={ViewAPermission} />
+              {/* Route is only active for users that have permission create_institution  */}                
+              <PrivateRoute exact path='/institution-setup' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionSetup} />                
+              <PrivateRoute exact path='/institution-list' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionsList} />                
+              <PrivateRoute exact path='/institution-list/:id' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionList} />                
 
+              <PrivateRoute exact path="/wallets" condition={hasPermission(CREATE_WALLET)} component={WalletsList} />
+              <PrivateRoute exact path="/wallet/:id" condition={hasPermission(CREATE_WALLET)} component={WalletView} />
 
-                <Route exact path="/audit" component={AuditComponent} />        
+              {/* Route is only active for users that have permission global_settings  */}
+              <PrivateRoute exact path='/configuration/globalsetting' condition={hasPermission(GLOBAL_SETTINGS)} component={GlobalSetting} />                
+              <Route exact path="/configuration/:id" component={ViewServiceProvider} /> 
+              <Route exact path="/configuration/profile/:id" component={ViewProfile} />  
+              <Route exact path="/configuration" component={ConfigurationComponent} />
 
-                <Route exact path="/user-setup" component={UserRegistration} />
-                <Route exact path="/user-list" component={UsersList} />
-                <Route exact path="/user/:id" component={User} />
+              <Route exact path="/reporting" component={ReportingComponent} />
+              <Route exact path="/reporting/:id" component={ReportTransactionDetails} />
 
-                <Route path="*" component={Dashboard} />      
+              <Route exact path="/audit" component={AuditComponent} />        
+
+              <Route path="*" component={Dashboard} />      
             </Switch>
           </Suspense>
         </ErrorBoundary>

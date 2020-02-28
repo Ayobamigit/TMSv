@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import NoResultFound from '../../../components/NoResultFound/NoResultfound';
 import DeleteServiceProvider from './deleteServiceProvider.component';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ListOfServiceProvidersComponent = ({ isLoading, serviceProviders }) => {
     const [state, setState ] = useState({
@@ -36,9 +37,9 @@ const ListOfServiceProvidersComponent = ({ isLoading, serviceProviders }) => {
                                             <tr key={i}>
                                                 <th scope="row">{i+1}</th>
                                                 <td>{providerName}</td>
-                                                <td data-toggle="modal" data-target="#deleteModal" onClick={() => setState({...state, idToBeDeleted: id})}><Link to="#"><i className="fa fa-2x fa-trash"></i></Link></td>
+                                                <td data-toggle="modal" data-target="#deleteModal" onClick={() => setState({...state, idToBeDeleted: id})}><Link to="#"><FontAwesomeIcon icon="trash" size="2x" /></Link></td>
                                                 <td>
-                                                    <Link to={`/configuration/${id}`}><i className="fa fa-2x fa-eye"></i></Link>
+                                                    <Link to={`/configuration/${id}`}><FontAwesomeIcon icon="eye" size="2x" /></Link>
                                                 </td>                                                
                                             </tr>
                                         )

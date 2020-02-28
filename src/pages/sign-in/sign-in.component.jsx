@@ -43,13 +43,18 @@ const SignIn = ({ history }) => {
             })
             .then(response => {
                 setState({ ...state, isLoggingIn: false })
+                // console.log(response)
                 if (response.data.respCode === '00') {
-                    const { role, institution, token } = response.data.respBody
+                    const { 
+                        role, 
+                        institution, 
+                        token 
+                    } = response.data.respBody
                     setAuthenticationStatus(true)
                     sessionStorage.setItem('userDetails', JSON.stringify({
                         authToken: token,
                         userName: state.username.toUpperCase(),
-                        institution,
+                        institutionID: institution ? institution.institutionID : null, // If the person is not an institution, set null
                         role
                     }))
                     history.push('/dashboard')

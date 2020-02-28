@@ -1,14 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, Fragment } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar.styles.scss';
+import { hasPermission, CREATE_ROLES, CREATE_USER, ADD_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_WALLET } from '../../Utils/getPermission';
 import Logo from '../../img/logo.png';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { authContext } from '../../Context/Authentication.context';
 
 const Sidebar = () => {
   const { setAuthenticationStatus } = useContext(authContext)
+  const { institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
+
     const logout = () => {
-        setAuthenticationStatus(false);
-        sessionStorage.clear();
+      setAuthenticationStatus(false);
+      sessionStorage.clear();
     }
     return (
       <React.Fragment>
@@ -21,7 +26,7 @@ const Sidebar = () => {
           {/* Dashboard */}
           <li>
             <NavLink className="nav-link" to="/dashboard" activeClassName="selected">
-              <i className="fa fa-home"></i>
+              <FontAwesomeIcon icon="home" />
               <span>Dashboard</span>
             </NavLink>
           </li>
@@ -30,16 +35,19 @@ const Sidebar = () => {
           <li>
             <div className="nav-link dropdown-toggle" href="#userSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
-                <i className="fa fa-users"></i>
+                <FontAwesomeIcon icon="users" />
                 <span>User Management</span>
               </NavLink>
             </div>
             <ul className="collapse list-unstyled nav-link" id="userSubmenu">
-              <li>
-                <NavLink to="/user-setup" activeClassName="selected">
-                  Register a User
-                </NavLink>
-              </li>
+              {
+                hasPermission(CREATE_USER) ?
+                <li>
+                  <NavLink to="/user-setup" activeClassName="selected">
+                    Register a User
+                  </NavLink>
+                </li>: null
+              }              
               <li>
                 <NavLink to="/user-list" activeClassName="selected">
                   View all Users  
@@ -52,16 +60,20 @@ const Sidebar = () => {
           <li>
             <div className="nav-link dropdown-toggle" href="#deviceSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
-                <i className="fa fa-cogs"></i>
+                <FontAwesomeIcon icon="cogs" />
                 <span>Device Setup</span>
               </NavLink>
             </div>
             <ul className="collapse list-unstyled nav-link" id="deviceSubmenu">
-              <li>
-                <NavLink to="/device-setup" activeClassName="selected">
-                  Register a Terminal
-                </NavLink>
-              </li>
+              {
+                hasPermission(ADD_TERMINALS) ?
+                  <li>
+                    <NavLink to="/device-setup" activeClassName="selected">
+                      Register a Terminal
+                    </NavLink>
+                  </li>
+                  : null
+              }
               <li>
                 <NavLink to="/device-list" activeClassName="selected">
                   View all Terminals  
@@ -71,31 +83,49 @@ const Sidebar = () => {
           </li>
 
           {/*  Institution Management */}
-          <li>
-            <div className="nav-link dropdown-toggle" href="#institutionSubmenu" data-toggle="collapse" aria-expanded="false">
-              <NavLink to="#">
-                <i className="fa fa-university"></i>
-                <span>Institution Management</span>
-              </NavLink>
-            </div>
-            <ul className="collapse list-unstyled nav-link" id="institutionSubmenu">
+            {
+              hasPermission(CREATE_INSTITUTION) ?
               <li>
-                <NavLink to="/institution-setup" activeClassName="selected">
-                  Register an Institution
+                <div className="nav-link dropdown-toggle" href="#institutionSubmenu" data-toggle="collapse" aria-expanded="false">
+                  <NavLink to="#">
+                    <FontAwesomeIcon icon="university" />
+                    <span>Institution Management</span>
+                  </NavLink>
+                </div>
+                <ul className="collapse list-unstyled nav-link" id="institutionSubmenu">
+                  <Fragment>
+                    <li>
+                      <NavLink to="/institution-setup" activeClassName="selected">
+                        Register an Institution
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/institution-list" activeClassName="selected">
+                        View all Instistutions  
+                      </NavLink>
+                    </li>                  
+                  </Fragment>
+                </ul> 
+              </li>
+              : null
+            }
+          
+          {/*  Wallet */}            
+          {
+            hasPermission(CREATE_WALLET) ?
+              <li>
+                <NavLink className="nav-link" to="/wallets" activeClassName="selected">
+                  <FontAwesomeIcon icon="wallet" />
+                  <span>Wallets</span>
                 </NavLink>
               </li>
-              <li>
-                <NavLink to="/institution-list" activeClassName="selected">
-                  View all Instistutions  
-                </NavLink>
-              </li>
-            </ul> 
-          </li>
+              : null
+          }
           
           {/*  Reporting */}
           <li>
             <NavLink className="nav-link" to="/reporting" activeClassName="selected">
-              <i className="fa fa-book"></i>
+              <FontAwesomeIcon icon="book" />
               <span>Reporting</span>
             </NavLink>
           </li>
@@ -103,31 +133,53 @@ const Sidebar = () => {
           {/*  Audit */}
           <li>
             <NavLink className="nav-link" to="/audit" activeClassName="selected">
-              <i className="fa fa-file"></i>
+              <FontAwesomeIcon icon="file" />
               <span>Audit</span>
             </NavLink>
           </li>
 
           {/*  Configurations */}
           <li>
-            <NavLink className="nav-link" to="/configuration" activeClassName="selected">
-              <i className="fa fa-cog"></i>
-              <span>Configuration</span>
-            </NavLink>
+            <div className="nav-link dropdown-toggle" href="#configurationSubmenu" data-toggle="collapse" aria-expanded="false">
+              <NavLink to="#">
+                <FontAwesomeIcon icon="cog" />
+                <span>Configuration</span>
+              </NavLink>
+            </div>
+            <ul className="collapse list-unstyled nav-link" id="configurationSubmenu">
+              <li>
+                <NavLink to="/configuration" activeClassName="selected">
+                  Service Providers
+                </NavLink>
+              </li>
+              {
+                hasPermission(GLOBAL_SETTINGS) && institutionID ? 
+                <li>
+                  <NavLink to="/configuration/globalsetting" activeClassName="selected">
+                    Global Settings
+                  </NavLink>
+                </li>
+                : null
+              }
+            </ul> 
           </li>
 
           {/*  Roles and Permissions */}
-          <li>
-            <NavLink className="nav-link" to="/roles" activeClassName="selected">
-              <i className="fa fa-key"></i>
-              <span>Roles</span>
-            </NavLink>
-          </li>
+          {
+            hasPermission(CREATE_ROLES) ? 
+            <li>
+              <NavLink className="nav-link" to="/roles" activeClassName="selected">
+                <FontAwesomeIcon icon="key" />
+                <span>Roles</span>
+              </NavLink>
+            </li> : 
+            null
+          }
 
           {/* { Logout } */}
           <li>
             <NavLink className="nav-link" to="/" onClick={logout}>
-              <i className="fa fa-sign-out"></i>
+              <FontAwesomeIcon icon="sign-out-alt" />
               <span>Logout</span>
             </NavLink>
           </li>

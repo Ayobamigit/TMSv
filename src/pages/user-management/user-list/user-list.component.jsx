@@ -12,12 +12,13 @@ import DeleteModal from './delete-user.component';
 
 import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const UsersList = () => {
     const [usersList, setUsersList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     const [ idToDelete, setIdToDelete] = useState('')
-    const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+    const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'))
 
     useEffect(() => {
         axios({
@@ -33,7 +34,6 @@ const UsersList = () => {
         .then(result => {
             setIsLoading(false)
             if(result.data.respCode === '00'){
-                console.log(result.data.respBody)
                 setUsersList(result.data.respBody)
             } else {
                 Swal.fire({
@@ -83,8 +83,8 @@ const UsersList = () => {
                                     {
                                         usersList.length === 0 ? 
                                             <NoResultFound /> : 
-                                            usersList.map((terminal, index) => {
-                                                const { id, firstname, lastname, email, username, institution, role, datecreated } = terminal;
+                                            usersList.map((user, index) => {
+                                                const { id, firstname, lastname, email, username, institution, role, datecreated } = user;
                                                 return (
                                                     <tr key={index}>
                                                         <th scope="row">{index+1}</th>
@@ -96,10 +96,10 @@ const UsersList = () => {
                                                         {/* <td>{role}</td> */}
                                                         <td>{datecreated ? datecreated.substring(0,19) : null}</td>
                                                         <td>
-                                                            <Link to={`/user/${id}`}><i className="fa fa-eye"></i></Link>
+                                                            <Link to={`/user/${id}`}><FontAwesomeIcon icon="eye" /></Link>
                                                         </td>
                                                         <td>
-                                                            <i className="fa fa-trash" data-toggle="modal" onClick={() => setIdToDelete(id)} data-target="#deleteModal"></i>
+                                                            <FontAwesomeIcon icon="trash" data-toggle="modal" onClick={() => setIdToDelete(id)} data-target="#deleteModal" />
                                                         </td>
                                                     </tr>
                                                 )

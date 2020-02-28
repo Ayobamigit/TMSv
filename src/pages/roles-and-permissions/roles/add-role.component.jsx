@@ -1,18 +1,46 @@
-import React, { useState, useRef } from 'react'
-import { addRoles } from '../../../Utils/URLs';
+import React, { useState, useRef, useEffect, Fragment } from 'react'
+import { addRoles, getAllPermissions } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import axios from 'axios';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
+import IsLoadingData from '../../../components/isLoadingData/isLoadingData';
+
+    let permissionsToBeAdded = []
+    let itemToBeDeleted = 0
+    let allPermissionsArray = []
+    const onChangeCheckBox = (e) => {
+        const value = e.target.value
+        const check = allPermissionsArray.find((permission) => {
+            return permission.name === value
+        })
+        if(check){
+            if(permissionsToBeAdded.length){
+                const exists = permissionsToBeAdded.find((permission, i) => {
+                    if(permission.name === value){
+                        itemToBeDeleted = i;
+                        return permission;
+                    }
+                })
+                if(exists){
+                    permissionsToBeAdded.splice(itemToBeDeleted, 1)
+                } else {
+                    permissionsToBeAdded.push(check)
+                }
+            } else {
+                permissionsToBeAdded.push(check)
+            }
+        }
+    }
 
 export default function AddRole() {
     const [state, setState] = useState({
         description: "",
-        email: "",
         name: "",
         permissions: [],
-        userType: "",
-        isFetchingData: false
+        isFetchingData: false,
+        isLoading: false,
+        allPermissions: []
     })
     let dismissModal = useRef();
     const onChange = (e) => {
@@ -21,20 +49,56 @@ export default function AddRole() {
             [e.target.name]: e.target.value
         })
     }
+    
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+    useEffect(() => {
+            setState(state => ({
+                ...state,
+                isLoading: true
+            }))
+            axios.get(`${getAllPermissions}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                timeout: FetchTimeOut
+                })
+              .then(result => {
+                  if(result.data.respCode === '00'){
+                      allPermissionsArray = result.data.respBody;
+                      setState( state => ({
+                        ...state,
+                        allPermissions: result.data.respBody,
+                        isLoading: false
+                      }))
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }                
+              })
+              .catch(error => {
+                setState(state =>({
+                    ...state,
+                    isLoading: false
+                }))            
+            });
+
+    }, [authToken])
     const addRole = (e) => {
         e.preventDefault();
         setState({
             ...state, 
             isFetchingData: true
         })
-        const { email, description, permissions, userType } = state;
+        const { description, name } = state;
         let reqBody = {
-            name: userType.split(/(?=[A-Z])/).join('_'),
-            email,
+            name,
             description,
-            permissions,
-            userType
+            permissions: permissionsToBeAdded,
         }
         axios({
             url: `${addRoles}`,
@@ -81,7 +145,7 @@ export default function AddRole() {
             })
         });
     }
-    const { description, email, userType, isFetchingData } = state;
+    const { description, name, isFetchingData, allPermissions, isLoading } = state;
     return (
         <div className="modal fade" id="addRoleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog" role="document">
@@ -96,38 +160,15 @@ export default function AddRole() {
                     <form onSubmit={addRole}>
                         <div className="form-row">
                             <div className="col-md-12">
-                                <p>User Type </p>
-                                <select className="custom-select" value={userType} required name="userType" onChange={onChange}>
-                                    <option value="">Choose a User Type</option>
-                                    <option value="SuperAdmin">Super Admin</option>
-                                    <option value="InstitutionAdmin">Institution Admin</option>
-                                    <option value="InstitutionUser">Institution User</option>
-                                    <option value="TerminalUser">Terminal User</option>
-                                </select>
-                            </div>
-                            <div className="col-md-12">
                                 <p>Name</p>
                                 <input 
                                     type="text" 
-                                    value={userType.split(/(?=[A-Z])/).join('_')}
+                                    value={name}
                                     name="name"
-                                    readOnly
                                     onChange={onChange}
                                     required 
                                     className="form-control" 
                                     placeholder="Role Name" 
-                                />
-                            </div>
-                            <div className="col-md-12">
-                                <p>Email</p>
-                                <input 
-                                    type="text" 
-                                    value={email}
-                                    name="email"
-                                    onChange={onChange}
-                                    required 
-                                    className="form-control" 
-                                    placeholder="Email" 
                                 />
                             </div>
                             <div className="col-md-12">
@@ -144,8 +185,35 @@ export default function AddRole() {
                                 </textarea>
                             </div>
                         </div>
+                        <div className="form-group">
+                            <p>Permissions: </p>
+                            {
+                                isLoading ? 
+                                <IsLoadingData />
+                                : 
+                                <Fragment>
+                                    {
+                                        allPermissions.length ?
+                                        allPermissions.map((permission, i) => {
+                                            // console.log(permission, i)
+                                            return (
+                                                <div className="form-check" key={i}>
+                                                    <input className="form-check-input" onChange={onChangeCheckBox} type="checkbox" value={permission.name} />
+                                                    <label className="form-check-label">
+                                                        {permission.name}
+                                                    </label>
+                                                </div>
+                                            )
+                                        })
+                                        :
+                                        null
+                                    }
+                                </Fragment>
+                            }
+                            
+                        </div>
                         <div className="modal-footer">                            
-                            <button type="submit" disabled={isFetchingData} className="btn btn-primary">
+                            <button type="submit" disabled={isFetchingData || isLoading || !allPermissions.length} className="btn btn-primary">
                                 {
                                     isFetchingData ? <IsFetching /> : 'Submit'
                                 }

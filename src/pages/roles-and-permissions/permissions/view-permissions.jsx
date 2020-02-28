@@ -4,8 +4,8 @@ import Swal from '../../../constants/swal';
 import axios from 'axios';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
-import DeletePermission from './delete-permission.component';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function ViewPermissions() {
     const [state, setState] = useState({
@@ -57,10 +57,10 @@ export default function ViewPermissions() {
             })
         });
     }, [authToken])
-    const { permissions, isFetchingData, permissionToBeDeleted } = state;
+    const { permissions, isFetchingData } = state;
     return (
         <div className="modal fade" id="viewPermissionsModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog" role="document">
+            <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div className="modal-content">
                 <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLabel">All Permissions</h5>
@@ -77,7 +77,7 @@ export default function ViewPermissions() {
                             <div className="accordion" id="accordionExample">
                                 {
                                     permissions.map((permission, i) => {
-                                        const { name, description, userType } = permission;
+                                        const { name, description } = permission;
                                         return (
                                             <div className="card" key={i}>
                                                 <div className="card-header d-flex justify-content-between align-items-center" id={`heading${i + 10}`}>
@@ -94,14 +94,12 @@ export default function ViewPermissions() {
                                                             to={{pathname: `/roles/permission/${name.toLowerCase()}`, 
                                                             state: permission} }
                                                         >
-                                                            <i className="fa fa-2x fa-eye ml-5" title="View this Permission"></i></Link>
-                                                        <i className="fa fa-2x fa-trash ml-5" data-toggle="modal" onClick={() => {setState({ ...state, permissionToBeDeleted: permission })}} data-target="#deletePermissionModal" title="Delete this Permission"></i>
+                                                            <FontAwesomeIcon icon="eye" size="2x" className="ml-5" title="View this Permission" /></Link>
                                                     </div>
                                                 </div>
                                                 <div id={`collapse${i + 10}`} className={`collapse ${i === 0 ? 'show': ''}`} aria-labelledby={`heading${i + 10}`} data-parent="#accordionExample">
                                                     <div className="card-body">
                                                         <p>Name: {name} </p>
-                                                        <p>User Type: {userType}</p>
                                                         <p>Description: { description }</p>                                                        
                                                     </div>
                                                 </div>
@@ -115,7 +113,6 @@ export default function ViewPermissions() {
                 </div>
                 </div>
             </div>
-            <DeletePermission permissionToBeDeleted={permissionToBeDeleted} />
         </div>
     )
 }

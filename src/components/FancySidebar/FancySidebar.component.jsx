@@ -4,6 +4,8 @@ import './FancySidebar.styles.scss';
 import Logo from '../../img/logo_icon.png';
 
 import { authContext } from '../../Context/Authentication.context';
+import { hasPermission, CREATE_ROLES, CREATE_INSTITUTION } from '../../Utils/getPermission';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FancySidebar = () => {
   const { setAuthenticationStatus } = useContext(authContext)
@@ -22,7 +24,7 @@ const FancySidebar = () => {
           {/* Dashboard */}
           <li title="Dashboard">
             <NavLink className="nav-link" to="/dashboard" activeClassName="selected">
-              <i className="fa fa-home"></i>
+              <FontAwesomeIcon icon="home" />
             </NavLink>
           </li>
 
@@ -30,7 +32,7 @@ const FancySidebar = () => {
           <li title="Users">
             <div className="nav-link"  aria-expanded="false">
               <NavLink to="/user-list">
-                <i className="fa fa-users"></i>
+                <FontAwesomeIcon icon="users" />
               </NavLink>
             </div>
           </li>
@@ -39,16 +41,28 @@ const FancySidebar = () => {
           <li title="Devices">
             <div className="nav-link" aria-expanded="false">
               <NavLink to="/device-list">
-                <i className="fa fa-cogs"></i>
+                <FontAwesomeIcon icon="cogs" />
               </NavLink>
             </div>
           </li>
-
           {/*  Institution Management */}
-          <li title="Institutions">
+          {
+            hasPermission(CREATE_INSTITUTION) ?
+            <li title="Institutions">
+              <div className="nav-link"  aria-expanded="false">
+                <NavLink to="/institution-list">
+                  <FontAwesomeIcon icon="university" />
+                </NavLink>
+              </div> 
+            </li>
+            : null
+          } 
+
+          {/* Wallet */}
+          <li title="Wallet">
             <div className="nav-link"  aria-expanded="false">
-              <NavLink to="/institution-list">
-                <i className="fa fa-university"></i>
+              <NavLink to="/wallet/:id">
+                <FontAwesomeIcon icon="wallet" />
               </NavLink>
             </div> 
           </li>
@@ -56,35 +70,39 @@ const FancySidebar = () => {
           {/*  Reporting */}
           <li title="Reporting">
             <NavLink className="nav-link" to="/reporting" activeClassName="selected">
-              <i className="fa fa-book"></i>
+              <FontAwesomeIcon icon="book" />
             </NavLink>
           </li>
           
           {/*  Audit */}
           <li title="Audit">
             <NavLink className="nav-link" to="/audit" activeClassName="selected">
-              <i className="fa fa-file"></i>
+              <FontAwesomeIcon icon="file" />
             </NavLink>
           </li>
 
           {/*  Configurations */}
           <li title="Configuration">
             <NavLink className="nav-link" to="/configuration" activeClassName="selected">
-              <i className="fa fa-cog"></i>
+              <FontAwesomeIcon icon="cog" />
             </NavLink>
           </li>
 
           {/*  Roles and Permissions */}
-          <li title="Configuration">
-            <NavLink className="nav-link" to="/roles" activeClassName="selected">
-              <i className="fa fa-key"></i>
-            </NavLink>
-          </li>         
+          {
+            hasPermission(CREATE_ROLES) ? 
+            <li title="Roles and Permissions">
+              <NavLink className="nav-link" to="/roles" activeClassName="selected">
+                <FontAwesomeIcon icon="key" />
+              </NavLink>
+            </li> :
+            null        
+          }
           
           {/* { Logout } */}
           <li title="Logout">
             <NavLink className="nav-link" to="/" onClick={logout}>
-              <i className="fa fa-sign-out"></i>
+              <FontAwesomeIcon icon="sign-out-alt" />
             </NavLink>
           </li>
         </ul>     

@@ -61,7 +61,7 @@ export default function () {
                                             <td>{amount}</td>
                                             <td>{rrn}</td>
                                             <td>{responseCode}</td>
-                                            <td><p className={statusClass()}>{responseDesc}</p></td>
+                                            <td><p className={`overflow-hidden ${statusClass()}`}>{responseDesc}</p></td>
                                             <td><p>{institutionResponseCode}</p></td>
                                             <td><p>{institutionResponseDesc}</p></td>
                                         </tr>

@@ -47,14 +47,14 @@ const Reporting = () => {
     const history= useHistory();
     const { totalCount, page, size, fromDate, toDate, isLoading } = state;
     let { transactions } = state;
-    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+    const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
     const customFileName = `tms-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
 
     useEffect(() => {
         const getTransactionsHistory = () => {
             let reqBody = {
                 fromDate,
-                institutionID: "",
+                institutionID,
                 page,
                 size,
                 toDate
@@ -78,6 +78,7 @@ const Reporting = () => {
                     ...state,
                     isLoading: false
                 }))
+                // console.log(result)
                 if(result.data.respCode === '00'){
                     const { transactions, totalCount, hasNextRecord } = result.data.respBody;
                     setState(state =>({
@@ -96,6 +97,7 @@ const Reporting = () => {
                 }            
             })
             .catch(err => {
+                // console.log(err)
                 setState(state =>({
                     ...state,
                     isLoading: false
@@ -109,17 +111,6 @@ const Reporting = () => {
             });
         }
         getTransactionsHistory();
-
-        //Autorefresh Function 
-
-        // const interval = setInterval(() => {
-        //     getTransactionsHistory();
-        // }, 30000)
-
-        // Clearing autorefresh function when component unmounts
-        // return(() => {
-        //     clearInterval(interval)
-        // })
     }, [page, size, authToken, fromDate, toDate])
 
     const changeCurrentPage = (pageNumber) => {

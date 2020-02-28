@@ -45,9 +45,9 @@ const Dashboard = () => {
     })
     const { data, page, size, isLoading, toDate, fromDate, fetchingTransactions, terminalsStatistics } = state;
 
+    let { institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
     useEffect(() => {
         let { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
-
         //Get New Token when token expires
         const getNewToken = () => {
             axios.post(`${getNewTokenUrl}`, {
@@ -92,16 +92,16 @@ const Dashboard = () => {
                 isLoading: true
             }))
 
-            axios.all([
-                axios.get(`${dashboardUtilities}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    timeout: FetchTimeOut
-                  })
-              ])
-              .then(axios.spread((dashboardStats) => {
+            
+
+            axios.post(`${dashboardUtilities}`, authToken, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                timeout: FetchTimeOut
+              })
+              .then(dashboardStats => {
                 setState(state =>({
                     ...state,
                     isLoading: false,
@@ -139,7 +139,7 @@ const Dashboard = () => {
                         footer: 'Please contact support'
                     })
                 }                
-              }))
+              })
               .catch(error => {
                 setState(state =>({
                     ...state,
@@ -208,7 +208,10 @@ const Dashboard = () => {
                             <DashboardCardsList />
                         </div>
                     </div>
-                    <TopInstitutions />
+                    {
+                        institutionID ? null :
+                        <TopInstitutions />
+                    }
                     <DashboardTransactionHistoryComponent />
                 </DashboardContext.Provider>
             </div>
