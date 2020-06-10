@@ -11,7 +11,7 @@ export const useHttp = (url, dependencies) => {
         fetch(url)
         .then(response => {
             if(!response.ok){
-                throw new Error('Failed to Fetch Data')
+                throw new Error('Failed to Fetch Data');
             } 
             return response.json();
         })
