@@ -34,15 +34,17 @@ const InstitutionsList = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: reqBody,
             timeout: FetchTimeOut
         })
             .then(result => {
+             
             setIsLoading(false)
             if(result.data.respCode === '00'){
-                setInstitutionsList(result.data.respBody.transactions)
+                setInstitutionsList(result.data.respBody.institution)
                 setState(state =>({
                     ...state,
                     totalCount: result.data.respBody.totalCount

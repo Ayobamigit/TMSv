@@ -37,11 +37,12 @@ const WalletView = () => {
     useEffect(() => {
         const getWalletInformation = () => {
             axios({
-                method: 'get',
-                url: `${getAWalletURL}/${match.params.id}`,
+                method: 'post',
+                url: `${getAWalletURL}`,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
                 data: match.params.id,
                 timeout: FetchTimeOut
@@ -103,7 +104,8 @@ const WalletView = () => {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: JSON.stringify(reqBody),
             timeout: FetchTimeOut
@@ -119,7 +121,7 @@ const WalletView = () => {
                     title: 'Successful Update...',
                     text: 'Wallet Update was Successful!'
                 })
-                history.push('/dashboard');
+                history.push('/wallets');
             }else{
                 Swal.fire({
                     type: 'error',

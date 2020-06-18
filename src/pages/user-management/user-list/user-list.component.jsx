@@ -18,7 +18,7 @@ const UsersList = () => {
     const [usersList, setUsersList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     const [ idToDelete, setIdToDelete] = useState('')
-    const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'))
+    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'))
 
     useEffect(() => {
         axios({
@@ -26,7 +26,8 @@ const UsersList = () => {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: {},
             timeout: FetchTimeOut
@@ -84,7 +85,7 @@ const UsersList = () => {
                                         usersList.length === 0 ? 
                                             <NoResultFound /> : 
                                             usersList.map((user, index) => {
-                                                const { id, firstname, lastname, email, username, institution, role, datecreated } = user;
+                                                const { id, firstname, lastname, email, username, institution, datecreated } = user;
                                                 return (
                                                     <tr key={index}>
                                                         <th scope="row">{index+1}</th>

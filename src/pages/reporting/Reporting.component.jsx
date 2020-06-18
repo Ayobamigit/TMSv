@@ -45,7 +45,7 @@ const Reporting = () => {
         })
     }
     const history= useHistory();
-    const { totalCount, page, size, fromDate, toDate, isLoading } = state;
+    const { totalCount, page, size, fromDate, toDate, isLoading, terminalID } = state;
     let { transactions } = state;
     const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
     const customFileName = `tms-report-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`;
@@ -57,7 +57,8 @@ const Reporting = () => {
                 institutionID,
                 page,
                 size,
-                toDate
+                toDate,
+                terminalID
             }
             setState(state =>({
                 ...state,
@@ -68,7 +69,8 @@ const Reporting = () => {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
                 data: reqBody,
                 timeout: FetchTimeOut

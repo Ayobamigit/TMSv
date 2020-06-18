@@ -21,7 +21,8 @@ export default function ViewPermissions() {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             timeout: FetchTimeOut
         })

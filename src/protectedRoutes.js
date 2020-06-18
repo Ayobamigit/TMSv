@@ -1,12 +1,12 @@
 import React, { lazy, Suspense } from 'react';
 import './App.scss';
 
-import { Route, Switch, HashRouter } from 'react-router-dom';
+import { Route, Switch, BrowserRouter } from 'react-router-dom';
 
 import PreLoader from './components/PreLoader/Preloader.component';
 
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import { hasPermission, ADD_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_ROLES, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
+import { hasPermission, CREATE_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_ROLES, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
 import PrivateRoute from './privateRoute';
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard.component'));
 
@@ -42,11 +42,10 @@ const WalletView = lazy(() => import('./pages/wallet/view-wallet/view-wallet.com
 function ProtectedRoutes() {
   return (
     <React.Fragment>
-      <HashRouter>
+      <BrowserRouter>
         <ErrorBoundary>
-          <Suspense fallback={<PreLoader />}>
             <Switch> 
-              <Route exact path="/" component={Dashboard} /> 
+          <Suspense fallback={<PreLoader />}>
               <Route exact path="/dashboard" component={Dashboard} />
 
               <PrivateRoute exact path='/roles/:id' condition={hasPermission(CREATE_ROLES)} component={ViewRole} />
@@ -59,7 +58,7 @@ function ProtectedRoutes() {
               <Route exact path="/user/:id" component={User} />
             
               {/* Route is only active for users that have permission add_terminals  */}
-              <PrivateRoute exact path='/device-setup' condition={hasPermission(ADD_TERMINALS)} component={DeviceSetup} />                
+              <PrivateRoute exact path='/device-setup' condition={hasPermission(CREATE_TERMINALS)} component={DeviceSetup} />                
               <Route exact path="/device-list" component={DeviceLists} />
               <Route exact path="/device-list/:id" component={DeviceList} />
 
@@ -81,12 +80,13 @@ function ProtectedRoutes() {
               <Route exact path="/reporting/:id" component={ReportTransactionDetails} />
 
               <Route exact path="/audit" component={AuditComponent} />        
+              <Route exact path="/" component={Dashboard} /> 
 
-              <Route path="*" component={Dashboard} />      
-            </Switch>
+              {/* <Route path="*" component={Dashboard} />       */}
           </Suspense>
+            </Switch>
         </ErrorBoundary>
-      </HashRouter>
+      </BrowserRouter>
     </React.Fragment>
   );
 }

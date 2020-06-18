@@ -41,7 +41,8 @@ export default function DeleteRole( { roleToBeDeleted }) {
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
                     },
                     data: reqBody,
                     timeout: FetchTimeOut

@@ -27,20 +27,24 @@ const RolesAndPermissions = () => {
             ...state,
             isLoading: true
         }))
+        
         axios({
             url: `${getRolesAndPermissions}`,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             timeout: FetchTimeOut
+           
         })
         .then(result => {
             setState(state =>({
                 ...state,
                 isLoading: false
             }))
+            console.log(result.data)
             if(result.data.respCode === '00'){
                 setState(state => ({
                     ...state,

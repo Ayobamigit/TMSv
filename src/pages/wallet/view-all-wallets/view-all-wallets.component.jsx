@@ -12,7 +12,7 @@ import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import NoResultFound from '../../../components/NoResultFound/NoResultfound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+const {authToken, institutionID} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const WalletsList = () => {
     const [walletsList, setWalletsList ] = useState([]);
@@ -24,7 +24,8 @@ const WalletsList = () => {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             timeout: FetchTimeOut
         })

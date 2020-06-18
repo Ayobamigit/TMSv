@@ -33,7 +33,7 @@ const SignIn = ({ history }) => {
                 username,
                 password
             }
-
+            
             axios({
                 method: 'post',
                 headers: {'Content-Type' : 'application/json'},
@@ -54,9 +54,12 @@ const SignIn = ({ history }) => {
                     sessionStorage.setItem('userDetails', JSON.stringify({
                         authToken: token,
                         userName: state.username.toUpperCase(),
+                        institution,
                         institutionID: institution ? institution.institutionID : null, // If the person is not an institution, set null
                         role
                     }))
+                    // console.log(role)
+                    // console.log(institution.serviceProviders.profile)
                     history.push('/dashboard')
                 } else {
                     setAuthenticationStatus(false);

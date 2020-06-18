@@ -108,7 +108,13 @@ const Dashboard = () => {
                     fetchingTransactions: false
                 }))                   
                   if(dashboardStats.data.respCode === '00'){
-                    const { dashboardTransactions, success, failed, totalSuccessfulAmount, totalTransactions, totalInstitutions, totalTerminals, activeInactiveTerminals: { activeTerminals, inactiveTerminals} } = dashboardStats.data.respBody;
+                    const { dashboardTransactions, 
+                            success, 
+                            failed, 
+                            totalSuccessfulAmount, 
+                            totalTransactions, 
+                            totalInstitutions, 
+                            totalTerminals, activeInactiveTerminals: { activeTerminals, inactiveTerminals} } = dashboardStats.data.respBody;
                     setTransactionsList(transactionsList =>({
                         ...transactionsList,
                         transactions: dashboardTransactions,

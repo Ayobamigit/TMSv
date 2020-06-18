@@ -59,7 +59,8 @@ export default function AddRole() {
             axios.get(`${getAllPermissions}`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
                 timeout: FetchTimeOut
                 })
@@ -105,7 +106,8 @@ export default function AddRole() {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: reqBody,
             timeout: FetchTimeOut

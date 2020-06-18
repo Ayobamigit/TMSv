@@ -1,5 +1,5 @@
 import React, { useState, useRef, Fragment } from 'react';
-import Axios from 'axios';
+import axios from 'axios';
 import Swal from '../../../constants/swal';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import { uploadTerminalsURL } from '../../../Utils/URLs';
@@ -59,10 +59,11 @@ const FileUploadModal = () => {
                     state.selectedFile,
                     state.selectedFile.name
                 )
-                Axios.post(`${uploadTerminalsURL}`, formData, {
+                axios.post(`${uploadTerminalsURL}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${authToken}`
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
                     },
                     timeout: FetchTimeOut,
                     onUploadProgress: progressEvent => {

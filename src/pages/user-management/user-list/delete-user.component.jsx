@@ -18,7 +18,7 @@ export default function DeleteModal({ id }) {
         const reqBody = {
             password,
             username: userName,
-            userToDeleteid: id
+            idToDelete: id
         }
         if (password.trim() === ''){
             Swal.fire({
@@ -36,7 +36,8 @@ export default function DeleteModal({ id }) {
                 url: `${deleteAUser}/${id}`,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
                 data: reqBody,
                 timeout: FetchTimeOut
@@ -46,7 +47,7 @@ export default function DeleteModal({ id }) {
                     ...state, 
                     IsFetchingData: false
                 })
-                if(result.data.respCode === '00'){
+                if(result.data.respCode === '96'){
                     Swal.fire({
                         type: 'success',
                         title: 'Successful Action...',

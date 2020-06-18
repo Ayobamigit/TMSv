@@ -29,92 +29,124 @@ const DeviceRegistration = () => {
     });
 
     const history = useHistory();
-    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+   
+    const { authToken, institution } = JSON.parse(sessionStorage.getItem('userDetails'));
 
     useEffect(() => {
         //Get All institutions
-        axios({
-            url: `${allInstitutions}`,
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: {},
-            timeout: FetchTimeOut
-        })
-            .then(result => {
-            if(result.data.respCode === '00'){
-                setState( state => ({
-                    ...state,
-                    institutionsList: result.data.respBody
-                }))
-            }else{
+        if(!institution){
+            axios({
+                url: `${allInstitutions}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                data: {},
+                timeout: FetchTimeOut
+            })
+                .then(result => {
+                if(result.data.respCode === '00'){
+                    setState( state => ({
+                        ...state,
+                        institutionsList: result.data.respBody
+                        
+                    }))
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }  
+                       
+            })
+            // console.log(institution.serviceProviders.profile)
+            .catch(err => {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${result.data.respDescription}`,
+                    text: `${err}`,
                     footer: 'Please contact support'
                 })
-            }            
-        })
-        .catch(err => {
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
-            })
-        });
-
-    }, [state.institution, authToken])
+            });
+    
+        }
+        
+    }, [authToken])
 
     const getProfilesByName = (name) => {
         if(!name){
             return;
         }
-        let result = state.institutionsList.find((element) => {
-            return element.institutionName === name
-        })
-        setState({
-            ...state,
-            institutionId: result.institutionID,
-            institution: result.institutionName
-        })
-        axios({
-            url: `${getProfilesByServiceProviderName}`,
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: name,
-            timeout: FetchTimeOut
-        })
-            .then(result => {
-            if(result.data.respCode === '00'){
-                setState( state => ({
-                    ...state,
-                    profilesList: result.data.respBody
-                }))
-            }else{
+        
+        if(institution){
+            // result = state.institutionsList.find((element) => {
+            //     return element.institutionName === institution.institutionName
+            // })
+
+            setState({
+                ...state,
+                profilesList: institution.serviceProviders.profile,
+                
+            })
+           
+        }
+        
+        else{
+
+            let result = state.institutionsList.find((element) => {
+                return element.institutionName === name
+            })
+            
+            setState({
+                ...state,
+                institutionId: result.institutionID,
+                institution: result.institutionName
+            })
+
+            axios({
+                url: `${getProfilesByServiceProviderName}`,
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                data: name,
+                timeout: FetchTimeOut
+            })
+                .then(result => {
+                if(result.data.respCode === '00'){
+                    setState( state => ({
+                        ...state,
+                        profilesList: result.data.respBody
+                    }))
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }
+                
+            })
+            .catch(err => {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${result.data.respDescription}`,
+                    text: `${err}`,
                     footer: 'Please contact support'
                 })
-            }
-            
-        })
-        .catch(err => {
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
-            })
-        });
+            });
+        
+        }
+        
+       
+       
     }
 
     const onChange = async (e) => {
@@ -140,64 +172,128 @@ const DeviceRegistration = () => {
             institutionID: institutionId,
             profileName
         }
-        if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === '' || institutionId.trim() === ''){
-            Swal.fire({
-                type: 'info',
-                title: 'Oops...',
-                text: 'Please fill all fields!'
-            })
-        } else {
-            setState({
-                ...state, 
-                IsFetchingData: true
-            })
-            axios({
-                method: 'post',
-                url: `${registerTerminalURL}`,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                data: reqBody,
-                timeout: FetchTimeOut
-            })
-            .then(result => {
+        if(institution){
+            if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === '' ){
+                Swal.fire({
+                    type: 'info',
+                    title: 'Oops...',
+                    text: 'Please fill all fields!'
+                })
+            } else {
                 setState({
                     ...state, 
-                    IsFetchingData: false
+                    IsFetchingData: true
                 })
-                if(result.data.respCode === '00'){
-                    Swal.fire({
-                        type: 'success',
-                        title: 'Successful Registration...',
-                        text: 'Terminal Registration was Successful!'
+                axios({
+                    method: 'post',
+                    url: `${registerTerminalURL}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
+                })
+                .then(result => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
                     })
-                    history.push('/dashboard');
-                }else{
+                    if(result.data.respCode === '00'){
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Successful Registration...',
+                            text: 'Terminal Registration was Successful!'
+                        })
+                        history.push('/dashboard');
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }                
+                })
+                .catch(err => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
+                    })
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.data.respDescription}`,
+                        text: `${err}`,
                         footer: 'Please contact support'
                     })
-                }                
-            })
-            .catch(err => {
+                });
+            }
+        }
+        else{
+            if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === '' || institutionId.trim() === ''){
+                Swal.fire({
+                    type: 'info',
+                    title: 'Oops...',
+                    text: 'Please fill all fields!'
+                })
+            } 
+            
+            else {
                 setState({
                     ...state, 
-                    IsFetchingData: false
+                    IsFetchingData: true
                 })
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${err}`,
-                    footer: 'Please contact support'
+                axios({
+                    method: 'post',
+                    url: `${registerTerminalURL}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
                 })
-            });
+                .then(result => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
+                    })
+                    if(result.data.respCode === '00'){
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Successful Registration...',
+                            text: 'Terminal Registration was Successful!'
+                        })
+                        history.push('/dashboard');
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }                
+                })
+                .catch(err => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
+                    })
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${err}`,
+                        footer: 'Please contact support'
+                    })
+                });
+            }
         }
+        
     }
     
-    const { IsFetchingData, profileName, institution } = state;
+    const { IsFetchingData, profileName } = state;
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -248,7 +344,10 @@ const DeviceRegistration = () => {
                                 required 
                             />
                         </div> 
-                        <div className="form-group">
+                        {// Institutions don't have to select themselves
+
+                            !institution?
+                            <div className="form-group">
                             <p>Select Institution</p>
                                 <select className="custom-select" name="institution" value={institution} onChange={onChange} required >
                                     <option value="">Select Institution</option>
@@ -267,12 +366,16 @@ const DeviceRegistration = () => {
                                         :null
                                     }
                                 </select>
-                        </div>
-                          
-                        <div className="form-group">
+                        </div>:
+                        null
+                        }
+                        
+                     
+                            <div className="form-group">
                             <p>Select Profiles</p>  
                             <select className="custom-select" name="profileName" value={profileName} onChange={onChange} required >
                                 <option value="">Select Profile</option>
+                                
                                 {
                                     state.profilesList ? 
                                     state.profilesList.map((profile, i) => {
@@ -286,9 +389,9 @@ const DeviceRegistration = () => {
                                         )
                                     }): null
                                 }
-                            </select>                                 
+                            </select>                                
                             
-                        </div>                
+                        </div>          
                         <div className="form-group d-flex justify-content-end">
                             <button 
                                 type="input"

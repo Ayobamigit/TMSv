@@ -1,37 +1,43 @@
 const baseUrl = () => {
-    return 'http://10.9.8.63:7070'; //Test IP
+     return 'http://10.2.2.47:5334';
+    // return 'http://10.9.8.102:8081'; // Another Test IP
+    // return 'http://10.9.8.63:7070'; //Test IP
     // return 'http://10.9.8.63:5334'; //Live IP
     // return 'http://41.219.149.51:5334'; //Test Public IP
     // return 'http://medusa.3lineng.com'; //New Public IP
 }
  
-export const institutionLoginUrl = `${baseUrl()}/api/v1/login`;
+export const institutionLoginUrl = `${baseUrl()}/api/v1/institution/login`;
 
 //Dashboard 
 export const transactionsHistoryURL = `${baseUrl()}/api/v1/transactions/tranHistory`;
 // export const institutionTransactionsHistoryURL = `${baseUrl()}/api/v1/InstitutionTransactions`;
 export const dashboardUtilities = `${baseUrl()}/api/v1/dashboard/DashboardUtilities`;
 export const getNewTokenUrl = `${baseUrl()}/api/v1/superadmin/gettoken`;
-export const getTransactionByIdUrl = `${baseUrl()}/api/v1/transactions`;
+export const getTransactionByIdUrl = `${baseUrl()}/api/v1/transactions/id`;
 
 //Terminal Management
 export const allTerminals = `${baseUrl()}/api/v1/tms/terminals`;
 export const institutionTerminals = `${baseUrl()}/api/v1/tms/Institutionterminals`;
 export const registerTerminalURL = `${baseUrl()}/api/v1/tms`;
 export const uploadTerminalsURL = `${baseUrl()}/api/v1/tms/upload`;
-export const viewATerminal = `${baseUrl()}/api/v1/tms`;
+export const viewATerminal = `${baseUrl()}/api/v1/tms/terminalID`;
+export const updateATerminal = `${baseUrl()}/api/v1/tms/updateTerminals`;
 export const getProfilesByServiceProviderName = `${baseUrl()}/api/v1/tms/getprofilesByInstitutionName`;
 
 // Institution Management
-export const registerInstitutionURL = `${baseUrl()}/api/v1/institution`;
-export const viewAnInstitution = `${baseUrl()}/api/v1/institution`;
+export const registerInstitutionURL = `${baseUrl()}/api/v1/institution/createinstitution`;
+export const viewAnInstitution = `${baseUrl()}/api/v1/institution/institutionID`;
+export const updateAnInstitution = `${baseUrl()}/api/v1/institution/updateInstitution`;
 export const getBanks = `${baseUrl()}/api/v1/serviceProviders/banks`;
-export const allInstitutions = `${baseUrl()}/api/v1/institution/institutionslist`;
-export const allInstitutionsList = `${baseUrl()}/api/v1/institution/institutions`;
+export const allInstitutions = `${baseUrl()}/api/v1/institution/institutionsList`;
+export const allInstitutionsList = `${baseUrl()}/api/v1/institution/getinstitutions`;
+export const createInstitutionUser = `${baseUrl()}/api/v1/institution/createInstitutionUser`;
+export const getInstitutionTerminals = `${baseUrl()}/api/v1/institution/institutionTerminalList`
 
 // Create Wallet
-export const allWalletsList = `${baseUrl()}/api/v1/walletAccount/getWallets`;
-export const getAWalletURL = `${baseUrl()}/api/v1/walletAccount`;
+export const allWalletsList = `${baseUrl()}/api/v1/walletAccount/getallWallets`;
+export const getAWalletURL = `${baseUrl()}/api/v1/walletAccount/getwalletbywalletid`;
 export const updateWalletInformation = `${baseUrl()}/api/v1/walletAccount/updateWalletAccount`;
 
 // Configurations
@@ -59,7 +65,7 @@ export const getAllPermissions = `${baseUrl()}/api/v1/rolePermissions/getAllPerm
 // SuperAdmin
 export const superAdminLoginUrl = `${baseUrl()}/api/v1/superadmin/login`;
 export const superAdminGetAllUsers = `${baseUrl()}/api/v1/superadmin/sgetAllUsers`;
-export const viewAUser = `${baseUrl()}/api/v1/superadmin/users`;
+export const viewAUser = `${baseUrl()}/api/v1/superadmin/users/id`;
 export const createAUser = `${baseUrl()}/api/v1/superadmin/createUsers`;
 export const deleteAUser = `${baseUrl()}/api/v1/superadmin/user`;
 export const globalSettings = `${baseUrl()}/api/v1/superadmin/globalSettings`;

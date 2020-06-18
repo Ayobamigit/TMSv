@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
-import { viewAnInstitution, getBanks } from '../../../Utils/URLs';
+import { viewAnInstitution, getBanks, updateAnInstitution, allServiceProviders } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
@@ -29,6 +29,8 @@ const InstitutionView = () => {
         banks: [],
         settlementBank: '',
         serviceProvider: '',
+        componentOne: '',
+        componentTwo: '',
         createdBy: '', 
         dateCreated: '',
         IsFetchingData: false
@@ -38,38 +40,50 @@ const InstitutionView = () => {
 
     useEffect(() => {
         const getDeviceData = () => {
+           
+            const reqBody = match.params.id
+            
+           
             axios({
-                url: `${viewAnInstitution}/${match.params.id}`,
-                method: 'get',
+                url: `${viewAnInstitution}`,
+                method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
-                data: {},
+                data: reqBody,
                 timeout: FetchTimeOut
             })
+            
                 .then(result => {
-                setIsLoading(false)
+                        setIsLoading(false)
+                
                 if (result.data.respCode === '00'){
+                    //console.log(result.data.respBody.institutionID)
+                  
                     const { 
-                        institutionName, institutionEmail, institutionID, settlementAccount, id, institutionPhone, serviceProvider,
-                        institutionAppKey, institutionIntegrationVersion, institutionURL, createdBy, dateCreated, bank
+                        institutionName, institutionEmail, institutionID, settlementAccount, id, institutionPhone, serviceProviders,
+                        institutionAppKey, institutionIntegrationVersion, institutionURL, createdBy, dateCreated, bank, component1, component2
                     } = result.data.respBody;
                     setState(state => ({
                         ...state, 
-                        id,
                         institutionName,
                         institutionEmail,
                         institutionID,
                         settlementAccount,
+                        id,
                         institutionPhone,
-                        createdBy,
+                        serviceProvider: serviceProviders,
                         institutionAppKey, 
+                        componentOne: component1,
+                        componentTwo: component2,
                         institutionIntegrationVersion, 
                         institutionURL,
+                        createdBy,
                         dateCreated,
                         settlementBank: bank,
-                        serviceProvider
+                        
                     }))
                 } else {                    
                     Swal.fire({
@@ -98,7 +112,8 @@ const InstitutionView = () => {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: {},
             timeout: FetchTimeOut
@@ -108,6 +123,43 @@ const InstitutionView = () => {
                 setState( state => ({
                     ...state,
                     banks: result.data.respBody
+                }))
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }
+            
+        })
+        .catch(err => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
+
+        //Get all service providers
+        axios({
+            url: `${allServiceProviders}`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
+            },
+            data: {},
+            timeout: FetchTimeOut
+        })
+            .then(result => {
+            if(result.data.respCode === '00'){
+                setState( state => ({
+                    ...state,
+                    serviceProvidersList: result.data.respBody
                 }))
             }else{
                 Swal.fire({
@@ -143,14 +195,12 @@ const InstitutionView = () => {
     const editInstitutionData = (e) => {
         e.preventDefault();
         const { 
-            id, institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated, 
-            institutionAppKey, institutionIntegrationVersion, institutionURL, settlementBank, serviceProvider
+            institutionName, institutionEmail, settlementAccount, institutionPhone, createdBy, dateCreated, 
+            institutionAppKey, institutionIntegrationVersion, institutionURL, settlementBank, serviceProvider, componentOne, componentTwo,
          } = state;
         const reqBody = {
-            id,
             institutionName, 
             institutionEmail, 
-            institutionID, 
             settlementAccount, 
             institutionPhone,
             createdBy, 
@@ -159,14 +209,15 @@ const InstitutionView = () => {
             institutionIntegrationVersion, 
             institutionURL,
             bank: settlementBank,
-            serviceProvider,
-            token: authToken
+            serviceProviderName: serviceProvider,
+            token: authToken,
+            component1: componentOne,
+            component2: componentTwo,
         };
         if (
-                institutionName.trim() === '' || institutionEmail.trim() === '' || institutionID.trim() === '' || 
-                settlementAccount.trim() === '' || institutionPhone.trim() === '' || createdBy.trim() === '' || 
-                dateCreated.trim() === '' || settlementBank.trim() === ''  || institutionAppKey.trim() === ''  || 
-                institutionIntegrationVersion.trim() === ''  || institutionURL.trim() === ''
+                institutionName.trim() === '' || institutionEmail.trim() === '' || settlementAccount.trim() === '' || institutionPhone.trim() === '' || createdBy.trim() === '' || 
+                dateCreated.trim() === '' || settlementBank.trim() === '' || serviceProvider.trim() === ''  || 
+                institutionAppKey.trim() === ''  || institutionIntegrationVersion.trim() === ''  || institutionURL.trim() === '' || componentOne.trim() === '' || componentTwo.trim() === ''
             ){
             Swal.fire({
                 type: 'info',
@@ -179,13 +230,14 @@ const InstitutionView = () => {
                 IsFetchingData: true
             })
             axios({
-                url: `${viewAnInstitution}/${match.params.id}`,
-                method: 'put',
+                url: `${updateAnInstitution}`,
+                method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
-                data: JSON.stringify(reqBody),
+                data: reqBody,
                 timeout: FetchTimeOut
             })
             .then(result => {
@@ -193,13 +245,14 @@ const InstitutionView = () => {
                     ...state, 
                     IsFetchingData: false
                 })
+                
                 if(result.data.respCode === '00'){
                     Swal.fire({
                         type: 'success',
                         title: 'Successful Update...',
                         text: 'Institution Update was Successful!'
                     })
-                    history.push('/dashboard');
+                    history.push('/institution-list');
                 }else{
                     Swal.fire({
                         type: 'error',
@@ -247,7 +300,7 @@ const InstitutionView = () => {
                                     name="institutionName" 
                                     onChange={onChange}
                                     required
-                                    readOnly={readOnly} 
+                                    readOnly
                                     className="form-control" 
                                     placeholder="Institution Name" 
                                 />
@@ -345,8 +398,13 @@ const InstitutionView = () => {
                             </div>
                             <div className="col-md-6">
                                 <p>Choose Settlement Bank</p>
-                                    <select className="custom-select mb-4" name="settlementBank" disabled={readOnly} value={state.settlementBank} onChange={onChange} required >
-                                    <option value="">Select Settlement Bank</option>
+                                    <select className="custom-select mb-4" 
+                                    name="settlementBank" 
+                                    disabled={readOnly} 
+                                    value={state.settlementBank} 
+                                    onChange={onChange} 
+                                    required >
+                                    <option value="">{state.settlementBank}</option>
                                     {
                                         state.banks ? 
                                         state.banks.map((bank, i) => {
@@ -363,6 +421,60 @@ const InstitutionView = () => {
                                     }
                                 </select>
                             </div> 
+                            <div className="col-md-6">
+                                <p>Choose Service Provider</p>
+                                    <select
+                                    className="custom-select mb-4" 
+                                    name="serviceProvider" 
+                                    disabled={readOnly} 
+                                    value={state.serviceProvider} 
+                                    onChange={onChange} 
+                                    required >
+                                    <option value="">{state.serviceProvider.providerName}</option>
+                                    {
+                                         state.serviceProvidersList ? 
+                                         state.serviceProvidersList.map((serviceProvider, i) => {
+                                             return(
+                                                 <option 
+                                                     value={serviceProvider.providerName} 
+                                                     key={i}
+                                                 >
+                                                     {serviceProvider.providerName}
+                                                 </option>
+                                             )
+                                         })
+                                         :null
+                                    }
+                                </select>
+                            </div> 
+                            <div className="col-md-6">
+                                <p>Component One</p>
+                                <input 
+                                    name="componentOne" 
+                                    className="form-control" 
+                                    value={state.componentOne} 
+                                    onChange={onChange} 
+                                    type="text"
+                                    readOnly={readOnly}
+                                    minLength="32"
+                                    maxLength = "32"
+                                    required                                    
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Component Two</p>
+                                <input 
+                                    name="componentTwo" 
+                                    className="form-control" 
+                                    value={state.componentTwo} 
+                                    onChange={onChange} 
+                                    type="text"
+                                    minLength="32"
+                                    maxLength = "32"
+                                    required 
+                                    readOnly={readOnly}                                   
+                                />
+                            </div>
                             <div className="col-md-6">
                                 <p>Created By</p>
                                 <input 

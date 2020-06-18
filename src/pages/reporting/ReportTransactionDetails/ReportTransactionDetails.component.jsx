@@ -26,13 +26,15 @@ const ReportTransactionDetails = () => {
             isLoading: true
         }))
         axios({
-            url: `${getTransactionByIdUrl}/${match.params.id}`,
-            method: 'get',
+            url: `${getTransactionByIdUrl}`,
+            method: 'post',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
-            timeout: FetchTimeOut
+            timeout: FetchTimeOut,
+            data: match.params.id
         })
         .then(result => {
             setState(state =>({

@@ -3,7 +3,7 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Swal from '../../../constants/swal';
 import { useHistory } from 'react-router-dom';
-import { allInstitutions, createAUser, getRolesAndPermissions } from '../../../Utils/URLs';
+import { allInstitutions, createAUser, getRolesAndPermissions, createInstitutionUser } from '../../../Utils/URLs';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 
 import Layout from '../../../components/Layout/layout.component';
@@ -26,131 +26,233 @@ const UserRegistration = () => {
     });
     const [ isLoading, setIsLoading ] = useState(true);
     const [ institutionInformation, setInstitutionInformation] = useState({})
-    const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'))
+    const { authToken, institution, role } = JSON.parse(sessionStorage.getItem('userDetails'))
 
     useEffect(() => {
-        axios.all([
-            axios.get(`${allInstitutions}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                timeout: FetchTimeOut
-            }),
+        if(role.name==='SUPER_ADMIN')
+        {   
             axios({
-                url: `${getRolesAndPermissions}`,
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                timeout: FetchTimeOut
+              url: `${allInstitutions}`, 
+                    method: 'get',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    timeout: FetchTimeOut
             })
-          ])
-          .then(axios.spread((result1, result2) => {
-            setIsLoading(false)
-            if(result1.data.respCode === '00'){
-                setState( state => ({
-                    ...state,
-                    institutionsList: result1.data.respBody,
-                    rolesAndPermissions: result2.data.respBody
-                }))
-            }else{
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${result1.data.respDescription}`,
-                    footer: 'Please contact support'
+        .then(res=>{
+                setIsLoading(false)
+
+                if(res.data.respCode === '00'){
+                    setState(state =>({
+                        ...state,
+                        institutionsList: res.data.respBody
+                    }))
+                }
+            })
+
+        }
+
+         axios({
+                url: `${getRolesAndPermissions}`, 
+                        method: 'get',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`,
+                            'Bearer': authToken
+                        },
+                        timeout: FetchTimeOut
                 })
-            }}))
-          .catch(err => {
-            setIsLoading(false)
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
-            })
-        });
+            .then(result1 =>{
+                    setIsLoading(false)
+
+                    if(result1.data.respCode === '00'){
+                        setState(state =>({
+                            ...state,
+                            rolesAndPermissions: result1.data.respBody
+                        }))
+                    }
+
+                    else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result1.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }
+                 
+                })
+            .catch(err => {
+                    setIsLoading(false)
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${err}`,
+                        footer: 'Please contact support'
+                    })
+            
+                })
+        
+
+           
     }, [authToken])
 
     const createUser = (e) => {
         e.preventDefault();
 
-        // Institution Users/Admin need not select their institution, this is done automatically using this code below
-        if(institutionID){
-            let result = state.institutionsList.find((element) => {
-                return element.institutionID === institutionID
-            })
-            setInstitutionInformation(result)
-        }
-        const { firstname, lastname, email, password, role, selectedRoleAndPermission } = state;
-        const reqBody = {
-            id: 0,
-            firstname,
-            dateCreated: new Date(),
-            lastname,
-            email,
-            password,
-            token: authToken,
-            role: selectedRoleAndPermission,
-            institution: institutionInformation
-        }
-        if (firstname.trim() === '' || lastname.trim() === '' || email.trim() === '' || password.trim() === '' || role.trim() === ''){
-            Swal.fire({
-                type: 'info',
-                title: 'Oops...',
-                text: 'Please fill all fields!'
-            })
-        } else {
-            setState({
-                ...state, 
-                IsFetchingData: true
-            })
-            axios({
-                method: 'post',
-                url: `${createAUser}`,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                data: reqBody,
-                timeout: FetchTimeOut
-            })
-            .then(result => {
+        if(role.name === 'SUPER_ADMIN'){
+            const { firstname, lastname, email, password, role, selectedRoleAndPermission } = state;
+            const reqBody = {
+                id: 0,
+                firstname,
+                dateCreated: new Date(),
+                lastname,
+                email,
+                password,
+                token: authToken,
+                role: selectedRoleAndPermission,
+                institution: institutionInformation
+            }
+            if (firstname.trim() === '' || lastname.trim() === '' || email.trim() === '' || password.trim() === '' || role.trim() === ''){
+                Swal.fire({
+                    type: 'info',
+                    title: 'Oops...',
+                    text: 'Please fill all fields!'
+                })
+            } else {
                 setState({
                     ...state, 
-                    IsFetchingData: false
+                    IsFetchingData: true
                 })
-                if(result.data.respCode === '00'){
-                    Swal.fire({
-                        type: 'success',
-                        title: 'Successful Registration...',
-                        text: 'User Registration was Successful!'
+                axios({
+                    method: 'post',
+                    url: `${createAUser}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
+                })
+                .then(result => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
                     })
-                    history.push('/dashboard');
-                }else{
+                    if(result.data.respCode === '00'){
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Successful Registration...',
+                            text: 'User Registration was Successful!'
+                        })
+                        history.push('/user-list');
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }                
+                })
+                .catch(err => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
+                    })
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.data.respDescription}`,
+                        text: `${err}`,
                         footer: 'Please contact support'
                     })
-                }                
-            })
-            .catch(err => {
+                });
+            }
+        }
+        
+        if(institution)
+        {
+            // Institution Users/Admin need not select their institution, this is done automatically using this code below
+           
+                let result = state.institutionsList.find((element) => {
+                    return element.institutionID === institution.institutionID
+                })
+                setInstitutionInformation(result)
+            
+            const { firstname, lastname, email, password, role, selectedRoleAndPermission } = state;
+            const reqBody = {
+                id: 0,
+                firstname,
+                dateCreated: new Date(),
+                lastname,
+                email,
+                password,
+                token: authToken,
+                role: selectedRoleAndPermission,
+                institution: institution
+            }
+            if (firstname.trim() === '' || lastname.trim() === '' || email.trim() === '' || password.trim() === '' || role.trim() === ''){
+                Swal.fire({
+                    type: 'info',
+                    title: 'Oops...',
+                    text: 'Please fill all fields!'
+                })
+            } else {
                 setState({
                     ...state, 
-                    IsFetchingData: false
+                    IsFetchingData: true
                 })
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${err}`,
-                    footer: 'Please contact support'
+                axios({
+                    method: 'post',
+                    url: `${createInstitutionUser}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
                 })
-            });
-        }
+                .then(result => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
+                    })
+                    if(result.data.respCode === '00'){
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Successful Registration...',
+                            text: 'User Registration was Successful!'
+                        })
+                        history.push('/user-list');
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }                
+                })
+                .catch(err => {
+                    setState({
+                        ...state, 
+                        IsFetchingData: false
+                    })
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${err}`,
+                        footer: 'Please contact support'
+                    })
+                });
+            }
+            }
+            
+        
     }
 
     const onChange = async (e) => {
@@ -236,7 +338,7 @@ const UserRegistration = () => {
                             </div> 
                             {
                                 // Institutions dont have to select their institution
-                                !institutionID ?
+                                !institution ?
                                 <div className="form-group">
                                     <p>Choose Institution</p>
                                     <select className="custom-select" name="institutionName" value={state.institutionName} onChange={onChange} required >
@@ -264,7 +366,9 @@ const UserRegistration = () => {
                                 <p>User Role</p>
                                 <select className="custom-select" name="role" value={state.role} onChange={onChange} required >
                                     <option value="" disabled>Choose role</option>
-                                    {
+                                    <option value="TELPO">TELPO</option>
+                                    <option value="TOPWISE">TOPWISE</option>
+                                    {/* {
                                         rolesAndPermissions.length ?
                                         rolesAndPermissions.map((role, i) => {
                                             return (
@@ -272,7 +376,7 @@ const UserRegistration = () => {
                                             )
                                         })
                                         : null
-                                    }                                
+                                    }                                 */}
                                 </select>
                             </div>
                             <div className="form-group d-flex justify-content-end">

@@ -3,7 +3,7 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 // import { useHttp } from '../../../CustomHooks/useHttp.hooks';
 import { Link } from 'react-router-dom';
 import './TerminalsList.styles.scss';
-import {allTerminals} from '../../../Utils/URLs';
+import {allTerminals, getInstitutionTerminals} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import Pagination from "react-pagination-js";
@@ -17,7 +17,7 @@ import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'))
+const { authToken, institution} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const DeviceList = () => {
     const [state, setState ] = useState({
@@ -28,48 +28,102 @@ const DeviceList = () => {
     const [terminalsList, setTerminalsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
-        let reqBody = {
-            institutionID,
-            page: state.page,
-            size: state.size
-        }
-        axios({
-            url: `${allTerminals}`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: reqBody,
-            timeout: FetchTimeOut
-        })
-        .then(result => {
-            setIsLoading(false)
-            if(result.data.respCode === '00'){
-                setTerminalsList(result.data.respBody.transactions)
-                setState(state => ({
-                    ...state,
-                    totalCount: result.data.respBody.totalCount
-                }))
-            } else {
+
+        if(institution){
+            let reqBody = {
+                institutionID: institution.institutionID,
+                page: state.page,
+                size: state.size
+            }
+            axios({
+                url: `${getInstitutionTerminals}`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                data: reqBody,
+                timeout: FetchTimeOut
+            })
+            .then(result => {
+                setIsLoading(false)
+                if(result.data.respCode === '00'){
+                    setTerminalsList(result.data.respBody.terminals)
+                    setState(state => ({
+                        ...state,
+                        totalCount: result.data.respBody.totalCount
+                    }))
+                    
+                        console.log(institution)
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }                
+            })
+            .catch(err => {
+                setIsLoading(false)
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${result.data.respDescription}`,
+                    text: `${err}`,
                     footer: 'Please contact support'
                 })
-            }                
-        })
-        .catch(err => {
-            setIsLoading(false)
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
+            });
+        }
+        else{
+            let reqBody = {
+                // institutionID,
+                page: state.page,
+                size: state.size
+            }
+            axios({
+                url: `${allTerminals}`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                data: reqBody,
+                timeout: FetchTimeOut
             })
-        });
-    }, [state.page, state.size])
+            .then(result => {
+                setIsLoading(false)
+                if(result.data.respCode === '00'){
+                    setTerminalsList(result.data.respBody.terminals)
+                    setState(state => ({
+                        ...state,
+                        totalCount: result.data.respBody.totalCount
+                    }))
+                    
+                        console.log(institution)
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }                
+            })
+            .catch(err => {
+                setIsLoading(false)
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${err}`,
+                    footer: 'Please contact support'
+                })
+            });
+        }
+
+       
+    }, [state.page, state.size, authToken])
 
     const changeCurrentPage = (pageNumber) => {
         setState({
@@ -118,7 +172,7 @@ const DeviceList = () => {
                                                     <td>{terminalType}</td>
                                                     <td>{dateCreated ? dateCreated.substring(0,19) : null}</td>
                                                     <td>
-                                                        <Link to={`/device-list/${id}`}><FontAwesomeIcon icon="eye" /></Link>
+                                                        <Link to={`/device-list/${terminalID}`}><FontAwesomeIcon icon="eye" /></Link>
                                                     </td>
                                                 </tr>
                                             )

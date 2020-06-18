@@ -30,10 +30,12 @@ const AdminSignIn = ({ history }) => {
                 username,
                 password
             }
-
+            console.log(superAdminLoginUrl, 'superAdminLoginUrl');
             axios({
                 method: 'post',
-                headers: {'Content-Type' : 'application/json'},
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
                 url: `${superAdminLoginUrl}`,
                 data: reqBody,
                 timeout: FetchTimeOut
@@ -42,10 +44,13 @@ const AdminSignIn = ({ history }) => {
                 setState({ ...state, isLoggingIn: false })
                 if (response.data.respCode === '00') {
                     setAuthenticationStatus(true)
+                    const {token, role} = response.data.respBody;
                     sessionStorage.setItem('userDetails', JSON.stringify({
-                        authToken: response.data.respBody.authToken,
-                        userName: state.username.toUpperCase()
+                        authToken: token,
+                        userName: state.username.toUpperCase(),
+                        role,
                     }))
+                    console.log(role)
                     history.push('/dashboard')
                 } else {
                     setAuthenticationStatus(false);

@@ -9,7 +9,7 @@ import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 
 // Context for Authentication
 import Layout from '../../../components/Layout/layout.component';
-import Axios from 'axios';
+import axios from 'axios';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const UserView = () => {
@@ -24,51 +24,58 @@ const UserView = () => {
     });
     const [readOnly ] = useState(true);
     const [ isLoading, setIsLoading ] = useState(true);
-    const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+    const {authToken, institution} = JSON.parse(sessionStorage.getItem('userDetails'))
 
     useEffect(() => {
         const getUserData = () => {
-            Axios({
-                method: 'get',
-                url: `${`${viewAUser}`}/${match.params.id}`,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                data: {},
-                timeout: FetchTimeOut
-            })
-            .then(result => {
-                setIsLoading(false)
-                if(result.data.respCode === '00'){
-                    const { firstname, lastname, email, institution: {institutionName}, username } = result.data.respBody;
-                    setState(state => ({
-                        ...state, 
-                        firstname,
-                        lastname,
-                        email,
-                        institutionName,
-                        username
-                    }))
-                }else{
+
+            const reqBody = match.params.id
+
+        
+                axios({
+                    method: 'post',
+                    url: `${viewAUser}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
+                })
+                .then(result => {
+                    setIsLoading(false)
+                    if(result.data.respCode === '00'){
+                        const { firstname, lastname, email, institutionName, username } = result.data.respBody;
+                        setState(state => ({
+                            ...state, 
+                            firstname,
+                            lastname,
+                            email,
+                            institutionName,
+                            username
+                        }))
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }                
+                })
+                .catch(err => {
+                    setIsLoading(false)
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.data.respDescription}`,
+                        text: `${err}`,
                         footer: 'Please contact support'
                     })
-                }                
-            })
-            .catch(err => {
-                setIsLoading(false)
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${err}`,
-                    footer: 'Please contact support'
-                })
-            });
-        }
+                }); 
+            }
+           
+        
         getUserData();
     }, [match.params.id, authToken])
         const onChange = (e) => {

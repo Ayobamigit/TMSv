@@ -27,6 +27,8 @@ const InstitutionRegistration = () => {
         feePercentage: '',
         maximumCharge: '',
         minimumCharge: '',
+        componentOne: '',
+        componentTwo: '',
         IsFetchingData: false
     });
     const [serviceProviderInfo, setServiceProviderInfo] = useState({})
@@ -55,7 +57,8 @@ const InstitutionRegistration = () => {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: {},
             timeout: FetchTimeOut
@@ -91,7 +94,8 @@ const InstitutionRegistration = () => {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: {},
             timeout: FetchTimeOut
@@ -128,7 +132,7 @@ const InstitutionRegistration = () => {
             ...state, 
             IsFetchingData: true
         })
-        const { institutionName, institutionEmail, settlementAccount, institutionPhone, settlementBank, institutionAppKey, institutionIntegrationVersion, institutionURL, feePercentage, maximumCharge, minimumCharge, } = state;
+        const { institutionName, institutionEmail, settlementAccount, institutionPhone, settlementBank, institutionAppKey, institutionIntegrationVersion, institutionURL, feePercentage, maximumCharge, minimumCharge, componentOne, componentTwo } = state;
         
         const reqBody = {
             institutionName, 
@@ -146,10 +150,13 @@ const InstitutionRegistration = () => {
             feePercentage: Number(feePercentage),
             maximumCharge,
             minimumCharge,
+            component1: componentOne,
+            component2: componentTwo,
             serviceProviderName: serviceProviderInfo.providerName        
 
         };
-        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAppKey.trim() === '' || institutionURL.trim() === '' || institutionIntegrationVersion.trim() === '' || settlementAccount.trim() === '' || settlementBank.trim() === '') {
+        
+        if (institutionName.trim() === '' || institutionEmail.trim() === '' || institutionPhone.trim() === '' || institutionAppKey.trim() === '' || institutionURL.trim() === '' || institutionIntegrationVersion.trim() === '' || settlementAccount.trim() === '' || settlementBank.trim() === '' || componentOne.trim() ==='' || componentTwo.trim() === '') {
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -165,7 +172,8 @@ const InstitutionRegistration = () => {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
                 data: reqBody,
                 timeout: FetchTimeOut
@@ -181,7 +189,7 @@ const InstitutionRegistration = () => {
                         title: 'Successful Registration...',
                         text: 'Institution Registration was Successful!'
                     })
-                    history.push('/dashboard');
+                    history.push('/institution-list');
                 }else{
                     Swal.fire({
                         type: 'error',
@@ -346,6 +354,32 @@ const InstitutionRegistration = () => {
                                     }
                                 </select>
                             </div>
+                            <div className="col-md-6">
+                                <p>Component One</p>
+                                <input 
+                                    name="componentOne" 
+                                    className="form-control" 
+                                    value={state.componentOne} 
+                                    onChange={onChange} 
+                                    type="text"
+                                    minLength="32"
+                                    maxLength = "32"
+                                    required                                    
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <p>Component Two</p>
+                                <input 
+                                    name="componentTwo" 
+                                    className="form-control" 
+                                    value={state.componentTwo} 
+                                    onChange={onChange} 
+                                    type="text"
+                                    minLength="32"
+                                    maxLength = "32"
+                                    required                                    
+                                />
+                            </div>
                         
                             <h5 className="text-center col-12 mt-5 mb-3"> Wallet Information</h5>
                             <div className="col-md-6">
@@ -377,6 +411,7 @@ const InstitutionRegistration = () => {
                                     required                                    
                                 />
                             </div> 
+                            
                             <div className="col-md-6">
                                 <p>Maximum Charge (in naira)</p>
                                 <input 

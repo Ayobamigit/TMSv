@@ -62,7 +62,8 @@ export default function ViewRole() {
             axios.get(`${getAllPermissions}`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
                 timeout: FetchTimeOut
                 })
@@ -135,7 +136,8 @@ export default function ViewRole() {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: reqBody,
             timeout: FetchTimeOut
@@ -237,7 +239,7 @@ export default function ViewRole() {
                                 </textarea>
                             </div>
                             <div className="form-group col-6">
-                                <p className="d-flex justify-content-between">
+                                {/* <p className="d-flex justify-content-between">
                                     Attached Permissions: 
                                     {
                                         hasPermission(CREATE_ROLES) ?
@@ -247,7 +249,7 @@ export default function ViewRole() {
                                         :
                                         null
                                     }
-                                </p>
+                                </p> */}
                                 {
                                     permissions.length ?
                                     permissions.map((permission, i) => {

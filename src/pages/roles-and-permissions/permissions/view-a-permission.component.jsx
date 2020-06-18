@@ -35,12 +35,12 @@ export default function ViewAPermission() {
             [e.target.name]: e.target.value
         })
     }
-    const editFields = () => {
-        setState({
-            ...state,
-            readOnly: !state.readOnly
-        })
-    }
+    // const editFields = () => {
+    //     setState({
+    //         ...state,
+    //         readOnly: !state.readOnly
+    //     })
+    // }
 
     const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
     const updatePermission = (e) => {
@@ -60,7 +60,8 @@ export default function ViewAPermission() {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
             },
             data: reqBody,
             timeout: FetchTimeOut
@@ -105,7 +106,7 @@ export default function ViewAPermission() {
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h2">Permission</h1>
-                <button className="btn btn-sm btn-primary" onClick={editFields}>Edit Fields</button>
+                {/* <button className="btn btn-sm btn-primary" onClick={editFields}>Edit Fields</button> */}
             </div>
             <div className="row page-content">
                 <div className="col-md-6">

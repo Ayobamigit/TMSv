@@ -1,7 +1,7 @@
 import React, { useContext, Fragment } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar.styles.scss';
-import { hasPermission, CREATE_ROLES, CREATE_USER, ADD_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_WALLET } from '../../Utils/getPermission';
+import { hasPermission, CREATE_ROLES, CREATE_USER, CREATE_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_WALLET } from '../../Utils/getPermission';
 import Logo from '../../img/logo.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -66,7 +66,7 @@ const Sidebar = () => {
             </div>
             <ul className="collapse list-unstyled nav-link" id="deviceSubmenu">
               {
-                hasPermission(ADD_TERMINALS) ?
+                hasPermission(CREATE_TERMINALS) ?
                   <li>
                     <NavLink to="/device-setup" activeClassName="selected">
                       Register a Terminal
@@ -112,9 +112,9 @@ const Sidebar = () => {
           
           {/*  Wallet */}            
           {
-            hasPermission(CREATE_WALLET) ?
+            hasPermission(CREATE_WALLET) || institutionID ?
               <li>
-                <NavLink className="nav-link" to="/wallets" activeClassName="selected">
+                <NavLink className="nav-link" to="/wallet" activeClassName="selected">
                   <FontAwesomeIcon icon="wallet" />
                   <span>Wallets</span>
                 </NavLink>
@@ -178,7 +178,7 @@ const Sidebar = () => {
 
           {/* { Logout } */}
           <li>
-            <NavLink className="nav-link" to="/" onClick={logout}>
+            <NavLink className="nav-link" to="/super-admin" onClick={logout}>
               <FontAwesomeIcon icon="sign-out-alt" />
               <span>Logout</span>
             </NavLink>

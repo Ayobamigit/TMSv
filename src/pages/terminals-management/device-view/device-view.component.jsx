@@ -3,11 +3,11 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Swal from '../../../constants/swal';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { viewATerminal } from '../../../Utils/URLs';
+import { viewATerminal, updateATerminal } from '../../../Utils/URLs';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 
 import Layout from '../../../components/Layout/layout.component';
-import Axios from 'axios';
+import axios from 'axios';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 
 const DeviceView = () => {
@@ -19,9 +19,10 @@ const DeviceView = () => {
         terminalStatus: 'good',
         terminalROMVersion: '',
         terminalSerialNo: '',
-        institutionName: '',
+        institution: '',
         serviceProvider: '',
         profile: '',
+        dateCreated: '',
         IsFetchingData: false
     });
     const [readOnly, setIsReadOnly ] = useState(true);
@@ -30,29 +31,32 @@ const DeviceView = () => {
 
     useEffect(() => {
         const getDeviceData = () => {
-            Axios({
-                method: 'get',
-                url: `${`${viewATerminal}`}/${match.params.id}`,
+            const reqBody = match.params.id
+            axios({
+                method: 'post',
+                url: `${viewATerminal}`,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
-                data: {},
+                data: reqBody,
                 timeout: FetchTimeOut
             })
             .then(result => {
                 setIsLoading(false)
                 if(result.data.respCode === '00'){
-                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution:{institutionName, serviceProviders: {providerName}}, profile: {profileName} } = result.data.respBody;
+                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution, institution:{serviceProviders: {providerName}}, profile, dateCreated } = result.data.respBody;
                     setState(state => ({...state, 
                         terminalID,
                         terminalType,
                         terminalStatus,
                         terminalROMVersion,
                         terminalSerialNo,
-                        institutionName,
+                        institution,
                         serviceProvider: providerName,
-                        profile: profileName
+                        profile,
+                        dateCreated
                     }))
                 }else{
                     Swal.fire({
@@ -86,16 +90,18 @@ const DeviceView = () => {
 
     const editDeviceData = (e) => {
         e.preventDefault();
-        const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, terminalStatus } = state;
+        const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, institution, dateCreated, profile} = state;
         const reqBody = {
-            id: match.params.id,
             terminalID,
+            dateCreated,
             terminalROMVersion,
             terminalSerialNo,
             terminalType,
-            terminalStatus
+            institution,
+            profile
         }
-        if (terminalID.trim() === '' || terminalType.trim() === '' || terminalStatus.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === ''){
+       
+        if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === ''){
             Swal.fire({
                 type: 'info',
                 title: 'Oops...',
@@ -106,13 +112,14 @@ const DeviceView = () => {
                 ...state, 
                 IsFetchingData: true
             })
-            Axios({
-                method: 'put',
+            axios({
+                method: 'post',
                 data: reqBody,
-                url: `${`${viewATerminal}`}/${match.params.id}`,
+                url: `${updateATerminal}`,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
                 },
                 timeout: FetchTimeOut
             })
@@ -127,7 +134,7 @@ const DeviceView = () => {
                         title: 'Successful Update...',
                         text: 'Terminal Update was Successful!'
                     })
-                    history.push('/dashboard');
+                    history.push('/device-list');
                 } else {
                     Swal.fire({
                         type: 'error',
@@ -181,7 +188,7 @@ const DeviceView = () => {
                                     <select className="browser-default custom-select" name="terminalType" value={state.terminalType} onChange={onChange} required disabled={readOnly} >
                                         <option value="" disabled>Choose your option</option>                                
                                         <option value="justTide">justTide</option>
-                                        <option value="PACS">PACS</option>
+                                        <option value="PAX">PAX</option>
                                         <option value="TELPO">TELPO</option>
                                         <option value="Topwise">Topwise</option>
                                     </select>
@@ -272,7 +279,7 @@ const DeviceView = () => {
                                     <input 
                                         name="terminalSerialNo" 
                                         className="form-control" 
-                                        value={state.institutionName} 
+                                        value={state.institution.institutionName}
                                         onChange={onChange}
                                         required 
                                         readOnly
@@ -294,7 +301,7 @@ const DeviceView = () => {
                                     <input 
                                         name="terminalSerialNo" 
                                         className="form-control" 
-                                        value={state.profile} 
+                                        value={state.profile.profileName} 
                                         onChange={onChange}
                                         required 
                                         readOnly
