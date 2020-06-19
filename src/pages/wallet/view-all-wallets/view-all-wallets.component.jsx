@@ -102,7 +102,11 @@ const WalletsList = () => {
             <Layout>
                 <div className="page-content">
                     <div className="table-layout">
-                        <h3>List of Institutions and their Wallets</h3>
+                        {institution?
+                            <h3>Institution Wallet</h3>:
+                            <h3>Institution Wallets</h3>
+                        }
+                        
                         <div>
                             <table className="table table-striped" id="table-to-xls">
                                 <thead>
