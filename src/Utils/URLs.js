@@ -33,7 +33,10 @@ export const getBanks = `${baseUrl()}/api/v1/serviceProviders/banks`;
 export const allInstitutions = `${baseUrl()}/api/v1/institution/institutionsList`;
 export const allInstitutionsList = `${baseUrl()}/api/v1/institution/getinstitutions`;
 export const createInstitutionUser = `${baseUrl()}/api/v1/institution/createInstitutionUser`;
-export const getInstitutionTerminals = `${baseUrl()}/api/v1/institution/institutionTerminalList`
+//export const getInstitutionTerminals = `${baseUrl()}/api/v1/institution/institutionTerminalList`
+export const getInstitutionTerminals = `${baseUrl()}/api/v1/tms/Institutionterminals`
+export const getInstitutionPermissions = `${baseUrl()}/api/v1/rolePermissions/getAllInstitutionPermissions`
+export const getAInstitutionUser = `${baseUrl()}/api/v1/institution/getInstitutionUserbyID`
 
 // Create Wallet
 export const allWalletsList = `${baseUrl()}/api/v1/walletAccount/getallWallets`;

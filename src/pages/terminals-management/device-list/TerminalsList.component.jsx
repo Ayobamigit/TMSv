@@ -28,10 +28,10 @@ const DeviceList = () => {
     const [terminalsList, setTerminalsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
-
+       
         if(institution){
             let reqBody = {
-                institutionID: institution.institutionID,
+                // institutionID: institution.institutionID,
                 page: state.page,
                 size: state.size
             }
@@ -55,7 +55,7 @@ const DeviceList = () => {
                         totalCount: result.data.respBody.totalCount
                     }))
                     
-                        console.log(institution)
+                        
                 } else {
                     Swal.fire({
                         type: 'error',
@@ -101,7 +101,7 @@ const DeviceList = () => {
                         totalCount: result.data.respBody.totalCount
                     }))
                     
-                        console.log(institution)
+                      
                 } else {
                     Swal.fire({
                         type: 'error',
@@ -123,7 +123,7 @@ const DeviceList = () => {
         }
 
        
-    }, [state.page, state.size, authToken])
+    }, [state.page, state.size])
 
     const changeCurrentPage = (pageNumber) => {
         setState({

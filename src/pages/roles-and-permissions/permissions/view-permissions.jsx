@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react'
-import { getAllPermissions } from '../../../Utils/URLs';
+import { getAllPermissions, getInstitutionPermissions } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import axios from 'axios';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout';
@@ -14,49 +14,99 @@ export default function ViewPermissions() {
         permissionToBeDeleted: []
     })
     let dismissModal = useRef();
-    const { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
+    const { authToken, institution } = JSON.parse(sessionStorage.getItem('userDetails'));
     useEffect(() => {
-        axios({
-            url: `${getAllPermissions}`,
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`,
-                'Bearer': authToken
-            },
-            timeout: FetchTimeOut
-        })
-        .then(result => {
-            setState(state => ({
-                ...state, 
-                isFetchingData: false
-            }))
-            if(result.data.respCode === '00'){
+
+        if(institution)
+        {
+            axios({
+                url: `${getInstitutionPermissions}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                timeout: FetchTimeOut
+            })
+            .then(result => {
                 setState(state => ({
-                    ...state,
-                    permissions: result.data.respBody
+                    ...state, 
+                    isFetchingData: false
                 }))
-            }else{
+                if(result.data.respCode === '00'){
+                    setState(state => ({
+                        ...state,
+                        permissions: result.data.respBody
+                    }))
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }                
+            })
+            .catch(err => {
+                setState(state => ({
+                    ...state, 
+                    isFetchingData: false
+                }))
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${result.data.respDescription}`,
+                    text: `${err}`,
                     footer: 'Please contact support'
                 })
-            }                
-        })
-        .catch(err => {
-            setState(state => ({
-                ...state, 
-                isFetchingData: false
-            }))
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
+            });
+        }
+
+        else{
+            axios({
+                url: `${getAllPermissions}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                timeout: FetchTimeOut
             })
-        });
+            .then(result => {
+                setState(state => ({
+                    ...state, 
+                    isFetchingData: false
+                }))
+                if(result.data.respCode === '00'){
+                    setState(state => ({
+                        ...state,
+                        permissions: result.data.respBody
+                    }))
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }                
+            })
+            .catch(err => {
+                setState(state => ({
+                    ...state, 
+                    isFetchingData: false
+                }))
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${err}`,
+                    footer: 'Please contact support'
+                })
+            });
+        }
+
+        
     }, [authToken])
     const { permissions, isFetchingData } = state;
     return (

@@ -6,7 +6,7 @@ import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import PreLoader from './components/PreLoader/Preloader.component';
 
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import { hasPermission, CREATE_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_ROLES, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
+import { hasPermission, CREATE_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_PROVIDERS, CREATE_ROLES, VIEW_WALLET, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
 import PrivateRoute from './privateRoute';
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard.component'));
 
@@ -67,12 +67,12 @@ function ProtectedRoutes() {
               <PrivateRoute exact path='/institution-list' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionsList} />                
               <PrivateRoute exact path='/institution-list/:id' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionList} />                
 
-              <PrivateRoute exact path="/wallets" condition={hasPermission(CREATE_WALLET)} component={WalletsList} />
+              <PrivateRoute exact path="/wallets" condition={hasPermission(CREATE_WALLET) || (VIEW_WALLET)} component={WalletsList} />
               <PrivateRoute exact path="/wallet/:id" condition={hasPermission(CREATE_WALLET)} component={WalletView} />
 
               {/* Route is only active for users that have permission global_settings  */}
               <PrivateRoute exact path='/configuration/globalsetting' condition={hasPermission(GLOBAL_SETTINGS)} component={GlobalSetting} />                
-              <Route exact path="/configuration/:id" component={ViewServiceProvider} /> 
+              <Route exact path="/configuration/:id" condition={hasPermission(CREATE_PROVIDERS)} component={ViewServiceProvider} /> 
               <Route exact path="/configuration/profile/:id" component={ViewProfile} />  
               <Route exact path="/configuration" component={ConfigurationComponent} />
 

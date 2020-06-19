@@ -30,7 +30,7 @@ const AdminSignIn = ({ history }) => {
                 username,
                 password
             }
-            console.log(superAdminLoginUrl, 'superAdminLoginUrl');
+            // console.log(superAdminLoginUrl, 'superAdminLoginUrl');
             axios({
                 method: 'post',
                 headers: {
@@ -50,7 +50,7 @@ const AdminSignIn = ({ history }) => {
                         userName: state.username.toUpperCase(),
                         role,
                     }))
-                    console.log(role)
+                    // console.log(role)
                     history.push('/dashboard')
                 } else {
                     setAuthenticationStatus(false);

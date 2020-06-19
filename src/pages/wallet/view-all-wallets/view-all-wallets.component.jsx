@@ -12,47 +12,88 @@ import { FetchTimeOut } from "../../../Utils/FetchTimeout";
 import NoResultFound from '../../../components/NoResultFound/NoResultfound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const {authToken, institutionID} = JSON.parse(sessionStorage.getItem('userDetails'))
+const {authToken, institution} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const WalletsList = () => {
     const [walletsList, setWalletsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
 
-        axios({
-            url: `${allWalletsList}`,
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`,
-                'Bearer': authToken
-            },
-            timeout: FetchTimeOut
-        })
-            .then(result => {
-            setIsLoading(false)
-            if(result.data.respCode === '00'){
-                setWalletsList(result.data.respBody)
-            }else{
+        if(institution)
+        {
+          
+            axios({
+                url: `${allWalletsList}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                timeout: FetchTimeOut
+            })
+                .then(result => {
+                setIsLoading(false)
+                if(result.data.respCode === '00'){
+                    setWalletsList(result.data.respBody)
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }
+                
+            })
+            .catch(err => {
+                setIsLoading(false)
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: `${result.data.respDescription}`,
+                    text: `${err}`,
                     footer: 'Please contact support'
                 })
-            }
-            
-        })
-        .catch(err => {
-            setIsLoading(false)
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: `${err}`,
-                footer: 'Please contact support'
+            });
+        }
+
+        else{
+            axios({
+                url: `${allWalletsList}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                timeout: FetchTimeOut
             })
-        });
-    }, [])
+                .then(result => {
+                setIsLoading(false)
+                if(result.data.respCode === '00'){
+                    setWalletsList(result.data.respBody)
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }
+                
+            })
+            .catch(err => {
+                setIsLoading(false)
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${err}`,
+                    footer: 'Please contact support'
+                })
+            });
+        }
+
+    }, [authToken, institution])
 
     if(isLoading){
         return <PreLoader />

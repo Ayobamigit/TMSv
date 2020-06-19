@@ -4,7 +4,7 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Swal from '../../../constants/swal';
 import { useRouteMatch } from 'react-router-dom';
-import { viewAUser } from '../../../Utils/URLs';
+import { viewAUser, getAInstitutionUser } from '../../../Utils/URLs';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 
 // Context for Authentication
@@ -31,7 +31,51 @@ const UserView = () => {
 
             const reqBody = match.params.id
 
-        
+            if(institution){
+                // console.log(institution)
+                axios({
+                    method: 'post',
+                    url: `${getAInstitutionUser}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
+                })
+                .then(result => {
+                    setIsLoading(false)
+                    if(result.data.respCode === '00'){
+                        const { firstname, lastname, email,  username } = result.data.respBody;
+                        setState(state => ({
+                            ...state, 
+                            firstname,
+                            lastname,
+                            email,
+                            institutionName: institution.institutionName,
+                            username
+                        }))
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }                
+                })
+                .catch(err => {
+                    setIsLoading(false)
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${err}`,
+                        footer: 'Please contact support'
+                    })
+                }); 
+            }
+            else{
                 axios({
                     method: 'post',
                     url: `${viewAUser}`,
@@ -46,7 +90,7 @@ const UserView = () => {
                 .then(result => {
                     setIsLoading(false)
                     if(result.data.respCode === '00'){
-                        const { firstname, lastname, email, institutionName, username } = result.data.respBody;
+                        const { firstname, lastname, email, institution:{institutionName}, username } = result.data.respBody;
                         setState(state => ({
                             ...state, 
                             firstname,
@@ -74,6 +118,7 @@ const UserView = () => {
                     })
                 }); 
             }
+        } 
            
         
         getUserData();

@@ -22,7 +22,7 @@ const DeviceRegistration = () => {
         serviceProviderId: '',
         profilesList: [],
         institutionsList: [],
-        institution: '',
+        // institution: '',
         institutionId: '',
         profileName: '',
         IsFetchingData: false
@@ -34,6 +34,7 @@ const DeviceRegistration = () => {
 
     useEffect(() => {
         //Get All institutions
+
         if(!institution){
             axios({
                 url: `${allInstitutions}`,
@@ -63,7 +64,7 @@ const DeviceRegistration = () => {
                 }  
                        
             })
-            // console.log(institution.serviceProviders.profile)
+          
             .catch(err => {
                 Swal.fire({
                     type: 'error',
@@ -74,19 +75,12 @@ const DeviceRegistration = () => {
             });
     
         }
-        
-    }, [authToken])
+         // Get profileName if logged in as in institution
 
-    const getProfilesByName = (name) => {
-        if(!name){
-            return;
-        }
-        
         if(institution){
             // result = state.institutionsList.find((element) => {
             //     return element.institutionName === institution.institutionName
             // })
-
             setState({
                 ...state,
                 profilesList: institution.serviceProviders.profile,
@@ -95,7 +89,16 @@ const DeviceRegistration = () => {
            
         }
         
-        else{
+    }, [authToken])
+
+   
+
+    const getProfilesByName = (name) => {
+        if(!name){
+            return;
+        }
+        
+
 
             let result = state.institutionsList.find((element) => {
                 return element.institutionName === name
@@ -123,6 +126,7 @@ const DeviceRegistration = () => {
                     setState( state => ({
                         ...state,
                         profilesList: result.data.respBody
+                        
                     }))
                 }else{
                     Swal.fire({
@@ -143,7 +147,7 @@ const DeviceRegistration = () => {
                 })
             });
         
-        }
+        
         
        
        
@@ -162,17 +166,20 @@ const DeviceRegistration = () => {
     }
     const registerDevice = (e) => {
         e.preventDefault();
-        const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, profileName, institutionId } = state;
-        const reqBody = {
-            terminalID,
-            dateCreated: new Date(),
-            terminalROMVersion,
-            terminalSerialNo,
-            terminalType,
-            institutionID: institutionId,
-            profileName
-        }
+
         if(institution){
+
+            const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, profileName} = state;
+            const reqBody = {
+                terminalID,
+                dateCreated: new Date(),
+                terminalROMVersion,
+                terminalSerialNo,
+                terminalType,
+                institutionID: institution.institutionID,
+                profileName
+            }
+        
             if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === '' ){
                 Swal.fire({
                     type: 'info',
@@ -206,7 +213,7 @@ const DeviceRegistration = () => {
                             title: 'Successful Registration...',
                             text: 'Terminal Registration was Successful!'
                         })
-                        history.push('/dashboard');
+                        history.push('/device-list');
                     }else{
                         Swal.fire({
                             type: 'error',
@@ -231,6 +238,18 @@ const DeviceRegistration = () => {
             }
         }
         else{
+
+            const { terminalID, terminalType, terminalROMVersion, terminalSerialNo, profileName, institutionId } = state;
+            const reqBody = {
+                terminalID,
+                dateCreated: new Date(),
+                terminalROMVersion,
+                terminalSerialNo,
+                terminalType,
+                institutionID: institutionId,
+                profileName
+            }
+
             if (terminalID.trim() === '' || terminalType.trim() === '' || terminalROMVersion.trim() === '' || terminalSerialNo.trim() === '' || institutionId.trim() === ''){
                 Swal.fire({
                     type: 'info',
@@ -266,7 +285,7 @@ const DeviceRegistration = () => {
                             title: 'Successful Registration...',
                             text: 'Terminal Registration was Successful!'
                         })
-                        history.push('/dashboard');
+                        history.push('/device-list');
                     }else{
                         Swal.fire({
                             type: 'error',

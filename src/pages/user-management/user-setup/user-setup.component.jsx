@@ -192,7 +192,8 @@ const UserRegistration = () => {
                 password,
                 token: authToken,
                 role: selectedRoleAndPermission,
-                institution: institution
+                institution: institution,
+                institutionName:institution.institutionName
             }
             if (firstname.trim() === '' || lastname.trim() === '' || email.trim() === '' || password.trim() === '' || role.trim() === ''){
                 Swal.fire({
@@ -366,9 +367,9 @@ const UserRegistration = () => {
                                 <p>User Role</p>
                                 <select className="custom-select" name="role" value={state.role} onChange={onChange} required >
                                     <option value="" disabled>Choose role</option>
-                                    <option value="TELPO">TELPO</option>
-                                    <option value="TOPWISE">TOPWISE</option>
-                                    {/* {
+                                    {/* <option value="TELPO">TELPO</option>
+                                    <option value="TOPWISE">TOPWISE</option> */}
+                                    {
                                         rolesAndPermissions.length ?
                                         rolesAndPermissions.map((role, i) => {
                                             return (
@@ -376,7 +377,7 @@ const UserRegistration = () => {
                                             )
                                         })
                                         : null
-                                    }                                 */}
+                                    }                                
                                 </select>
                             </div>
                             <div className="form-group d-flex justify-content-end">

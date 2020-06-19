@@ -27,58 +27,113 @@ const DeviceView = () => {
     });
     const [readOnly, setIsReadOnly ] = useState(true);
     const [ isLoading, setIsLoading ] = useState(true);
-    const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+    const {authToken, institution } = JSON.parse(sessionStorage.getItem('userDetails'))
 
     useEffect(() => {
         const getDeviceData = () => {
+           
             const reqBody = match.params.id
-            axios({
-                method: 'post',
-                url: `${viewATerminal}`,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`,
-                    'Bearer': authToken
-                },
-                data: reqBody,
-                timeout: FetchTimeOut
-            })
-            .then(result => {
-                setIsLoading(false)
-                if(result.data.respCode === '00'){
-                    const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution, institution:{serviceProviders: {providerName}}, profile, dateCreated } = result.data.respBody;
-                    setState(state => ({...state, 
-                        terminalID,
-                        terminalType,
-                        terminalStatus,
-                        terminalROMVersion,
-                        terminalSerialNo,
-                        institution,
-                        serviceProvider: providerName,
-                        profile,
-                        dateCreated
-                    }))
-                }else{
+
+            if (institution){
+                
+                axios({
+                    method: 'post',
+                    url: `${viewATerminal}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
+                })
+                .then(result => {
+                    setIsLoading(false)
+                    if(result.data.respCode === '00'){
+                        const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, profile, dateCreated } = result.data.respBody;
+                        setState(state => ({...state, 
+                            terminalID,
+                            terminalType,
+                            terminalStatus,
+                            terminalROMVersion,
+                            terminalSerialNo,
+                            institution,
+                            serviceProvider: institution.serviceProviders.providerName,
+                            profile,
+                            dateCreated
+                        }))
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                        
+                    }                
+                })
+                .catch(err => {
+                    setIsLoading(false)
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
-                        text: `${result.data.respDescription}`,
+                        text: `${err}`,
                         footer: 'Please contact support'
                     })
-                }                
-            })
-            .catch(err => {
-                setIsLoading(false)
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: `${err}`,
-                    footer: 'Please contact support'
+                });
+            }
+
+            else{
+               
+                axios({
+                    method: 'post',
+                    url: `${viewATerminal}`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Bearer': authToken
+                    },
+                    data: reqBody,
+                    timeout: FetchTimeOut
                 })
-            });
+                .then(result => {
+                    setIsLoading(false)
+                    if(result.data.respCode === '00'){
+                        const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution, institution:{serviceProviders: {providerName}}, profile, dateCreated } = result.data.respBody;
+                        setState(state => ({...state, 
+                            terminalID,
+                            terminalType,
+                            terminalStatus,
+                            terminalROMVersion,
+                            terminalSerialNo,
+                            institution,
+                            serviceProvider: providerName,
+                            profile,
+                            dateCreated
+                        }))
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: `${result.data.respDescription}`,
+                            footer: 'Please contact support'
+                        })
+                    }                
+                })
+                .catch(err => {
+                    setIsLoading(false)
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${err}`,
+                        footer: 'Please contact support'
+                    })
+                });
+            }
+            
         }
         getDeviceData();
-    }, [match.params.id, authToken])
+    }, [match.params.id])
     
     const onChange = (e) => {
         setState({...state, [e.target.name]: e.target.value})

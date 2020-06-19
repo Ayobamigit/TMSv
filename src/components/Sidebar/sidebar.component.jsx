@@ -1,7 +1,7 @@
 import React, { useContext, Fragment } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar.styles.scss';
-import { hasPermission, CREATE_ROLES, CREATE_USER, CREATE_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_WALLET } from '../../Utils/getPermission';
+import { hasPermission, CREATE_ROLES, CREATE_USER, CREATE_TERMINALS, CREATE_PROVIDERS, CREATE_INSTITUTION, VIEW_WALLET, GLOBAL_SETTINGS, CREATE_WALLET } from '../../Utils/getPermission';
 import Logo from '../../img/logo.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,7 +9,7 @@ import { authContext } from '../../Context/Authentication.context';
 
 const Sidebar = () => {
   const { setAuthenticationStatus } = useContext(authContext)
-  const { institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
+  const { institution } = JSON.parse(sessionStorage.getItem('userDetails'));
 
     const logout = () => {
       setAuthenticationStatus(false);
@@ -83,7 +83,7 @@ const Sidebar = () => {
           </li>
 
           {/*  Institution Management */}
-            {
+            {!institution?
               hasPermission(CREATE_INSTITUTION) ?
               <li>
                 <div className="nav-link dropdown-toggle" href="#institutionSubmenu" data-toggle="collapse" aria-expanded="false">
@@ -107,14 +107,14 @@ const Sidebar = () => {
                   </Fragment>
                 </ul> 
               </li>
-              : null
+              : null:null
             }
           
           {/*  Wallet */}            
           {
-            hasPermission(CREATE_WALLET) || institutionID ?
+            hasPermission(CREATE_WALLET)|| (VIEW_WALLET)?
               <li>
-                <NavLink className="nav-link" to="/wallet" activeClassName="selected">
+                <NavLink className="nav-link" to="/wallets" activeClassName="selected">
                   <FontAwesomeIcon icon="wallet" />
                   <span>Wallets</span>
                 </NavLink>
@@ -147,13 +147,16 @@ const Sidebar = () => {
               </NavLink>
             </div>
             <ul className="collapse list-unstyled nav-link" id="configurationSubmenu">
-              <li>
+              { hasPermission(CREATE_PROVIDERS)?
+                <li>
                 <NavLink to="/configuration" activeClassName="selected">
                   Service Providers
                 </NavLink>
-              </li>
+              </li>: null
+              }
+              
               {
-                hasPermission(GLOBAL_SETTINGS) && institutionID ? 
+                hasPermission(GLOBAL_SETTINGS) && institution ? 
                 <li>
                   <NavLink to="/configuration/globalsetting" activeClassName="selected">
                     Global Settings
@@ -178,7 +181,7 @@ const Sidebar = () => {
 
           {/* { Logout } */}
           <li>
-            <NavLink className="nav-link" to="/super-admin" onClick={logout}>
+            <NavLink className="nav-link" to="/" onClick={logout}>
               <FontAwesomeIcon icon="sign-out-alt" />
               <span>Logout</span>
             </NavLink>
