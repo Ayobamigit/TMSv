@@ -61,7 +61,7 @@ const Sidebar = () => {
             <div className="nav-link dropdown-toggle" href="#deviceSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
                 <FontAwesomeIcon icon="cogs" />
-                <span>Device Setup</span>
+                <span>Terminal Management</span>
               </NavLink>
             </div>
             <ul className="collapse list-unstyled nav-link" id="deviceSubmenu">

@@ -332,6 +332,8 @@ const DeviceRegistration = () => {
                                 value={state.terminalID} 
                                 onChange={onChange}
                                 required 
+                                minLength = '8'
+                                maxLength = '8'
                             />
                         </div>
                         <div className="form-group">

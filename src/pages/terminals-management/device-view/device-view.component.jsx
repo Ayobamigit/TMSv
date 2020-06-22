@@ -3,7 +3,7 @@ import withTimeout from '../../../HOCs/withTimeout.hoc';
 import PreLoader from '../../../components/PreLoader/Preloader.component';
 import Swal from '../../../constants/swal';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { viewATerminal, updateATerminal } from '../../../Utils/URLs';
+import { viewATerminal, updateATerminal, getProfilesByServiceProviderName, allInstitutions } from '../../../Utils/URLs';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout'
 
 import Layout from '../../../components/Layout/layout.component';
@@ -22,12 +22,15 @@ const DeviceView = () => {
         institution: '',
         serviceProvider: '',
         profile: '',
+        selectedProfileName: '', 
         dateCreated: '',
+        institutionsList:[],
+        profilesList:[],
         IsFetchingData: false
     });
     const [readOnly, setIsReadOnly ] = useState(true);
     const [ isLoading, setIsLoading ] = useState(true);
-    const {authToken, institution } = JSON.parse(sessionStorage.getItem('userDetails'))
+    const {authToken, institution } = JSON.parse(sessionStorage.getItem('userDetails'));
 
     useEffect(() => {
         const getDeviceData = () => {
@@ -60,6 +63,7 @@ const DeviceView = () => {
                             institution,
                             serviceProvider: institution.serviceProviders.providerName,
                             profile,
+                            selectedProfileName: profile.profileName,
                             dateCreated
                         }))
                     }else{
@@ -81,6 +85,8 @@ const DeviceView = () => {
                         footer: 'Please contact support'
                     })
                 });
+
+                
             }
 
             else{
@@ -96,7 +102,7 @@ const DeviceView = () => {
                     data: reqBody,
                     timeout: FetchTimeOut
                 })
-                .then(result => {
+                .then(result => {console.log(result.data)
                     setIsLoading(false)
                     if(result.data.respCode === '00'){
                         const { terminalID, terminalType, terminalStatus, terminalROMVersion, terminalSerialNo, institution, institution:{serviceProviders: {providerName}}, profile, dateCreated } = result.data.respBody;
@@ -109,9 +115,10 @@ const DeviceView = () => {
                             institution,
                             serviceProvider: providerName,
                             profile,
+                            selectedProfileName: profile.profileName,
                             dateCreated
                         }))
-                    }else{
+                  console.log(profile) }else{
                         Swal.fire({
                             type: 'error',
                             title: 'Oops...',
@@ -132,15 +139,115 @@ const DeviceView = () => {
             }
             
         }
+
+        // get all institution
+
+        if(!institution){
+            axios({
+                url: `${allInstitutions}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                data: {},
+                timeout: FetchTimeOut
+            })
+                .then(result => {
+                if(result.data.respCode === '00'){
+                    setState( state => ({
+                        ...state,
+                        institutionsList: result.data.respBody
+                    }))
+                  }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }  
+                       
+            })
+          
+            .catch(err => {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${err}`,
+                    footer: 'Please contact support'
+                })
+            });
+    
+        }
+
         getDeviceData();
+       
     }, [match.params.id])
+
+    const getProfilesByName = () => {
+
+            axios({
+                url: `${getProfilesByServiceProviderName}`,
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Bearer': authToken
+                },
+                data: state.institution.institutionName,
+                timeout: FetchTimeOut
+            })
+                .then(result => {
+                if(result.data.respCode === '00'){
+                    setState( state => ({
+                        ...state,
+                        profilesList: result.data.respBody
+                        
+                    }))
+            }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }
+                
+            })
+            .catch(err => {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${err}`,
+                    footer: 'Please contact support'
+                })
+            });
+        
+        
+        
+       
+       
+    }
     
     const onChange = (e) => {
-        setState({...state, [e.target.name]: e.target.value})
+        let {target: {name, value}} = e;
+        setState({
+            ...state, 
+            [name]: value
+        });
     }
+
+    const updateProfile = ({target}) => {
+        const profile = state.profilesList.find(profile => profile.profileName === target.value);
+        setState({...state, profile, selectedProfileName: profile.profileName })
+;    }
+    
 
     const editFields = () => {
         setIsReadOnly(!readOnly)
+        getProfilesByName()
     }
 
     const editDeviceData = (e) => {
@@ -233,9 +340,9 @@ const DeviceView = () => {
                                         name="terminalID" 
                                         className="form-control" 
                                         value={state.terminalID} 
-                                        onChange={onChange}
+                                       
                                         required
-                                        readOnly={readOnly}
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group col-md-6">
@@ -266,7 +373,7 @@ const DeviceView = () => {
                                         name="terminalROMVersion" 
                                         className="form-control" 
                                         value="87%" 
-                                        onChange={onChange} 
+                                        
                                         required
                                         readOnly
                                     />
@@ -277,7 +384,7 @@ const DeviceView = () => {
                                         name="terminalROMVersion" 
                                         className="form-control" 
                                         value="56%" 
-                                        onChange={onChange} 
+                                        
                                         required
                                         readOnly
                                     />
@@ -288,7 +395,7 @@ const DeviceView = () => {
                                         name="terminalROMVersion" 
                                         className="form-control" 
                                         value={state.terminalID === '2101CX82' ? 'Banana Island, Lagos.' : '7a Idejo Street, Lagos.'} 
-                                        onChange={onChange} 
+                                        
                                         required
                                         readOnly
                                     />
@@ -299,7 +406,7 @@ const DeviceView = () => {
                                         name="terminalROMVersion" 
                                         className="form-control" 
                                         value="6" 
-                                        onChange={onChange} 
+                                        
                                         required
                                         readOnly
                                     />
@@ -315,7 +422,7 @@ const DeviceView = () => {
                                         value={state.terminalROMVersion} 
                                         onChange={onChange} 
                                         required
-                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                     />
                                 </div>
                                 <div className="form-group col-md-6">
@@ -326,16 +433,16 @@ const DeviceView = () => {
                                         value={state.terminalSerialNo} 
                                         onChange={onChange}
                                         required 
-                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                     />
                                 </div>  
                                 <div className="form-group col-md-6">
                                     <p>Institution</p>
                                     <input 
-                                        name="terminalSerialNo" 
+                                        name="institution" 
                                         className="form-control" 
                                         value={state.institution.institutionName}
-                                        onChange={onChange}
+                                        
                                         required 
                                         readOnly
                                     />
@@ -343,24 +450,40 @@ const DeviceView = () => {
                                 <div className="form-group col-md-6">
                                     <p>Service Provider</p>
                                     <input 
-                                        name="terminalSerialNo" 
+                                        name="serviceProvider" 
                                         className="form-control" 
                                         value={state.serviceProvider} 
-                                        onChange={onChange}
+                                       
                                         required 
                                         readOnly
                                     />
                                 </div>
                                 <div className="form-group col-md-6">
                                     <p>Profile</p>
-                                    <input 
-                                        name="terminalSerialNo" 
+                                    <select 
+                                        name="profile" 
                                         className="form-control" 
-                                        value={state.profile.profileName} 
-                                        onChange={onChange}
+                                        value={state.selectedProfileName} 
+                                        onChange={updateProfile}
                                         required 
-                                        readOnly
-                                    />
+                                        disabled={readOnly}
+                                    >
+                                        <option value="" selected disable>{state.profile.profileName}</option>
+                                
+                                    {
+                                        state.profilesList ? 
+                                        state.profilesList.map((profile, i) => {
+                                            return(
+                                                <option 
+                                                    value= {profile.profileName}
+                                                    key={i}
+                                                >
+                                                    {profile.profileName}
+                                                </option>
+                                            )
+                                        }): null
+                                    }
+                                    </select>
                                 </div>
                                 {
                                     readOnly ?

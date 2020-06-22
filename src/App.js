@@ -22,12 +22,12 @@ function App() {
         <ErrorBoundary>
             <Switch>
           <Suspense fallback={<PreLoader />}>
-              <Route path="/super-admin/" component={AdminSignIn} />
+              <Route path="/super-admin" component={AdminSignIn} />
 
               <Route path="/dashboard" component={ProtectedRoutes} />
               <Route path="/device-setup" component={ProtectedRoutes} />
-              <Route path="/device-list" component={ProtectedRoutes} />
-              <Route exact path="/device-list/:id" component={ProtectedRoutes} />   
+              <Route exact path="/device-list" component={ProtectedRoutes} />
+              <Route path="/device-list/:id" component={ProtectedRoutes} />   
 
               <Route path="/institution-setup" component={ProtectedRoutes} />
               <Route path="/institution-list" component={ProtectedRoutes} />
