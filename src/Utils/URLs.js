@@ -38,6 +38,8 @@ export const createInstitutionUser = `${baseUrl()}/api/v1/institution/createInst
 export const getInstitutionTerminals = `${baseUrl()}/api/v1/tms/Institutionterminals`
 export const getInstitutionPermissions = `${baseUrl()}/api/v1/rolePermissions/getAllInstitutionPermissions`
 export const getAInstitutionUser = `${baseUrl()}/api/v1/institution/getInstitutionUserbyID`
+export const getInstitutionSetting = `${baseUrl()}/api/v1/institution/getInstitutionGlobalSettings`
+export const updateGlobalSettings = `${baseUrl()}/api/v1/institution/updateInstitutionGlobalSettings`
 
 // Create Wallet
 export const allWalletsList = `${baseUrl()}/api/v1/walletAccount/getallWallets`;

@@ -99,6 +99,7 @@ const InstitutionsList = () => {
                                     <th scope="col">Created By</th>
                                     <th scope="col">Date Created</th>
                                     <th scope="col">View</th>
+                                    <th scope="col">Global Settings</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -122,12 +123,19 @@ const InstitutionsList = () => {
                                                     <td>
                                                         <Link to={`/institution-list/${institutionID}`}><FontAwesomeIcon icon="eye" /></Link>
                                                     </td>
+                                                    <td>
+                                                    <span className="switch" >
+                                                        <input type="checkbox" readOnly />
+                                                        <span className={`slider round `}></span>
+                                                    </span>
+                                                    </td>
                                                 </tr>
                                             )
                                         })
                                     }
                                 </tbody>
                             </table>
+                            
                             <Pagination
                                 currentPage={page + 1}
                                 totalSize={totalCount}

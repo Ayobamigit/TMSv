@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-import { viewAnInstitution, updateAnInstitution } from '../../../Utils/URLs';
+import { getInstitutionSetting, updateGlobalSettings } from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import axios from 'axios';
 import { FetchTimeOut } from '../../../Utils/FetchTimeout';
@@ -18,8 +18,8 @@ const GlobalSetting = () => {
     const { authToken, institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
     useEffect(() => {
         axios({
-            url: `${viewAnInstitution}`,
-            method: 'post',
+            url: `${getInstitutionSetting}`,
+            method: 'get',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`,
@@ -32,8 +32,8 @@ const GlobalSetting = () => {
             if(result.data.respCode === '00'){
                 setState(state => ({
                     ...state,
-                    switchButton: result.data.respBody.globalSetting,
-                    requestBody: result.data.respBody
+                    switchButton: result.data.respBody,
+                    // requestBody: result.data.respBody
                 }))
                 
             } else {
@@ -74,19 +74,16 @@ const GlobalSetting = () => {
             ...state,
             disableSwitchButton: true
         })
-        let reqBody = {
-            ...state.requestBody,
-            globalSetting: value
-        }
+       
         axios({
-            url: `${updateAnInstitution}`,
+            url: `${updateGlobalSettings}`,
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`,
                 'Bearer': authToken
             },
-            data: reqBody,
+            data: value,
             timeout: FetchTimeOut
         })
         .then(result => {

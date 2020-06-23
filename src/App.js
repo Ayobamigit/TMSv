@@ -30,8 +30,8 @@ function App() {
               <Route path="/device-list/:id" component={ProtectedRoutes} />   
 
               <Route path="/institution-setup" component={ProtectedRoutes} />
-              <Route path="/institution-list" component={ProtectedRoutes} />
-              <Route exact path="/institution-list/:id" component={ProtectedRoutes} />
+              <Route exact path="/institution-list" component={ProtectedRoutes} />
+              <Route path="/institution-list/:id" component={ProtectedRoutes} />
 
               <Route path="/wallets" component={ProtectedRoutes} />
               <Route exact path="/wallet/:id" component={ProtectedRoutes} />

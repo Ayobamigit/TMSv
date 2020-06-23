@@ -1,7 +1,7 @@
 import React, { useContext, Fragment } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar.styles.scss';
-import { hasPermission, CREATE_ROLES, CREATE_USER, CREATE_TERMINALS, CREATE_PROVIDERS, CREATE_INSTITUTION, VIEW_WALLET, GLOBAL_SETTINGS, CREATE_WALLET } from '../../Utils/getPermission';
+import { hasPermission, CREATE_ROLES, CREATE_USER, CREATE_TERMINALS, CREATE_PROVIDERS, CREATE_INSTITUTION, VIEW_WALLET, GLOBAL_SETTINGS, CREATE_WALLET, VIEW_INSTITUTION_INSTITUTION } from '../../Utils/getPermission';
 import Logo from '../../img/logo.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -107,7 +107,14 @@ const Sidebar = () => {
                   </Fragment>
                 </ul> 
               </li>
-              : null:null
+              : null:
+              hasPermission (VIEW_INSTITUTION_INSTITUTION) ?
+                <li>
+                  <NavLink className="nav-link" to={`/institution-list/${institution.institutionID}`} activeClassName="selected">
+                    <FontAwesomeIcon icon="university" />
+                    <span>View Institution</span>
+                  </NavLink>
+              </li>:null
             }
           
           {/*  Wallet */}            

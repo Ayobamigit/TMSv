@@ -6,7 +6,7 @@ import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import PreLoader from './components/PreLoader/Preloader.component';
 
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import { hasPermission, CREATE_TERMINALS, CREATE_INSTITUTION, GLOBAL_SETTINGS, CREATE_PROVIDERS, CREATE_ROLES, VIEW_WALLET, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
+import { hasPermission, CREATE_TERMINALS, CREATE_INSTITUTION, VIEW_INSTITUTION_INSTITUTION, GLOBAL_SETTINGS, CREATE_PROVIDERS, CREATE_ROLES, VIEW_WALLET, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
 import PrivateRoute from './privateRoute';
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard.component'));
 
@@ -65,7 +65,7 @@ function ProtectedRoutes() {
               {/* Route is only active for users that have permission create_institution  */}                
               <PrivateRoute exact path='/institution-setup' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionSetup} />                
               <PrivateRoute exact path='/institution-list' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionsList} />                
-              <PrivateRoute exact path='/institution-list/:id' condition={hasPermission(CREATE_INSTITUTION)} component={InstitutionList} />                
+              <PrivateRoute exact path='/institution-list/:id' condition={hasPermission(CREATE_INSTITUTION) || (VIEW_INSTITUTION_INSTITUTION)} component={InstitutionList} />                
 
               <PrivateRoute exact path="/wallets" condition={hasPermission(CREATE_WALLET) || (VIEW_WALLET)} component={WalletsList} />
               <PrivateRoute exact path="/wallet/:id" condition={hasPermission(CREATE_WALLET)} component={WalletView} />

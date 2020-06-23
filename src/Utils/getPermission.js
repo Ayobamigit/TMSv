@@ -14,6 +14,7 @@ export const hasPermission = (neededRole) => {
 
 //Available Permissions
 export const CREATE_INSTITUTION = 'CREATE_INSTITUTION'
+export const VIEW_INSTITUTION_INSTITUTION = 'VIEW_INSTITUTION_INSTITUTION'
 export const CREATE_TERMINALS = 'CREATE_TERMINALS'
 export const GLOBAL_SETTINGS = 'GLOBAL_SETTINGS'
 export const CREATE_ROLES = 'CREATE_ROLES'

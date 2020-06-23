@@ -11,7 +11,7 @@ import Layout from '../../../components/Layout/layout.component';
 import axios from 'axios';
 import IsFetching from '../../../components/isFetching/IsFetching.component';
 
-const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
+const {authToken, institution} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const InstitutionView = () => {
     const history = useHistory();
@@ -252,7 +252,12 @@ const InstitutionView = () => {
                         title: 'Successful Update...',
                         text: 'Institution Update was Successful!'
                     })
-                    history.push('/institution-list');
+                    if(institution){
+                        history.push('/dashboard')
+                    }else{
+                        history.push('/institution-list');
+                    }
+                   
                 }else{
                     Swal.fire({
                         type: 'error',
@@ -447,7 +452,8 @@ const InstitutionView = () => {
                                     }
                                 </select>
                             </div> 
-                            <div className="col-md-6">
+                            {!institution ?
+                                <div className="col-md-6">
                                 <p>Component One</p>
                                 <input 
                                     name="componentOne" 
@@ -455,13 +461,30 @@ const InstitutionView = () => {
                                     value={state.componentOne} 
                                     onChange={onChange} 
                                     type="text"
-                                    readOnly={readOnly}
+                                    disabled={readOnly}
                                     minLength="32"
                                     maxLength = "32"
                                     required                                    
                                 />
-                            </div>
-                            <div className="col-md-6">
+                                </div>:
+                                 
+                                <div className="col-md-6">
+                                    <p>Component One</p>
+                                    <input 
+                                        name="componentOne" 
+                                        className="form-control" 
+                                        value={state.componentOne} 
+                                        onChange={onChange} 
+                                        type="text"
+                                        readOnly
+                                        minLength="32"
+                                        maxLength = "32"
+                                        required                                    
+                                    />
+                                </div>
+                                }
+                             {!institution ?
+                                <div className="col-md-6">
                                 <p>Component Two</p>
                                 <input 
                                     name="componentTwo" 
@@ -472,9 +495,24 @@ const InstitutionView = () => {
                                     minLength="32"
                                     maxLength = "32"
                                     required 
-                                    readOnly={readOnly}                                   
+                                    disabled={readOnly}                                   
                                 />
-                            </div>
+                                </div> :  
+                                <div className="col-md-6">
+                                    <p>Component Two</p>
+                                    <input 
+                                        name="componentTwo" 
+                                        className="form-control" 
+                                        value={state.componentTwo} 
+                                        onChange={onChange} 
+                                        type="text"
+                                        minLength="32"
+                                        maxLength = "32"
+                                        required 
+                                        readOnly                                   
+                                    />
+                                </div> 
+                             }
                             <div className="col-md-6">
                                 <p>Created By</p>
                                 <input 
