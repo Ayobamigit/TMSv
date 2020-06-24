@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { Link } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
-import {allInstitutionsList} from '../../../Utils/URLs';
+import {allInstitutionsList,changeGlobalSettings} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import Pagination from "react-pagination-js";
 import "react-pagination-js/dist/styles.css";
@@ -20,7 +20,10 @@ const InstitutionsList = () => {
     const [state, setState] = useState({
         page: 0,
         size: 20,
-        totalCount: 0
+        totalCount: 0,
+        switchButton: false,
+        disableSwitchButton: false,
+        id: 0
     })
     const [institutionsList, setInstitutionsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
@@ -47,7 +50,8 @@ const InstitutionsList = () => {
                 setInstitutionsList(result.data.respBody.institution)
                 setState(state =>({
                     ...state,
-                    totalCount: result.data.respBody.totalCount
+                    totalCount: result.data.respBody.totalCount,
+                    id: result.data.respBody.institution.id
                 }))
             }else{
                 Swal.fire({
@@ -76,7 +80,78 @@ const InstitutionsList = () => {
             page: pageNumber - 1
         })
     }
-    const { page, size, totalCount } = state;
+
+    const onSwitchChange = async() => {
+        let value;
+        if (state.switchButton){
+            value =  false;
+        } else {
+            value = true;
+        }
+        globalSettingsActivation(value)
+    }
+
+    const globalSettingsActivation = async (value) => {
+        setState({
+            ...state,
+            disableSwitchButton: true
+        })
+
+        const reqBody ={
+           id,
+            value
+        }
+       
+        axios({
+            url: `${changeGlobalSettings}`,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
+            },
+            data: reqBody,
+            timeout: FetchTimeOut
+        })
+        .then(result => {console.log(id)
+            // console.log(result)
+            setState(state =>({
+                ...state,
+                isLoading: false,
+                disableSwitchButton: false
+            }))
+            if(result.data.respCode === '00'){
+                setState({
+                    ...state,                    
+                    switchButton: !state.switchButton
+                })                
+            } else {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${result.data.respDescription}`,
+                    footer: 'Please contact support'
+                })
+            }            
+        })
+        .catch(err => {
+            setState(state =>({
+                ...state,
+            disableSwitchButton: false,
+            isLoading: false
+            }))
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: `${err}`,
+                footer: 'Please contact support'
+            })
+        });
+    }
+
+    
+
+    const { page, size, totalCount, switchButton, disableSwitchButton, id } = state;
 
     if(isLoading){
         return <PreLoader />
@@ -124,9 +199,9 @@ const InstitutionsList = () => {
                                                         <Link to={`/institution-list/${institutionID}`}><FontAwesomeIcon icon="eye" /></Link>
                                                     </td>
                                                     <td>
-                                                    <span className="switch" >
+                                                    <span className="switch" onClick={onSwitchChange} checked={switchButton} disabled={disableSwitchButton} readOnly >
                                                         <input type="checkbox" readOnly />
-                                                        <span className={`slider round `}></span>
+                                                        <span className={`slider round ${disableSwitchButton ? 'disabled' : ''}`}></span>
                                                     </span>
                                                     </td>
                                                 </tr>

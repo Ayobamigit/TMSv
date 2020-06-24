@@ -76,3 +76,4 @@ export const createAUser = `${baseUrl()}/api/v1/superadmin/createUsers`;
 export const deleteAUser = `${baseUrl()}/api/v1/superadmin/user`;
 export const globalSettings = `${baseUrl()}/api/v1/superadmin/globalSettings`;
 export const getGlobalSettings = `${baseUrl()}/api/v1/superadmin/getSetting`;
+export const changeGlobalSettings = `${baseUrl()}/api/v1/superadmin/updatesuperAdminGlobalSettings`
