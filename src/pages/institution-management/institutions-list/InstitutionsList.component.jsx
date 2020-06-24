@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
 import {allInstitutionsList, changeGlobalSettings, getSuperAdminSetting} from '../../../Utils/URLs';
@@ -18,7 +17,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const InstitutionsList = () => {
-    const match = useRouteMatch();
     const [state, setState] = useState({
         page: 0,
         size: 20,
@@ -209,7 +207,7 @@ const InstitutionsList = () => {
                                                         <Link to={`/institution-list/${institutionID}`}><FontAwesomeIcon icon="eye" /></Link>
                                                     </td>
                                                     <td>
-                                                    <span className="switch" onClick={()=>onSwitchChange(institutionID, globalSetting)}  > 
+                                                    <span className="switchButton" onClick={()=>onSwitchChange(institutionID, globalSetting)}  > 
                                                         <input type="checkbox" checked={globalSetting} disabled={disableSwitchButton} readOnly /> 
                                                         <span className={`slider round ${disableSwitchButton ? 'disabled' : ''}`}></span>
                                                     </span>
