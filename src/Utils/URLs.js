@@ -1,6 +1,6 @@
 const baseUrl = () => {
-     return 'http://10.2.2.47:5334';
-    //  return 'http://test.3lineng.com:5334';
+    //  return 'http://10.2.2.47:5334';
+     return 'http://test.3lineng.com:5334';
     // return 'http://10.9.8.102:8081'; // Another Test IP
     // return 'http://10.9.8.63:7070'; //Test IP
     // return 'http://10.9.8.63:5334'; //Live IP
@@ -77,3 +77,4 @@ export const deleteAUser = `${baseUrl()}/api/v1/superadmin/user`;
 export const globalSettings = `${baseUrl()}/api/v1/superadmin/globalSettings`;
 export const getGlobalSettings = `${baseUrl()}/api/v1/superadmin/getSetting`;
 export const changeGlobalSettings = `${baseUrl()}/api/v1/superadmin/updatesuperAdminGlobalSettings`
+export const getSuperAdminSetting = `${baseUrl()}/api/v1/superadmin/getsuperAdminGlobalSettings`

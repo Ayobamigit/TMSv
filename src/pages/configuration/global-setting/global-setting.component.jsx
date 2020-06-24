@@ -25,7 +25,7 @@ const GlobalSetting = () => {
                 'Authorization': `Bearer ${authToken}`,
                 'Bearer': authToken
             },
-            data: institutionID,
+            // data: institutionID,
             timeout: FetchTimeOut
         })
         .then(result => {

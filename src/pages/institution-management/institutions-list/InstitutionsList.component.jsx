@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
-import {allInstitutionsList,changeGlobalSettings} from '../../../Utils/URLs';
+import {allInstitutionsList, changeGlobalSettings, getSuperAdminSetting} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import Pagination from "react-pagination-js";
 import "react-pagination-js/dist/styles.css";
@@ -17,18 +18,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const {authToken} = JSON.parse(sessionStorage.getItem('userDetails'))
 
 const InstitutionsList = () => {
+    const match = useRouteMatch();
     const [state, setState] = useState({
         page: 0,
         size: 20,
         totalCount: 0,
         switchButton: false,
         disableSwitchButton: false,
-        id: 0
+        id:0
     })
     const [institutionsList, setInstitutionsList ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     useEffect(() => {
-        let reqBody = {
+        const reqBody = {
             page: state.page,
             size: state.size
         }
@@ -48,10 +50,11 @@ const InstitutionsList = () => {
             setIsLoading(false)
             if(result.data.respCode === '00'){
                 setInstitutionsList(result.data.respBody.institution)
+                
                 setState(state =>({
                     ...state,
                     totalCount: result.data.respBody.totalCount,
-                    id: result.data.respBody.institution.id
+                    
                 }))
             }else{
                 Swal.fire({
@@ -72,6 +75,9 @@ const InstitutionsList = () => {
                 footer: 'Please contact support'
             })
         });
+
+     
+      
     }, [state.page, state.size])
 
     const changeCurrentPage = (pageNumber) => {
@@ -81,24 +87,24 @@ const InstitutionsList = () => {
         })
     }
 
-    const onSwitchChange = async() => {
+    const onSwitchChange = async(institutionID, globalSetting) => {
         let value;
-        if (state.switchButton){
+        if (globalSetting){
             value =  false;
         } else {
             value = true;
         }
-        globalSettingsActivation(value)
+        globalSettingsActivation(value, institutionID)
     }
 
-    const globalSettingsActivation = async (value) => {
+    const globalSettingsActivation = async (value, institutionID) => {
         setState({
             ...state,
             disableSwitchButton: true
         })
 
-        const reqBody ={
-           id,
+        const req ={
+            institutionID,
             value
         }
        
@@ -108,12 +114,13 @@ const InstitutionsList = () => {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`,
-                'Bearer': authToken
+                'Bearer': authToken,
+                
             },
-            data: reqBody,
+            data: req,
             timeout: FetchTimeOut
         })
-        .then(result => {console.log(id)
+        .then(result => {
             // console.log(result)
             setState(state =>({
                 ...state,
@@ -121,10 +128,13 @@ const InstitutionsList = () => {
                 disableSwitchButton: false
             }))
             if(result.data.respCode === '00'){
-                setState({
-                    ...state,                    
-                    switchButton: !state.switchButton
-                })                
+               
+                const updatedInstitution = result.data.respBody;
+                const allInstitutions = [...institutionsList];
+                const indexOfInstituion = allInstitutions.findIndex(institution => institution.institutionID === updatedInstitution.institutionID);
+                allInstitutions[indexOfInstituion] = updatedInstitution;
+               
+                setInstitutionsList(allInstitutions);              
             } else {
                 Swal.fire({
                     type: 'error',
@@ -183,7 +193,7 @@ const InstitutionsList = () => {
                                         <NoResultFound /> :
                                         institutionsList.map((institution, index) => {
                                             const { 
-                                                id,institutionName, institutionEmail, institutionID, settlementAccount, institutionPhone, createdBy, dateCreated
+                                                id,institutionName, institutionEmail, institutionID, settlementAccount, globalSetting, institutionPhone, createdBy, dateCreated
                                             } = institution;
                                             return (
                                                 <tr key={index}>
@@ -199,8 +209,8 @@ const InstitutionsList = () => {
                                                         <Link to={`/institution-list/${institutionID}`}><FontAwesomeIcon icon="eye" /></Link>
                                                     </td>
                                                     <td>
-                                                    <span className="switch" onClick={onSwitchChange} checked={switchButton} disabled={disableSwitchButton} readOnly >
-                                                        <input type="checkbox" readOnly />
+                                                    <span className="switch" onClick={()=>onSwitchChange(institutionID, globalSetting)}  > 
+                                                        <input type="checkbox" checked={globalSetting} disabled={disableSwitchButton} readOnly /> 
                                                         <span className={`slider round ${disableSwitchButton ? 'disabled' : ''}`}></span>
                                                     </span>
                                                     </td>
