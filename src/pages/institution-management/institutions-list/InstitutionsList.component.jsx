@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import withTimeout from '../../../HOCs/withTimeout.hoc';
 import { Link } from 'react-router-dom';
 import './InstitutionsList.styles.scss';
-import {allInstitutionsList, changeGlobalSettings, getSuperAdminSetting} from '../../../Utils/URLs';
+import {allInstitutionsList, changeGlobalSettings} from '../../../Utils/URLs';
 import Swal from '../../../constants/swal';
 import Pagination from "react-pagination-js";
 import "react-pagination-js/dist/styles.css";
@@ -159,7 +159,7 @@ const InstitutionsList = () => {
 
     
 
-    const { page, size, totalCount, switchButton, disableSwitchButton, id } = state;
+    const { page, size, totalCount, disableSwitchButton} = state;
 
     if(isLoading){
         return <PreLoader />
@@ -191,7 +191,7 @@ const InstitutionsList = () => {
                                         <NoResultFound /> :
                                         institutionsList.map((institution, index) => {
                                             const { 
-                                                id,institutionName, institutionEmail, institutionID, settlementAccount, globalSetting, institutionPhone, createdBy, dateCreated
+                                                institutionName, institutionEmail, institutionID, settlementAccount, globalSetting, institutionPhone, createdBy, dateCreated
                                             } = institution;
                                             return (
                                                 <tr key={index}>

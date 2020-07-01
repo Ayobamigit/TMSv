@@ -161,7 +161,7 @@ const DeviceList = () => {
                                         terminalsList.length === 0 ? 
                                             <NoResultFound /> : 
                                         terminalsList.map((terminal, index) => {
-                                            const { id, terminalID, terminalROMVersion, terminalSerialNo, terminalType, dateCreated } = terminal;
+                                            const {terminalID, terminalROMVersion, terminalSerialNo, terminalType, dateCreated } = terminal;
                                             return (
                                                 <tr key={index}>
                                                     <th scope="row">{index+1}</th>

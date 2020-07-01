@@ -187,7 +187,6 @@ const WalletView = () => {
                             <div className="form-group">
                                 <p>Ledger Balance</p>
                                 <input  
-                                    type="text"
                                     name="ledgerBalance" 
                                     className="form-control" 
                                     value={ledgerBalance} 

@@ -37,7 +37,7 @@ function App() {
               <Route exact path="/wallet/:id" component={ProtectedRoutes} />
 
               <Route path="/configuration" component={ProtectedRoutes} />
-              <Route path="/configuration/globalsetting" component={ProtectedRoutes} />
+              <Route exact path="/globalsetting" component={ProtectedRoutes} />
               <Route exact path="/configuration/:id" component={ProtectedRoutes} /> 
               <Route exact path="/configuration/profile/:id" component={ProtectedRoutes} />  
 

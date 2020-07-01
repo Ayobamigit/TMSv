@@ -165,7 +165,7 @@ const Sidebar = () => {
               {
                 hasPermission(GLOBAL_SETTINGS) && institution ? 
                 <li>
-                  <NavLink to="/configuration/globalsetting" activeClassName="selected">
+                  <NavLink to="/globalsetting" activeClassName="selected">
                     Global Settings
                   </NavLink>
                 </li>

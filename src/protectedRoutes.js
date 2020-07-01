@@ -71,10 +71,11 @@ function ProtectedRoutes() {
               <PrivateRoute exact path="/wallet/:id" condition={hasPermission(CREATE_WALLET)} component={WalletView} />
 
               {/* Route is only active for users that have permission global_settings  */}
-              <PrivateRoute exact path='/configuration/globalsetting' condition={hasPermission(GLOBAL_SETTINGS)} component={GlobalSetting} />                
+              <PrivateRoute exact path='/globalsetting' condition={hasPermission(GLOBAL_SETTINGS)} component={GlobalSetting} />             
               <Route exact path="/configuration/:id" condition={hasPermission(CREATE_PROVIDERS)} component={ViewServiceProvider} /> 
               <Route exact path="/configuration/profile/:id" component={ViewProfile} />  
               <Route exact path="/configuration" component={ConfigurationComponent} />
+              
 
               <Route exact path="/reporting" component={ReportingComponent} />
               <Route exact path="/reporting/:id" component={ReportTransactionDetails} />

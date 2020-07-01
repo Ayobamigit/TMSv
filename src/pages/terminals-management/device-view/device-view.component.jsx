@@ -184,7 +184,7 @@ const DeviceView = () => {
 
         getDeviceData();
        
-    }, [match.params.id])
+    }, [match.params.id, authToken, institution])
 
     const getProfilesByName = () => {
 

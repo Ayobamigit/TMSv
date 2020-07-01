@@ -37,7 +37,9 @@ const Reporting = () => {
                 ...state,
                 size: e.target.value
             })
+            
             return;
+            
         }
         setSearchValues({
             ...searchValues,
@@ -113,7 +115,7 @@ const Reporting = () => {
             });
         }
         getTransactionsHistory();
-    }, [page, size, authToken, fromDate, toDate])
+    }, [page, size, authToken, fromDate, toDate, institutionID, terminalID])
 
     const changeCurrentPage = (pageNumber) => {
         setState({

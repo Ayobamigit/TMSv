@@ -14,6 +14,7 @@
     "node-sass": "^4.13.0",
     "react": "^16.12.0",
     "react-chartjs-2": "^2.8.0",
+    "react-datepicker": "^3.0.0",
     "react-dom": "^16.12.0",
     "react-html-table-to-excel": "^2.0.0",
     "react-pagination-js": "^2.0.0",

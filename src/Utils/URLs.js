@@ -1,7 +1,7 @@
 const baseUrl = () => {
-    //  return 'http://10.2.2.47:5334';
-     return 'http://test.3lineng.com:5334';
-    // return 'http://10.9.8.102:8081'; // Another Test IP
+    // return 'http://10.2.2.47:5334';
+    // return 'http://test.3lineng.com:5334';
+    return 'http://10.9.8.102:8081'; // Another Test IP
     // return 'http://10.9.8.63:7070'; //Test IP
     // return 'http://10.9.8.63:5334'; //Live IP
     // return 'http://41.219.149.51:5334'; //Test Public IP
@@ -78,3 +78,8 @@ export const globalSettings = `${baseUrl()}/api/v1/superadmin/globalSettings`;
 export const getGlobalSettings = `${baseUrl()}/api/v1/superadmin/getSetting`;
 export const changeGlobalSettings = `${baseUrl()}/api/v1/superadmin/updatesuperAdminGlobalSettings`
 export const getSuperAdminSetting = `${baseUrl()}/api/v1/superadmin/getsuperAdminGlobalSettings`
+
+//Audit
+export const getAllAudit = `${baseUrl()}/api/v1/audit/superAdminAllAudits`;
+export const getInstitutionAudit = `${baseUrl()}/api/v1/audit/getAllPagenatedAuditsByInstitution`;
+export const getPaginatedAudit = `${baseUrl()}/api/v1/audit/getAllPagenatedAuditsByUser`;
