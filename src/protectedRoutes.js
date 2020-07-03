@@ -6,7 +6,7 @@ import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import PreLoader from './components/PreLoader/Preloader.component';
 
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import { hasPermission, CREATE_TERMINALS, CREATE_INSTITUTION, VIEW_INSTITUTION_INSTITUTION, GLOBAL_SETTINGS, CREATE_PROVIDERS, CREATE_ROLES, VIEW_WALLET, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
+import { hasPermission, CREATE_TERMINALS, VIEW_ROLES, CREATE_INSTITUTION, VIEW_INSTITUTION_INSTITUTION, GLOBAL_SETTINGS, CREATE_PROVIDERS, CREATE_ROLES, VIEW_WALLET, CREATE_USER, CREATE_WALLET } from './Utils/getPermission';
 import PrivateRoute from './privateRoute';
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard.component'));
 
@@ -49,8 +49,8 @@ function ProtectedRoutes() {
               <Route exact path="/dashboard" component={Dashboard} />
 
               <PrivateRoute exact path='/roles/:id' condition={hasPermission(CREATE_ROLES)} component={ViewRole} />
-              <PrivateRoute exact path='/roles' condition={hasPermission(CREATE_ROLES)} component={RolesAndPermissionsComponent} />
-              <PrivateRoute exact path='/roles/permission/:id' condition={hasPermission(CREATE_ROLES)} component={ViewAPermission} />
+              <PrivateRoute exact path='/roles' condition={hasPermission(VIEW_ROLES)} component={RolesAndPermissionsComponent} />
+              <PrivateRoute path='/roles/permission/:id' condition={hasPermission(CREATE_ROLES)} component={ViewAPermission} />
 
               {/* Route is only active for users that have permission create_user  */}
               <PrivateRoute exact path='/user-setup' condition={hasPermission(CREATE_USER)} component={UserRegistration} />                

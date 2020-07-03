@@ -89,7 +89,7 @@ const DeviceRegistration = () => {
            
         }
         
-    }, [authToken, institution])
+    }, [authToken])
 
    
 

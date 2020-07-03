@@ -1,14 +1,18 @@
 import React, { useState, useEffect, Fragment}from 'react';
+import DatePicker from 'react-datepicker';
 import withTimeout from '../../HOCs/withTimeout.hoc';
 import Pagination from "react-pagination-js";
 import {getAllAudit, getInstitutionAudit} from "../../Utils/URLs"
 import "react-pagination-js/dist/styles.css";
+import "react-datepicker/dist/react-datepicker.css"
 import Layout from '../../components/Layout/layout.component';
 import IsLoadingData from '../../components/isLoadingData/isLoadingData';
 import axios from 'axios';
 import NoResultFound from '../../components/NoResultFound/NoResultfound'
 import { FetchTimeOut } from '../../Utils/FetchTimeout';
 import Swal from '../../constants/swal'
+import './AuditStyle.scss'
+
 
 const Audit = () => {
     const [state, setState] = useState({
@@ -41,8 +45,12 @@ const Audit = () => {
             [e.target.name] : e.target.value
         })
     }
+
+     
     const{ totalCount, page, size, fromDate, toDate, isLoading, institutionID} = state;
     let {audits} = state;
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const {authToken, institution} = JSON.parse(sessionStorage.getItem('userDetails'));
 
     useEffect(() =>{
@@ -165,7 +173,21 @@ const Audit = () => {
 
        getAudit();
 
-    }, [page, size, authToken, fromDate, totalCount, toDate, institutionID])
+    }, [authToken, page, size])
+    
+
+    useEffect(()=>{
+        if(startDate && endDate)
+        {
+          dateFilter();
+        }
+
+        if(!startDate && !endDate)
+        {
+          clearDateFilter();
+        }
+
+    }, [startDate, endDate])
 
     const changeCurrentPage = (pageNumber) => {
         setState({
@@ -184,6 +206,83 @@ const Audit = () => {
         return(audit.username.toLowerCase()).includes(searchValues.username.toLowerCase())
     })
 
+    // Filter by Date
+    const startDateFilter = date =>{
+        console.log(startDate)
+        setStartDate(date)   
+        console.log(startDate)   
+    }
+
+    const endDateFilter = date =>{
+        setEndDate(date)
+        console.log(endDate)
+        
+    }
+
+    const clearDateFilter =()=>{
+        return null;
+    }
+
+    const dateFilter =()=>{
+
+        
+        const reqBody ={
+            fromDate: startDate,
+            institutionID,
+            page,
+            size,
+            toDate: endDate
+        }
+
+        axios({
+            url: `${getAllAudit}`,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
+            },
+            data: reqBody,
+            timeout: FetchTimeOut
+        })
+        .then(result =>{ 
+                setState(state =>({
+                    ...state,
+                    isLoading: false
+                }))
+
+                if(result.data.respCode === '00'){
+                    const {totalCount, audits, hasNextRecord} = result.data.respBody;
+                    setState(state =>({
+                        ...state,
+                        totalCount,
+                        audits,
+                        hasNextRecord
+                    }))
+                }
+                else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }
+        })
+        .catch(err => {
+                    setState(state =>({
+                        ...state,
+                        isLoading: false
+                }))
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${err}`,
+                        footer: 'Please contact support'
+                    })
+        });
+    }
+
     return (
         <Layout>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -191,18 +290,33 @@ const Audit = () => {
             </div>
 
             <div className="overflow-auto">
-                            <div className="d-flex justify-content-between">
-                                <select className="custom-select mx-2" value = {state.size} name="size" onChange= {onChange} required >
-                                    <option value="20">Sort by size</option>
-                                    <option value="50">50 Results</option>
-                                    <option value="100">100 Results</option>
-                                    <option value="200">200 Results</option>
-                                    <option value="500">500 Results</option>
-                                    <option value="1000000">All</option>                                
-                                </select>
+                            <div className="d-flex justify-content-between">                               
+                                
                                 <input type="text" name="institutionname" value={searchValues.institutionname} className="form-control mx-2" placeholder="Filter by Institution Name" onChange={onChange} />
-                                <input type="text" name="action" className="form-control mx-2" placeholder="Filter by Action" />
                                 <input type="text" name="username" value={searchValues.username} className="form-control mx-2" placeholder="Filter by User" onChange = {onChange} />
+                                <DatePicker 
+                                placeholderText="Select start date"
+                                className = 'datePicker mx-2'
+                                selected={startDate}
+                                onChange={date=> startDateFilter(date)}
+                                selectsStart
+                                startDate={startDate}
+                                endDate={endDate}
+                                maxDate={endDate}
+                                
+                                />
+                                <DatePicker
+                                    placeholderText="Select end date"
+                                    className = 'datePicker mx-2'
+                                    selected={endDate}
+                                    onChange={date => endDateFilter(date)}
+                                    //onChange={date => setEndDate(date)}
+                                    selectsEnd
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    minDate={startDate}
+                                />
+                                
                             </div>
                         </div>
             <div className="page-content">

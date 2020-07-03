@@ -1,7 +1,25 @@
 import React, { useContext, Fragment } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar.styles.scss';
-import { hasPermission, CREATE_ROLES, CREATE_USER, CREATE_TERMINALS, CREATE_PROVIDERS, CREATE_INSTITUTION, VIEW_WALLET, GLOBAL_SETTINGS, CREATE_WALLET, VIEW_INSTITUTION_INSTITUTION } from '../../Utils/getPermission';
+import { 
+  hasPermission, 
+  CREATE_ROLES, 
+  CREATE_USER,
+  VIEW_USER, 
+  CREATE_TERMINALS, 
+  CREATE_PROVIDERS, 
+  CREATE_INSTITUTION, 
+  VIEW_WALLET, 
+  GLOBAL_SETTINGS, 
+  CREATE_WALLET, 
+  VIEW_INSTITUTION_INSTITUTION,
+  VIEW_AUDIT,
+  VIEW_INSTITUTION_AUDIT,
+  VIEW_USER_AUDIT,
+  VIEW_TRANSACTIONS,
+  VIEW_TERMINALS,
+  VIEW_ROLES
+ } from '../../Utils/getPermission';
 import Logo from '../../img/logo.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -32,6 +50,7 @@ const Sidebar = () => {
           </li>
 
           {/*  User Management */}
+          {hasPermission (CREATE_USER) || hasPermission (VIEW_USER) ?
           <li>
             <div className="nav-link dropdown-toggle" href="#userSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
@@ -47,16 +66,21 @@ const Sidebar = () => {
                     Register a User
                   </NavLink>
                 </li>: null
-              }              
+              }
+
+              { 
+              hasPermission(VIEW_USER) ?
               <li>
                 <NavLink to="/user-list" activeClassName="selected">
                   View all Users  
                 </NavLink>
-              </li>
+              </li> :null
+              }
             </ul>
-          </li>
+          </li>:null}
 
           {/*  Device Setup / configuration */}
+          {hasPermission (CREATE_TERMINALS) || hasPermission (VIEW_TERMINALS) ? 
           <li>
             <div className="nav-link dropdown-toggle" href="#deviceSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
@@ -80,7 +104,7 @@ const Sidebar = () => {
                 </NavLink>
               </li>
             </ul>
-          </li>
+          </li>: null}
 
           {/*  Institution Management */}
             {!institution?
@@ -119,7 +143,7 @@ const Sidebar = () => {
           
           {/*  Wallet */}            
           {
-            hasPermission(CREATE_WALLET)|| (VIEW_WALLET)?
+            hasPermission (CREATE_WALLET) || hasPermission (VIEW_WALLET)?
               <li>
                 <NavLink className="nav-link" to="/wallets" activeClassName="selected">
                   <FontAwesomeIcon icon="wallet" />
@@ -130,22 +154,25 @@ const Sidebar = () => {
           }
           
           {/*  Reporting */}
+          {hasPermission (VIEW_TRANSACTIONS) ?
           <li>
             <NavLink className="nav-link" to="/reporting" activeClassName="selected">
               <FontAwesomeIcon icon="book" />
               <span>Reporting</span>
             </NavLink>
-          </li>
+          </li> : null}
           
           {/*  Audit */}
+          {hasPermission ( VIEW_AUDIT) || hasPermission (VIEW_INSTITUTION_AUDIT) || hasPermission (VIEW_USER_AUDIT) ?
           <li>
             <NavLink className="nav-link" to="/audit" activeClassName="selected">
               <FontAwesomeIcon icon="file" />
               <span>Audit</span>
             </NavLink>
-          </li>
+          </li> : null}
 
           {/*  Configurations */}
+          {hasPermission (CREATE_PROVIDERS) || hasPermission (GLOBAL_SETTINGS) ?
           <li>
             <div className="nav-link dropdown-toggle" href="#configurationSubmenu" data-toggle="collapse" aria-expanded="false">
               <NavLink to="#">
@@ -172,11 +199,11 @@ const Sidebar = () => {
                 : null
               }
             </ul> 
-          </li>
+          </li>: null}
 
           {/*  Roles and Permissions */}
           {
-            hasPermission(CREATE_ROLES) ? 
+            hasPermission(CREATE_ROLES) || hasPermission (VIEW_ROLES) ? 
             <li>
               <NavLink className="nav-link" to="/roles" activeClassName="selected">
                 <FontAwesomeIcon icon="key" />
