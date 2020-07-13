@@ -1,4 +1,5 @@
 import React, { useState, createContext, useEffect } from 'react';
+import withTimeout from '../../HOCs/withTimeout.hoc';
 import dashboardHOC from '../../HOCs/DashboardHOC.hoc';
 import './Dashboard.styles.scss';
 import Layout from '../../components/Layout/layout.component';
@@ -12,7 +13,7 @@ import DashboardTransactionHistoryComponent from '../../components/DashboardTran
 // Context for Authentication
 import { FetchTimeOut } from '../../Utils/FetchTimeout';
 import { dashboardUtilities, getNewTokenUrl } from '../../Utils/URLs';
-import TopInstitutions from '../../components/TopInstitutions/TopInstitutions.component';
+// import TopInstitutions from '../../components/TopInstitutions/TopInstitutions.component';
 import formatter from '../../Utils/formatter';
 
 export const DashboardContext = createContext();
@@ -45,7 +46,7 @@ const Dashboard = () => {
     })
     const { data, page, size, isLoading, toDate, fromDate, fetchingTransactions, terminalsStatistics } = state;
 
-    let { institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
+    // let { institutionID } = JSON.parse(sessionStorage.getItem('userDetails'));
     useEffect(() => {
         let { authToken } = JSON.parse(sessionStorage.getItem('userDetails'));
         //Get New Token when token expires
@@ -214,14 +215,14 @@ const Dashboard = () => {
                             <DashboardCardsList />
                         </div>
                     </div>
-                    {
+                    {/* {
                         institutionID ? null :
                         <TopInstitutions />
-                    }
+                    } */}
                     <DashboardTransactionHistoryComponent />
                 </DashboardContext.Provider>
             </div>
         </Layout>
     )
 }
-export default dashboardHOC(Dashboard)
+export default withTimeout(dashboardHOC(Dashboard))

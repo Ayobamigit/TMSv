@@ -1,18 +1,21 @@
 let { role } = JSON.parse(sessionStorage.getItem('userDetails'));
 export const hasPermission = (neededRole) => {
     if(role.permissions){
-        const result = role.permissions.find((item, i) => {
-            return item.name.toLowerCase().includes(neededRole.toLowerCase())
-        })
-        if(result){
-            return true
-        } else {
-            return false;
+            const result = role.permissions.find((item, i) => {
+                return item.name.toLowerCase().includes(neededRole.toLowerCase())
+            })
+            if(result){
+                return true
+            } else {
+                return false;
+            }
         }
-    }
+    
+   
 }
 
 //Available Permissions
+
 //Institution
 export const CREATE_INSTITUTION = 'CREATE_INSTITUTION'
 export const UPDATE_INSTITUTION = 'UPDATE_INSTITUTION'

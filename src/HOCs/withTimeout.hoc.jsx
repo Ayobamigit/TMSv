@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TimeOut from '../constants/timeOut';
-import { Redirect } from 'react-router-dom';
+// import { Redirect } from 'react-router-dom';
 
 const withTimeout = (WrappedComponent) => {
     return class WithTimeOut extends Component {
@@ -11,8 +11,9 @@ const withTimeout = (WrappedComponent) => {
         resetTimeout = () => { this.clearTimeoutFunc(); this.setTimeout(); };
         logout = () => { 
             if(this._isMounted && this.props.history.push){ 
-                this.props.history.push("/"); 
+                
                 alert('Your session timed out due to inactivity'); 
+                window.location.href = "/"; 
             }
             sessionStorage.clear();  
         };
@@ -39,7 +40,7 @@ const withTimeout = (WrappedComponent) => {
         }
         render(){
             if (!sessionStorage.getItem('userDetails')){
-                return <Redirect to="/" />
+                return window.location.href = '/sign-in'
             }
             return (
                 <WrappedComponent />

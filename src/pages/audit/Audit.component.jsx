@@ -225,7 +225,64 @@ const Audit = () => {
 
     const dateFilter =()=>{
 
-        
+      if(institution)  {
+        const reqBody ={
+            fromDate: startDate,
+            institutionID: institution.institutionID,
+            page,
+            size,
+            toDate: endDate
+        }
+
+        axios({
+            url: `${getAllAudit}`,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                'Bearer': authToken
+            },
+            data: reqBody,
+            timeout: FetchTimeOut
+        })
+        .then(result =>{ 
+                setState(state =>({
+                    ...state,
+                    isLoading: false
+                }))
+
+                if(result.data.respCode === '00'){
+                    const {totalCount, audits, hasNextRecord} = result.data.respBody;
+                    setState(state =>({
+                        ...state,
+                        totalCount,
+                        audits,
+                        hasNextRecord
+                    }))
+                }
+                else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${result.data.respDescription}`,
+                        footer: 'Please contact support'
+                    })
+                }
+        })
+        .catch(err => {
+                    setState(state =>({
+                        ...state,
+                        isLoading: false
+                }))
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: `${err}`,
+                        footer: 'Please contact support'
+                    })
+        });
+      }
+      else{
         const reqBody ={
             fromDate: startDate,
             institutionID,
@@ -281,6 +338,8 @@ const Audit = () => {
                         footer: 'Please contact support'
                     })
         });
+      }
+        
     }
 
     return (
@@ -295,6 +354,7 @@ const Audit = () => {
                                 <input type="text" name="institutionname" value={searchValues.institutionname} className="form-control mx-2" placeholder="Filter by Institution Name" onChange={onChange} />
                                 <input type="text" name="username" value={searchValues.username} className="form-control mx-2" placeholder="Filter by User" onChange = {onChange} />
                                 <DatePicker 
+                                // dateFormat="dd-MM-yyyy"
                                 placeholderText="Select start date"
                                 className = 'datePicker mx-2'
                                 selected={startDate}
@@ -303,9 +363,10 @@ const Audit = () => {
                                 startDate={startDate}
                                 endDate={endDate}
                                 maxDate={endDate}
-                                
+                                                            
                                 />
                                 <DatePicker
+                                    // dateFormat="dd/MM/yyyy"
                                     placeholderText="Select end date"
                                     className = 'datePicker mx-2'
                                     selected={endDate}
@@ -315,6 +376,7 @@ const Audit = () => {
                                     startDate={startDate}
                                     endDate={endDate}
                                     minDate={startDate}
+                                    // maxDate={new Date()}
                                 />
                                 
                             </div>

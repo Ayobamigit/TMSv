@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import './App.scss';
 
-import { Route, Switch, BrowserRouter } from 'react-router-dom';
+import { Route, Switch, HashRouter } from 'react-router-dom';
 
 import PreLoader from './components/PreLoader/Preloader.component';
 
@@ -42,11 +42,11 @@ const WalletView = lazy(() => import('./pages/wallet/view-wallet/view-wallet.com
 function ProtectedRoutes() {
   return (
     <React.Fragment>
-      <BrowserRouter>
+      <HashRouter>
         <ErrorBoundary>
-            <Switch> 
+         <Switch> 
           <Suspense fallback={<PreLoader />}>
-              <Route exact path="/dashboard" component={Dashboard} />
+              <Route exact path="/dashboard" component={Dashboard} /> 
 
               <PrivateRoute exact path='/roles/:id' condition={hasPermission(CREATE_ROLES)} component={ViewRole} />
               <PrivateRoute exact path='/roles' condition={hasPermission(VIEW_ROLES)} component={RolesAndPermissionsComponent} />
@@ -87,7 +87,7 @@ function ProtectedRoutes() {
           </Suspense>
             </Switch>
         </ErrorBoundary>
-      </BrowserRouter>
+      </HashRouter>
     </React.Fragment>
   );
 }

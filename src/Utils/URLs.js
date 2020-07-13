@@ -1,11 +1,12 @@
 const baseUrl = () => {
+    // return 'http://10.9.8.64:5334'; //Live IP
     //return 'http://10.2.2.47:5334';
-    return 'http://test.3lineng.com:5334';
-    // return 'http://10.9.8.102:8080'; // Another Test IP
+    //return 'http://test.3lineng.com:5334';
+    //return 'http://10.9.8.102:7079'; // Another Test IP
     // return 'http://10.9.8.63:7070'; //Test IP
     // return 'http://10.9.8.63:5334'; //Live IP
     // return 'http://41.219.149.51:5334'; //Test Public IP
-    // return 'http://medusa.3lineng.com'; //New Public IP
+     return 'https://medusa.3lineng.com:5335'; //New Public IP
 }
  
 export const institutionLoginUrl = `${baseUrl()}/api/v1/institution/login`;

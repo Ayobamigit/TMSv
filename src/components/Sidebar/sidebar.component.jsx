@@ -1,5 +1,5 @@
 import React, { useContext, Fragment } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link} from 'react-router-dom';
 import './sidebar.styles.scss';
 import { 
   hasPermission, 
@@ -25,6 +25,7 @@ import Logo from '../../img/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { authContext } from '../../Context/Authentication.context';
 
+
 const Sidebar = () => {
   const { setAuthenticationStatus } = useContext(authContext)
   const { institution } = JSON.parse(sessionStorage.getItem('userDetails'));
@@ -32,6 +33,7 @@ const Sidebar = () => {
     const logout = () => {
       setAuthenticationStatus(false);
       sessionStorage.clear();
+      // window.location.href = "/sign-in"
     }
     return (
       <React.Fragment>
@@ -63,7 +65,7 @@ const Sidebar = () => {
                 hasPermission(CREATE_USER) ?
                 <li>
                   <NavLink to="/user-setup" activeClassName="selected">
-                    Register a User
+                    Add User
                   </NavLink>
                 </li>: null
               }
@@ -93,7 +95,7 @@ const Sidebar = () => {
                 hasPermission(CREATE_TERMINALS) ?
                   <li>
                     <NavLink to="/device-setup" activeClassName="selected">
-                      Register a Terminal
+                      Add Terminal
                     </NavLink>
                   </li>
                   : null
@@ -120,7 +122,7 @@ const Sidebar = () => {
                   <Fragment>
                     <li>
                       <NavLink to="/institution-setup" activeClassName="selected">
-                        Register an Institution
+                        Add Institution
                       </NavLink>
                     </li>
                     <li>
@@ -189,7 +191,7 @@ const Sidebar = () => {
               </li>: null
               }
               
-              {
+              {/* {
                 hasPermission(GLOBAL_SETTINGS) && institution ? 
                 <li>
                   <NavLink to="/globalsetting" activeClassName="selected">
@@ -197,7 +199,7 @@ const Sidebar = () => {
                   </NavLink>
                 </li>
                 : null
-              }
+              } */}
             </ul> 
           </li>: null}
 
@@ -215,7 +217,7 @@ const Sidebar = () => {
 
           {/* { Logout } */}
           <li>
-            <NavLink className="nav-link" to="/" onClick={logout}>
+            <NavLink className="nav-link" to="/sign-in" onClick={logout}>
               <FontAwesomeIcon icon="sign-out-alt" />
               <span>Logout</span>
             </NavLink>
